@@ -1,4 +1,34 @@
-lockfileVersion: '9.0'
+cd ~/Projects/el-le3ba
+cat > .gitignore << 'EOF'
+# Dependencies
+**/node_modules/
+**/.pnpm-store/
+
+# Environment
+**/.env
+**/.env.local
+**/.env*.local
+
+# Next.js
+frontend/.next/
+frontend/out/
+
+# Build
+**/dist/
+**/build/
+
+# Logs
+**/*.log
+**/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+EOFlockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
