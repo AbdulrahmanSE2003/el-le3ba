@@ -1,3 +1,5 @@
+// NOTE: Temporary page will be landing page later
+
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function Home() {
