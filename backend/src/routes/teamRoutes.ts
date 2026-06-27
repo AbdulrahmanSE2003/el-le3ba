@@ -1,10 +1,16 @@
 import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
 import {
+  changeCaptain,
+  changeTeamName,
   createTeam,
   deleteMyTeam,
+  getAllTeams,
   getMyTeam,
+  getTeam,
+  getTeamAttempts,
   joinTeam,
+  kickMember,
   leaveTeam,
 } from "../controllers/teamController";
 
@@ -12,26 +18,23 @@ const teamRoutes = express.Router();
 
 teamRoutes.use(protect);
 
-teamRoutes.route("/").post(createTeam);
-//TODO GET all teams restrictTo("admin", "superAdmin")
+teamRoutes
+  .route("/")
+  .get(restrictTo("admin", "superAdmin"), getAllTeams)
+  .post(createTeam);
 
 teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
-// TODO DELETE my team
 
-teamRoutes.route("/join").post(joinTeam); // TODO POST join a team
-teamRoutes.route("/leave").delete(leaveTeam); // TODO DELETE leave a team
-
-teamRoutes.route("/:id/attempts");
-// GET remaining attempts for team
+teamRoutes.route("/join").post(joinTeam);
+teamRoutes.route("/leave").delete(leaveTeam);
+teamRoutes.route("/:id/attempts").get(getTeamAttempts);
 
 // NOTE: All next routes for captain only
-teamRoutes.route("/:id/name"); // TODO PATCH change team name for
-
-teamRoutes.route("/:id/captain"); // TODO PATCH change team captain
-
-teamRoutes.route("/:id/members/:userId"); // TODO DELETE kick a member
+teamRoutes.route("/:id/name").patch(changeTeamName);
+teamRoutes.route("/:id/captain").patch(changeCaptain);
+teamRoutes.route("/:id/members/:userId").delete(kickMember);
 
 // NOTE: Admins only
-teamRoutes.route("/:id"); // TODO GET any team
+teamRoutes.route("/:id").get(restrictTo("admin", "superAdmin"), getTeam);
 
 export default teamRoutes;
