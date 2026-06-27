@@ -129,3 +129,61 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
     session.endSession();
   }
 });
+
+export const leaveTeam = catchAsync(async (req, res, next) => {
+  /*
+  1. if user normal member so he just leave and we remove him from team membership
+  2. if user is the captain of the team we remove him then we change the captain in team model to the oldest one invited to the team in team and team membership
+  
+  */
+
+  if (!req.user) return next(new AppError("Not authenticated.", 401));
+  const userId = req.user._id;
+  const userTeam = await TeamMembership.findOne({ userId });
+
+  if (!userTeam)
+    return next(new AppError("The user is not in a team yet.", 400));
+
+  if (userTeam.role === "member") {
+    await TeamMembership.deleteOne({ userId });
+  } else {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
+    try {
+      // delete from team
+      await TeamMembership.deleteOne({ userId });
+      // Assign new captain
+      const newCaptain = await TeamMembership.findOne({
+        teamId: userTeam.teamId,
+      });
+
+      if (!newCaptain)
+        return next(
+          new AppError("Error while leaving, please try again.", 400),
+        );
+
+      newCaptain.role = "captain";
+      await newCaptain.save();
+      // Edit in team model
+      const team = await Team.findOne({ teamLeader: userId });
+
+      if (!team)
+        return next(
+          new AppError("Error while leaving, please try again.", 400),
+        );
+      team.teamLeader = newCaptain.userId;
+
+      await team.save();
+
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  res.status(204).send();
+});

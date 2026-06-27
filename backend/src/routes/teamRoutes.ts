@@ -5,6 +5,7 @@ import {
   deleteMyTeam,
   getMyTeam,
   joinTeam,
+  leaveTeam,
 } from "../controllers/teamController";
 
 const teamRoutes = express.Router();
@@ -18,7 +19,7 @@ teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
 // TODO DELETE my team
 
 teamRoutes.route("/join").post(joinTeam); // TODO POST join a team
-teamRoutes.route("/leave"); // TODO DELETE leave a team
+teamRoutes.route("/leave").delete(leaveTeam); // TODO DELETE leave a team
 
 teamRoutes.route("/:id/attempts");
 // GET remaining attempts for team
