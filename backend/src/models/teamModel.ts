@@ -1,5 +1,15 @@
 import mongoose from "mongoose";
 
+export interface ITeam extends Document {
+  name: string;
+  code: string;
+  teamLeader: mongoose.Types.ObjectId;
+  totalGames: number;
+  points: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const teamSchema = new mongoose.Schema(
   {
     name: {
@@ -36,6 +46,6 @@ const teamSchema = new mongoose.Schema(
 
 teamSchema.index({ points: -1 });
 
-const Team = mongoose.model("Team", teamSchema);
+const Team = mongoose.model<ITeam>("Team", teamSchema);
 
 export default Team;
