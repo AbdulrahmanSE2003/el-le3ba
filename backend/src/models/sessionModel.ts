@@ -10,7 +10,7 @@ type AnswerLog = {
   timeTaken: number;
 };
 
-interface ISession extends Document {
+export interface ISession extends Document {
   teamId: mongoose.Types.ObjectId;
   eventId: mongoose.Types.ObjectId;
   questions: mongoose.Types.ObjectId[];
@@ -79,3 +79,5 @@ sessionSchema.index({ status: 1 });
 // find all inProgress sessions (timeout cleanup later)
 
 const Session = mongoose.model<ISession>("Session", sessionSchema);
+
+export default Session;

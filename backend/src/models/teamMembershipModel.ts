@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Query } from "mongoose";
 
 export interface ITeamMembership extends Document {
   userId: mongoose.Types.ObjectId;
