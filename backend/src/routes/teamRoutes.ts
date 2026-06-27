@@ -16,6 +16,9 @@ teamRoutes.route("/my-team");
 teamRoutes.route("/join"); // POST join a team
 teamRoutes.route("/leave"); // DELETE leave a team
 
+teamRoutes.route("/:id/attempts");
+// GET remaining attempts for team
+
 // NOTE: All next routes for captain only
 teamRoutes.route("/:id/name"); // PATCH change team name for
 
