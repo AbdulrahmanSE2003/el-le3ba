@@ -142,7 +142,7 @@ userSchema.methods.createPasswordResetToken = function (): string {
 };
 
 // ==========================
-// =========Indexes==========
+//            Indexes
 // ==========================
 userSchema.index({ totalScore: -1 });
 userSchema.index({ role: 1 });
