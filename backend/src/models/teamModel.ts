@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
 export interface ITeam extends Document {
-  name: string;
-  code: string;
+  teamName: string;
+  teamCode: string;
   teamLeader: mongoose.Types.ObjectId;
   totalGames: number;
   points: number;
@@ -12,18 +12,18 @@ export interface ITeam extends Document {
 
 const teamSchema = new mongoose.Schema(
   {
-    name: {
+    teamName: {
       type: String,
       required: true,
       maxlength: [20, "Team name can't be more than 20 characters"],
     },
 
-    code: {
+    teamCode: {
       type: String,
       unique: true,
       required: true,
-      maxlength: 6,
-      minlength: 6,
+      maxlength: 8,
+      minlength: 8,
     },
 
     teamLeader: {

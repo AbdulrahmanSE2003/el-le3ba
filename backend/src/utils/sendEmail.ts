@@ -8,9 +8,8 @@ interface EmailOptions {
   resetURL: string;
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export const sendEmail = async (options: EmailOptions): Promise<void> => {
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const { error } = await resend.emails.send({
     from: "اللعبة <onboarding@resend.dev>",
     to: options.email,

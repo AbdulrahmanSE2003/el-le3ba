@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Query } from "mongoose";
 
 export interface ITeamMembership extends Document {
   userId: mongoose.Types.ObjectId;
@@ -20,6 +20,16 @@ const teamMembershipSchema = new mongoose.Schema({
 teamMembershipSchema.index({ userId: 1 });
 teamMembershipSchema.index({ teamId: 1 });
 teamMembershipSchema.index({ userId: 1, teamId: 1 }, { unique: true });
+
+teamMembershipSchema.pre(/^find/, function (this: Query<any, any>) {
+  this.populate({
+    path: "userId",
+    select: "name email",
+  }).populate({
+    path: "teamId",
+    select: "teamName",
+  });
+});
 
 const TeamMembership = mongoose.model<ITeamMembership>(
   "TeamMembership",
