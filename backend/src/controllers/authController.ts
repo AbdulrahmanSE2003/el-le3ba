@@ -50,6 +50,8 @@ export const signUp = catchAsync(
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
+      avatar: req.body.avatar,
+      role: "student",
     });
 
     createSendToken(newUser, 201, res);
@@ -103,6 +105,20 @@ export const protect = catchAsync(
       return next(
         new AppError("The user belonging to this token no longer exists.", 401),
       );
+    }
+
+    if (freshUser.passwordChangedAt) {
+      const changedTimestamp = Math.floor(
+        freshUser.passwordChangedAt.getTime() / 1000,
+      );
+      if (decoded.iat && decoded.iat < changedTimestamp) {
+        return next(
+          new AppError(
+            "Password was recently changed. Please log in again.",
+            401,
+          ),
+        );
+      }
     }
 
     req.user = freshUser;
