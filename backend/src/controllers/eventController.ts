@@ -1,4 +1,6 @@
 import Event from "../models/eventModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
 import {
   createOne,
   deleteOne,
