@@ -94,10 +94,13 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
   // Getting user team
   const userTeam = await TeamMembership.findOne({ userId });
   if (!userTeam) return next(new AppError("User don't have a team.", 400));
+  const team = await Team.findById(userTeam.teamId);
 
-  const teamMembers = await TeamMembership.find({ teamId: userTeam.teamId });
+  const teamMembers = await TeamMembership.find({
+    teamId: userTeam.teamId,
+  }).populate("userId", "name email");
 
-  resHandler(res, 200, "members", teamMembers);
+  resHandler(res, 200, "team", { team, members: teamMembers });
 });
 
 export const deleteMyTeam = catchAsync(async (req, res, next) => {
@@ -107,14 +110,6 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
   const userTeam = await Team.findOne({ teamLeader: userId });
 
   if (!userTeam) return next(new AppError("There is no such a team.", 404));
-
-  if (userTeam.teamLeader.toString() !== userId.toString())
-    return next(
-      new AppError(
-        "You are not a captain of any team, you cant perform this action",
-        401,
-      ),
-    );
 
   const teamId = userTeam._id;
 
