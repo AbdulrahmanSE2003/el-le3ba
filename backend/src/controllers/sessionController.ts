@@ -173,6 +173,7 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
     return resHandler(res, 200, "answerDetails", {
       isCorrect,
       score,
+      totalScore: session.answerLogs.reduce((sum, log) => sum + log.score, 0),
       currentStreak: session.currentStreak,
       sessionComplete: false,
     });
