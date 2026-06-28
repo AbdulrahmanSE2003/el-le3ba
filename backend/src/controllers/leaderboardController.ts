@@ -23,7 +23,7 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     return next(new AppError("This event has ended.", 400));
 
   if (req.user.role === "student") {
-    // Getting top 50 teams
+    // Getting top 50 teams points
     const top50 = await Leaderboard.find({ eventId })
       .sort({ totalPoints: -1 })
       .limit(50);
