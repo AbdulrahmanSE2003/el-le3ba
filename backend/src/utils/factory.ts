@@ -26,7 +26,7 @@ export const getAll = <T>(
 
       .paginate();
 
-    const docs = await features.query;
+    const docs = await features.query.populate(popOptions || []);
 
     const label = `${Model.modelName.toLowerCase()}s`;
 

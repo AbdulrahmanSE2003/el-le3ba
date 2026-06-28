@@ -1,18 +1,27 @@
 import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
+import {
+  deleteQuestion,
+  bulkCreateQuestions,
+  getQuestion,
+  updateQuestion,
+  createQuestion,
+  getAllQuestions,
+} from "../controllers/questionController";
 
 const questionRoutes = express.Router();
 
 questionRoutes.use(protect);
 questionRoutes.use(restrictTo("admin", "superAdmin"));
 
-questionRoutes.route("/");
-// GET all questions
-// POST create question
+questionRoutes.route("/").get(getAllQuestions).post(createQuestion);
 
-questionRoutes.route("/:id");
-// GET get one question
-// PATCH Edit one question
-// DELETE remove one question
+questionRoutes.route("/bulk").post(bulkCreateQuestions);
+
+questionRoutes
+  .route("/:id")
+  .get(getQuestion)
+  .patch(updateQuestion)
+  .delete(deleteQuestion);
 
 export default questionRoutes;

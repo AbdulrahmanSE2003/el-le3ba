@@ -1,22 +1,25 @@
 import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
+import {
+  abandonSession,
+  getAllSessions,
+  getSessionResult,
+  startSession,
+  submitAnswer,
+} from "../controllers/sessionController";
 
 const sessionRoutes = express.Router();
 
 sessionRoutes.use(protect);
 
-sessionRoutes.route("/start");
-// POST team starts a game
+sessionRoutes.route("/start").post(startSession);
 
-sessionRoutes.route("/:id/answer");
-// POST team submit an answer
+sessionRoutes.route("/:id/answer").post(submitAnswer);
 
-sessionRoutes.route("/:id");
-// GET team get game result
+sessionRoutes.route("/:id").get(getSessionResult);
 
-sessionRoutes.use(restrictTo("admin", "superAdmin"));
+sessionRoutes.route("/:id/abandon").post(abandonSession);
 
-sessionRoutes.route("/");
-// GET all sessions
+sessionRoutes.route("/").get(restrictTo("admin", "superAdmin"), getAllSessions);
 
 export default sessionRoutes;
