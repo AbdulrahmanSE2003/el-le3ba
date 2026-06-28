@@ -59,8 +59,6 @@ export const startSession = catchAsync(async (req, res, next) => {
     );
 
   // NOTE Start Session
-
-  // TODO later or do you think its better to retrieve question by question when they submit
   const questions = await Question.aggregate([{ $sample: { size: 20 } }]);
 
   const questionsForClient = questions.map(
@@ -68,20 +66,31 @@ export const startSession = catchAsync(async (req, res, next) => {
   );
 
   const SESSION_DURATION = 5 * 60 * 1000; // 5 minutes
+  const SESSION_EXPIRY = new Date(Date.now() + SESSION_DURATION);
 
   const session = await Session.create({
     teamId: team._id,
     eventId: event._id,
     questions: questions.map((q) => q._id),
     startedAt: new Date(),
-    expiresAt: new Date(Date.now() + SESSION_DURATION),
+    expiresAt: SESSION_EXPIRY,
   });
+
   resHandler(res, 201, "session", {
     sessionId: session._id,
     status: session.status,
     startedAt: session.startedAt,
     questions: questionsForClient,
+    expiresAt: SESSION_EXPIRY,
   });
+});
+
+export const submitAnswer = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated", 401));
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  const { questionId, answer, timeTaken, submittedBy } = req.body;
 });
 
 export const getAllSessions = getAll(Session);

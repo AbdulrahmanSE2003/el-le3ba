@@ -14,6 +14,9 @@ sessionRoutes.route("/:id/answer");
 sessionRoutes.route("/:id");
 // GET team get game result
 
+sessionRoutes.route("/:id/abandon");
+// POST abandon session
+
 sessionRoutes.use(restrictTo("admin", "superAdmin"));
 
 sessionRoutes.route("/");
