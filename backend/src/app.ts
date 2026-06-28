@@ -1,7 +1,6 @@
 import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
-import mongoSanitize from "express-mongo-sanitize";
 import hpp from "hpp";
 import { corsConfig } from "./config/cors";
 import { globalErrorHandler } from "./middleware/errorMiddleware";
@@ -12,6 +11,7 @@ import eventRoutes from "./routes/eventRoutes";
 import leaderboardRoutes from "./routes/leaderboardRoutes";
 import sessionRoutes from "./routes/sessionRoutes";
 import questionRoutes from "./routes/questionRoutes";
+import { sanitizeInput } from "./middleware/sanitize";
 
 const app = express();
 
@@ -42,7 +42,7 @@ app.use(corsConfig);
 app.use(express.json({ limit: "10kb" })); // body size limit
 
 // ── Security: NoSQL injection sanitization ─────────────────
-app.use(mongoSanitize());
+app.use(sanitizeInput);
 
 // ── Security: HTTP parameter pollution ────────────────────
 app.use(hpp());
