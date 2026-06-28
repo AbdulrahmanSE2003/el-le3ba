@@ -1,12 +1,12 @@
 import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
+import { startSession } from "../controllers/sessionController";
 
 const sessionRoutes = express.Router();
 
 sessionRoutes.use(protect);
 
-sessionRoutes.route("/start");
-// POST team starts a game
+sessionRoutes.route("/start").post(startSession);
 
 sessionRoutes.route("/:id/answer");
 // POST team submit an answer

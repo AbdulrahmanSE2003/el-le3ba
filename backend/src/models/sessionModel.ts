@@ -16,7 +16,9 @@ export interface ISession extends Document {
   questions: mongoose.Types.ObjectId[];
   status: "running" | "completed" | "scored";
   startedAt: Date;
+  expiresAt: Date;
   completedAt: Date;
+  endReason: "completed" | "expired" | "flagged" | "abandoned";
   finalScore: number;
   correctAnswers: number;
   currentStreak: number;
@@ -41,7 +43,14 @@ const sessionSchema = new mongoose.Schema(
     },
 
     startedAt: Date,
+    expiresAt: Date,
     completedAt: Date,
+
+    endReason: {
+      type: String,
+      enum: ["completed", "expired", "flagged", "abandoned"],
+      default: null,
+    },
 
     finalScore: { type: Number, default: 0 },
     correctAnswers: { type: Number, default: 0 },

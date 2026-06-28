@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-interface IQuestion extends Document {
+export interface IQuestion extends Document {
   question: string;
-  type: "mcq" | "a/b" | "oddOneOut" | "numberExact";
+  type: "mcq" | "a/b" | "oddOneOut" | "numberExact" | "speed";
   options?: string[];
   correctAnswer: string;
   category?: string;
@@ -20,7 +20,7 @@ const questionSchema = new mongoose.Schema(
 
     type: {
       type: String,
-      enum: ["mcq", "a/b", "oddOneOut", "numberExact"],
+      enum: ["mcq", "a/b", "oddOneOut", "numberExact", "speed"],
       required: true,
     },
 
