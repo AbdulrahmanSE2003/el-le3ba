@@ -11,11 +11,12 @@ import { catchAsync } from "../utils/catchAsync";
 import { getAll } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 
-const BASE_SCORE = 100;
-const STREAK_BONUS = 20;
+const BASE_SCORE = 15;
+const STREAK_BONUS = 5;
 const STREAK_MILESTONE = 5;
-const SESSION_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+const SESSION_DURATION_MS = 5 * 60 * 1000; // 5 minutes
 const QUESTIONS_PER_SESSION = 20;
+const MIN_TEAM_SIZE = 2;
 
 // ============================================================
 // POST /sessions/start
@@ -36,8 +37,10 @@ export const startSession = catchAsync(async (req, res, next) => {
 
   // 3. Verify team has minimum 2 members
   const memberCount = await TeamMembership.countDocuments({ teamId: team._id });
-  if (memberCount < 2)
-    return next(new AppError("Minimum 2 members required to play.", 400));
+  if (memberCount < MIN_TEAM_SIZE)
+    return next(
+      new AppError(`Minimum ${MIN_TEAM_SIZE} members required to play.`, 400),
+    );
 
   // 4. Verify team has remaining attempts for this event
   const attemptCount = await Session.countDocuments({
@@ -244,6 +247,87 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
 });
 
 // ============================================================
+// GET /sessions/:id
+// Any team member - gets the session result (score - correctAnswers count - best streak)
+// ============================================================
+export const getSessionResult = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated", 401));
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  if (!sessionId)
+    return next(new AppError("Invalid operation, provide session id", 400));
+
+  // 1. check the session has ended normally and not flagged
+  const session = await Session.findOne({ _id: sessionId });
+  if (!session) return next(new AppError("There is no such a session", 404));
+
+  if (session.status === "running")
+    return next(new AppError("Session is not completed yet", 400));
+
+  if (session.endReason === "flagged")
+    return next(
+      new AppError(
+        "Sorry this session is under processing, please check later",
+        400,
+      ),
+    );
+
+  // 2. check the user get his team session not anyone else
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+  if (!session.teamId.equals(membership.teamId))
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  // 4. Get session details
+  resHandler(res, 200, "sessionDetails", {
+    score: session.finalScore,
+    correctAnswers: session.correctAnswers,
+    bestStreak: session.bestStreak,
+  });
+});
+
+// ============================================================
+// POST /sessions/:id/abandon
+// Only captains and admins - can end leave
+// ============================================================
+export const abandonSession = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated", 401));
+  const userId = req.user._id;
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+
+  if (membership.role !== "captain")
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  const session = await Session.findOne({
+    _id: req.params.id,
+    teamId: membership.teamId,
+  });
+  if (!session) return next(new AppError("There is no such a session.", 400));
+  if (session.status !== "running")
+    return next(new AppError("Session has already finished.", 400));
+
+  // End session
+  session.status = "completed";
+  session.endReason = "abandoned";
+  session.completedAt = new Date();
+  session.finalScore = 0;
+
+  await session.save();
+
+  resHandler(res, 200, "session", session);
+});
+
+// ============================================================
 // GET /sessions — Admin only
 // ============================================================
-export const getAllSessions = getAll(Session);
+export const getAllSessions = getAll(Session, [
+  { path: "teamId", select: "teamName" },
+  { path: "eventId", select: "title" },
+]);
