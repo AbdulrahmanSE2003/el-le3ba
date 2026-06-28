@@ -7,6 +7,5 @@ const leaderboardRoutes = express.Router();
 leaderboardRoutes.use(protect);
 
 leaderboardRoutes.route("/").get(getLeaderboard);
-// Get all leaderboard teams
 
 export default leaderboardRoutes;

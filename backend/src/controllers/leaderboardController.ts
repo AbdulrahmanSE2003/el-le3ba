@@ -10,7 +10,11 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
   if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
-  const { eventId } = req.body;
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
 
   if (req.user.role === "student") {
     // Getting top 50 teams
@@ -23,16 +27,19 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     if (!membership)
       return next(new AppError("Invalid operation, no such a team", 404));
 
-    const team = await Team.findOne({ _id: membership.teamId });
-    if (!team)
-      return next(new AppError("Invalid operation, no such a team", 400));
-    const rank =
-      (await Leaderboard.countDocuments({
-        eventId,
-        totalPoints: { $gt: team.points },
-      })) + 1;
+    const myEntry = await Leaderboard.findOne({
+      teamId: membership.teamId,
+      eventId,
+    });
 
-    resHandler(res, 200, "Leaderboard", { leaderboard: top50, rank });
+    const rank = myEntry
+      ? (await Leaderboard.countDocuments({
+          eventId,
+          totalPoints: { $gt: myEntry.totalPoints },
+        })) + 1
+      : null;
+
+    resHandler(res, 200, "Leaderboard", { ranking: top50, rank });
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
       .filter()
