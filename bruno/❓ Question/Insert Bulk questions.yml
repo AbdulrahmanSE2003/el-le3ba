@@ -1,0 +1,249 @@
+info:
+  name: Insert Bulk questions
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{URL}}/questions/bulk"
+  body:
+    type: json
+    data: |-
+      {
+        "questions": [
+          {
+            "question": "أي كوكب يُعرف باسم الكوكب الأحمر؟",
+            "type": "mcq",
+            "options": ["الأرض", "المريخ", "المشتري", "زحل"],
+            "correctAnswer": "المريخ",
+            "category": "science",
+            "duration": 15
+          },
+          {
+            "question": "ما هو الجذر التربيعي للعدد 64؟",
+            "type": "numberExact",
+            "correctAnswer": "8",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "من الذي رسم لوحة الموناليزا؟",
+            "type": "mcq",
+            "options": ["فينسنت فان جوخ", "بابلو بيكاسو", "ليوناردو دا فينشي", "كلود مونيه"],
+            "correctAnswer": "ليوناردو دا فينشي",
+            "category": "history",
+            "duration": 15
+          },
+          {
+            "question": "كم عدد العظام في جسم الإنسان البالغ؟",
+            "type": "numberExact",
+            "correctAnswer": "206",
+            "category": "science",
+            "duration": 15
+          },
+          {
+            "question": "ما هو أكبر محيط على وجه الأرض؟",
+            "type": "mcq",
+            "options": ["المحيط الأطلسي", "المحيط الهندي", "المحيط المتجمد الشمالي", "المحيط الهادئ"],
+            "correctAnswer": "المحيط الهادئ",
+            "category": "geography",
+            "duration": 15
+          },
+          {
+            "question": "15 * 4 = ؟",
+            "type": "numberExact",
+            "correctAnswer": "60",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "أي عنصر كيميائي يُرمز له بالرمز 'O'؟",
+            "type": "mcq",
+            "options": ["الذهب", "الأكسجين", "الأوزميوم", "الحديد"],
+            "correctAnswer": "الأكسجين",
+            "category": "science",
+            "duration": 15
+          },
+          {
+            "question": "في أي عام انتهت الحرب العالمية الثانية؟",
+            "type": "numberExact",
+            "correctAnswer": "1945",
+            "category": "history",
+            "duration": 15
+          },
+          {
+            "question": "ما هي عاصمة اليابان؟",
+            "type": "mcq",
+            "options": ["كيوتو", "أوساكا", "طوكيو", "هيروشيما"],
+            "correctAnswer": "طوكيو",
+            "category": "geography",
+            "duration": 15
+          },
+          {
+            "question": "كم دقيقة في 3 ساعات؟",
+            "type": "numberExact",
+            "correctAnswer": "180",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "ما هو الغاز الذي تلمتصه النباتات من الغلاف الجوي لإتمام عملية البناء الضوئي؟",
+            "type": "mcq",
+            "options": ["الأكسجين", "النيتروجين", "ثاني أكسيد الكربون", "الهيدروجين"],
+            "correctAnswer": "ثاني أكسيد الكربون",
+            "category": "science",
+            "duration": 15
+          },
+          {
+            "question": "كم عدد القارات على كوكب الأرض؟",
+            "type": "numberExact",
+            "correctAnswer": "7",
+            "category": "geography",
+            "duration": 15
+          },
+          {
+            "question": "من هو كاتب مسرحية 'روميو وجولييت'؟",
+            "type": "mcq",
+            "options": ["تشارلز ديكنز", "ويليام شكسبير", "مارك توين", "جين أوستن"],
+            "correctAnswer": "ويليام شكسبير",
+            "category": "literature",
+            "duration": 15
+          },
+          {
+            "question": "ما هي درجة غليان الماء بالدرجة المئوية (سيليزيوس)؟",
+            "type": "numberExact",
+            "correctAnswer": "100",
+            "category": "science",
+            "duration": 10
+          },
+          {
+            "question": "أي دولة تعد الموطن الأصلي لحيوان الكنغر؟",
+            "type": "mcq",
+            "options": ["جنوب أفريقيا", "أستراليا", "كندا", "البرازيل"],
+            "correctAnswer": "أستراليا",
+            "category": "geography",
+            "duration": 15
+          },
+          {
+            "question": "120 / 6 = ؟",
+            "type": "numberExact",
+            "correctAnswer": "20",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "ما هي أقسى مادة طبيعية على وجه الأرض؟",
+            "type": "mcq",
+            "options": ["الذهب", "الحديد", "الألماس", "الكوارتز"],
+            "correctAnswer": "الألماس",
+            "category": "science",
+            "duration": 15
+          },
+          {
+            "question": "كم عدد الأيام في السنة الكبيسة؟",
+            "type": "numberExact",
+            "correctAnswer": "366",
+            "category": "general",
+            "duration": 15
+          },
+          {
+            "question": "أي مما يلي يعد من الألوان الأساسية؟",
+            "type": "mcq",
+            "options": ["الأخضر", "البنفسجي", "البرتقالي", "الأزرق"],
+            "correctAnswer": "الأزرق",
+            "category": "art",
+            "duration": 15
+          },
+          {
+            "question": "ما هو مكعب العدد 5 (5 * 5 * 5)؟",
+            "type": "numberExact",
+            "correctAnswer": "125",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "أيها يعد أطول نهر في العالم؟",
+            "type": "mcq",
+            "options": ["نهر الأمازون", "نهر النيل", "نهر يانغتسي", "نهر المسيسيبي"],
+            "correctAnswer": "نهر النيل",
+            "category": "geography",
+            "duration": 15
+          },
+          {
+            "question": "كم عدد أضلاع الشكل السداسي؟",
+            "type": "numberExact",
+            "correctAnswer": "6",
+            "category": "math",
+            "duration": 10
+          },
+          {
+            "question": "من هو أول شخص مشى على سطح القمر؟",
+            "type": "mcq",
+            "options": ["بز ألدرين", "يوري غاغارين", "نيل آرمسترونغ", "جون غلين"],
+            "correctAnswer": "نيل آرمسترونغ",
+            "category": "history",
+            "duration": 15
+          },
+          {
+            "question": "كم ميليمتراً في 5 سنتيمترات؟",
+            "type": "numberExact",
+            "correctAnswer": "50",
+            "category": "math",
+            "duration": 15
+          },
+          {
+            "question": "ما هو الحيوان المعروف بلقب ملك الغابة؟",
+            "type": "mcq",
+            "options": ["النمر", "الفيل", "الدب", "الأسد"],
+            "correctAnswer": "الأسد",
+            "category": "science",
+            "duration": 10
+          },
+          {
+            "question": "ما هو العدد الذري لعنصر الهيدروجين؟",
+            "type": "numberExact",
+            "correctAnswer": "1",
+            "category": "science",
+            "duration": 10
+          },
+          {
+            "question": "ما هي العملة المستخدمة في المملكة المتحدة؟",
+            "type": "mcq",
+            "options": ["اليورو", "الدولار", "الجنيه الإسترليني", "الين"],
+            "correctAnswer": "الجنيه الإسترليني",
+            "category": "general",
+            "duration": 15
+          },
+          {
+            "question": "كم عدد الدرجات في الزاوية القائمة؟",
+            "type": "numberExact",
+            "correctAnswer": "90",
+            "category": "math",
+            "duration": 10
+          },
+          {
+            "question": "أي مبنى يعد الأطول في العالم؟",
+            "type": "mcq",
+            "options": ["برج شانغهاي", "برج خليفة", "مبنى إمباير ستيت", "البنتاغون"],
+            "correctAnswer": "برج خليفة",
+            "category": "general",
+            "duration": 15
+          },
+          {
+            "question": "كم ثانية في 5 دقائق؟",
+            "type": "numberExact",
+            "correctAnswer": "300",
+            "category": "math",
+            "duration": 15
+          }
+        ]
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNDA0YzM4OTNkMTIwZDBmMDY0YjliOCIsImlhdCI6MTc4MjU5ODcxMiwiZXhwIjoxNzg1MTkwNzEyfQ.LEp-UIayGolLaRbjFTxOFE3hteVxzkVArqTexlXk_Pw
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

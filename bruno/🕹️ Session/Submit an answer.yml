@@ -1,0 +1,25 @@
+info:
+  name: Submit an answer
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{URL}}/sessions/6a4146decf27a41c69d1c2ff/answer"
+  body:
+    type: json
+    data: |-
+      {
+        "questionId":"6a40eb16c96f127107bf06e9",
+        "submittedAnswer":"300",
+        "timeTaken": 11
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2U4MzY5ZWE0YWEyMTUzNmJmNzMxOCIsImlhdCI6MTc4MjY0MDQzMCwiZXhwIjoxNzg1MjMyNDMwfQ.cmWjL_sZ4KwzfMcA9F22JWyKeT3YULYUbTVmuYBIG3Q
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

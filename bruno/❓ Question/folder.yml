@@ -1,0 +1,7 @@
+info:
+  name: ❓ Question
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit

@@ -1,0 +1,23 @@
+info:
+  name: Change team captain
+  type: http
+  seq: 7
+
+http:
+  method: PATCH
+  url: "{{URL}}/teams/6a4018beed48f75c8934b447/captain"
+  body:
+    type: json
+    data: |-
+      {
+        "newCaptainId":"6a3e8369ea4aa21536bf7318"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2ZjNmY4NjljY2UxMWIyODY4NTdhYyIsImlhdCI6MTc4MjYwMzA5NCwiZXhwIjoxNzg1MTk1MDk0fQ.2f7Skpkb9ajKKAhEjL5gOheXh4dfzWDiadYP6NqGZcM
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,21 @@
+info:
+  name: Get my team  attempts
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{URL}}/teams/6a4018beed48f75c8934b447/attempts?eventId=6a405924279d1c91471df143"
+  params:
+    - name: eventId
+      value: 6a405924279d1c91471df143
+      type: query
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2ZjNzNiNjljY2UxMWIyODY4NTdhZSIsImlhdCI6MTc4MjU2NDY2NywiZXhwIjoxNzg1MTU2NjY3fQ.-u3qXGEs2DXMkvBkF-SaYBAgxHpiRTat0_f543IvOHg
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

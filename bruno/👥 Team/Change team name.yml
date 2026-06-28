@@ -1,0 +1,23 @@
+info:
+  name: Change team name
+  type: http
+  seq: 8
+
+http:
+  method: PATCH
+  url: "{{URL}}/teams/6a4018beed48f75c8934b447/name"
+  body:
+    type: json
+    data: |-
+      {
+        "newTeamName":"BUGS AND MORE"
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2U4MzY5ZWE0YWEyMTUzNmJmNzMxOCIsImlhdCI6MTc4MjYwMzIwMywiZXhwIjoxNzg1MTk1MjAzfQ.BFRQLKolKDV4og69CbFgnL9H1JvNktl37gXNZMG5KSo
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

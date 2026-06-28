@@ -1,0 +1,17 @@
+info:
+  name: Start session
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{URL}}/sessions/start"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2U4MzY5ZWE0YWEyMTUzNmJmNzMxOCIsImlhdCI6MTc4MjY0MDQzMCwiZXhwIjoxNzg1MjMyNDMwfQ.cmWjL_sZ4KwzfMcA9F22JWyKeT3YULYUbTVmuYBIG3Q
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

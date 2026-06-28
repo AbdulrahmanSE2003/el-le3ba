@@ -1,0 +1,33 @@
+info:
+  name: Add Question
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{URL}}/questions/"
+  body:
+    type: json
+    data: |-
+      {
+        "question": "ما هي عاصمة مصر",
+        "type": "mcq",
+        "options": [
+          "القاهرة",
+          "الإسكندرية",
+          "الجيزة",
+          "الأقصر"
+        ],
+        "correctAnswer": "القاهرة",
+        "category": "geography",
+        "duration": 15
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNDA0YzM4OTNkMTIwZDBmMDY0YjliOCIsImlhdCI6MTc4MjU5ODcxMiwiZXhwIjoxNzg1MTkwNzEyfQ.LEp-UIayGolLaRbjFTxOFE3hteVxzkVArqTexlXk_Pw
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

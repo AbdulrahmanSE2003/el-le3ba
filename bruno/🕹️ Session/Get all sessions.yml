@@ -1,0 +1,20 @@
+info:
+  name: Get all sessions
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{URL}}/sessions/"
+  body:
+    type: json
+    data: ""
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNDA0YzM4OTNkMTIwZDBmMDY0YjliOCIsImlhdCI6MTc4MjU5ODcxMiwiZXhwIjoxNzg1MTkwNzEyfQ.LEp-UIayGolLaRbjFTxOFE3hteVxzkVArqTexlXk_Pw
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

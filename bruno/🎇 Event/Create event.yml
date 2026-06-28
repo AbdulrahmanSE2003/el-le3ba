@@ -1,0 +1,26 @@
+info:
+  name: Create event
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: "{{URL}}/events"
+  body:
+    type: json
+    data: |-
+      {
+        "title":"Septemper Event ✨",
+        "startTime": "2026-06-28T08:00:00.000Z",
+        "endTime": "2026-06-28T17:00:00.000Z",
+        "maxAttempts":8  
+      }
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhNDA0YzM4OTNkMTIwZDBmMDY0YjliOCIsImlhdCI6MTc4MjU5ODcxMiwiZXhwIjoxNzg1MTkwNzEyfQ.LEp-UIayGolLaRbjFTxOFE3hteVxzkVArqTexlXk_Pw
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

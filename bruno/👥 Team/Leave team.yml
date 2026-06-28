@@ -1,0 +1,17 @@
+info:
+  name: Leave team
+  type: http
+  seq: 11
+
+http:
+  method: DELETE
+  url: "{{URL}}/teams/leave"
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhM2U4MzY5ZWE0YWEyMTUzNmJmNzMxOCIsImlhdCI6MTc4MjU4NTc1NiwiZXhwIjoxNzg1MTc3NzU2fQ.STpSuibNT_xDPyntVRCcVCgOs_b3D2yjXlyRF5lgr-c
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
