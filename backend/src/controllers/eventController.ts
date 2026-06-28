@@ -17,7 +17,7 @@ export const getCurrentEvent = catchAsync(async (req, res, next) => {
 });
 
 export const getAllEvents = getAll(Event, {
-  path: "User",
+  path: "createdBy",
   select: "name email",
 });
 
