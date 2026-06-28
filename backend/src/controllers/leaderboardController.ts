@@ -1,3 +1,4 @@
+import Event from "../models/eventModel";
 import Leaderboard from "../models/leaderboardModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
@@ -15,6 +16,11 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     return next(
       new AppError("Invalid operation, please provide event id", 400),
     );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
 
   if (req.user.role === "student") {
     // Getting top 50 teams
