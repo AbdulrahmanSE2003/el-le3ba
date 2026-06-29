@@ -18,5 +18,5 @@ userRoutes.patch("/reset-password/:resetToken", resetPassword);
 
 userRoutes.use(protect);
 
-userRoutes.route("/me"); // will have (GET) getMe, (PATCH) updateMe, (DELETE) deleteMe
+userRoutes.route("/me"); // TODO: will have (GET) getMe, (PATCH) updateMe, (DELETE) deleteMe
 export default userRoutes;
