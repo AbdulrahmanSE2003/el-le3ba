@@ -1,15 +1,7 @@
 import { LucideIcon } from "lucide-react";
 
 export interface ActionState {
-  success: boolean;
-  message?: string;
-  errors?: {
-    name?: string[];
-    email?: string[];
-    password?: string[];
-    confirmPassword?: string[];
-    general?: string[];
-  };
+  error: string;
   userData?: {
     name?: string;
     email?: string;

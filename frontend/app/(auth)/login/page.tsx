@@ -6,7 +6,6 @@ export const metadata = {
 };
 
 export default async function LoginPage() {
-  const wait = await new Promise((resolve) => setTimeout(resolve, 5000)); 
   return <LoginForm />;
 }
 

@@ -7,11 +7,13 @@ import Motion from "@/components/shared/Motion";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   icon?: LucideIcon;
+  error?: string | string[];
 }
 
-export default function Input(input: InputProps) {
+export default function Input({ label, icon, error, ...props }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const isPassword = input.type === "password";
+  const isPassword = props.type === "password";
+  const Icon = icon;
 
   function toggle() {
     if (isPassword) {
@@ -31,26 +33,31 @@ export default function Input(input: InputProps) {
     >
       <div>
         <label
-          htmlFor={input.name}
+          htmlFor={props.name}
           className="font-bold text-lg text-dark dark:text-foreground"
         >
-          {input.label}
+          {label}
         </label>
       </div>
 
       <div className="relative flex items-center">
         {/* Left or Right Icon for general input */}
-        {input.icon && (
+        {Icon && (
           <span className="absolute right-4 cursor-pointer">
-            <input.icon className="w-5 h-5" />
+            <Icon className="w-5 h-5" />
           </span>
         )}
 
         <input
-          id={input.name}
-          type={input.type === "password" && showPassword ? "text" : input.type}
+          {...props}
+          id={props.name}
+          type={props.type === "password" && showPassword ? "text" : props.type}
           className={`
-          w-full px-4 py-2 ps-10 text-dark bg-white dark:text-muted dark:bg-muted-foreground border border-border rounded-lg outline-none focus:border-primary dark:focus:border-primary-foreground duration-300`}
+          w-full px-4 py-2 ps-10 text-dark bg-white dark:text-muted dark:bg-muted-foreground border rounded-lg outline-none duration-300 ${
+            error
+              ? "border-red-500 focus:border-red-500 dark:focus:border-red-500"
+              : "border-border focus:border-primary dark:focus:border-primary-foreground"
+          }`}
         />
 
         {isPassword && (
@@ -67,6 +74,12 @@ export default function Input(input: InputProps) {
           </button>
         )}
       </div>
+
+      {error && (
+        <span className="text-red-500 text-sm font-body mt-1">
+          {Array.isArray(error) ? error[0] : error}
+        </span>
+      )}
     </Motion>
   );
 }

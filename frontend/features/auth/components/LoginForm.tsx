@@ -17,14 +17,13 @@ import { signIn } from "../actions";
 
 import { showError } from "@/components/shared/notifications";
 
-
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(signIn, null);
 
   // show alert on error
   useEffect(() => {
-    if (state?.errors) {
-      // showError(state?.message);
+    if (state?.error) {
+      showError(state?.error);
     }
   }, [state]);
 
@@ -52,6 +51,7 @@ export default function LoginForm() {
           placeholder="••••••••"
           icon={Lock}
           disabled={isPending}
+          defaultValue={state?.userData?.password || ""}
           required
         />
 

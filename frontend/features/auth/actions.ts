@@ -1,117 +1,43 @@
 "use server";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ActionState } from "./types";
 
-const API_URL = "";
+const API_URL = "http://127.0.0.1:5000/api/v1";
 
 export async function signIn(
   prevState: ActionState | null,
   formData: FormData,
 ): Promise<ActionState> {
-
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  
+  const res = await fetch(`${API_URL}/users/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
 
-  
-}
+  if (!res.ok) {
+    const data = await res.json();
 
-/**
- * Mock Sign Up Server Action
- */
-export async function signUp(
-  prevState: ActionState | null,
-  formData: FormData,
-): Promise<ActionState> {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
-  const confirmPassword = formData.get("confirmPassword") as string;
-
-  const errors: ActionState["errors"] = {};
-
-  if (!name || name.trim().length < 2) {
-    errors.name = ["الاسم يجب أن يكون ثنائياً على الأقل"];
-  }
-  if (!email || !email.includes("@")) {
-    errors.email = ["الرجاء إدخال بريد إلكتروني صالح"];
-  }
-  if (!password || password.length < 6) {
-    errors.password = ["يجب أن تكون كلمة المرور 6 أحرف على الأقل"];
-  }
-  if (password !== confirmPassword) {
-    errors.confirmPassword = ["كلمتا المرور غير متطابقتين"];
-  }
-
-  if (Object.keys(errors).length > 0) {
     return {
-      success: false,
-      errors,
-      userData: { name, email },
-      message: "الرجاء التحقق من البيانات المدخلة",
+      error: data.message || "Invalid Credentials",
+      userData: { email, password },
     };
   }
 
-  // Mock behavior for existing email
-  if (email === "exists@elle3ba.com") {
-    return {
-      success: false,
-      errors: { email: ["هذا البريد الإلكتروني مسجل بالفعل"] },
-      userData: { name, email },
-      message: "البريد الإلكتروني مستخدم بالفعل",
-    };
-  }
+  const resData = await res.json();
+  const token = resData.auth.token;
+  const role = resData.auth.user.role;
 
-  return {
-    success: true,
-    message: "تم إنشاء الحساب بنجاح!",
-    userData: { name, email },
-  };
-}
+  const cookieStore = await cookies();
+  cookieStore.set("token", token, {
+    httpOnly: true, // JS can't access it — prevents XSS attacks
+    sameSite: "lax", // prevents CSRF attacks
+    maxAge: 60 * 60 * 24,
+  });
 
-/**
- * Mock Forgot Password Server Action
- */
-export async function forgotPassword(
-  prevState: ActionState | null,
-  formData: FormData,
-): Promise<ActionState> {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  const email = formData.get("email") as string;
-
-  const errors: ActionState["errors"] = {};
-
-  if (!email || !email.includes("@")) {
-    errors.email = ["الرجاء إدخال بريد إلكتروني صالح"];
-  }
-
-  if (Object.keys(errors).length > 0) {
-    return {
-      success: false,
-      errors,
-      userData: { email },
-      message: "الرجاء التحقق من البريد الإلكتروني",
-    };
-  }
-
-  if (email === "notfound@elle3ba.com") {
-    return {
-      success: false,
-      errors: { email: ["لم نجد حساباً مسجلاً بهذا البريد الإلكتروني"] },
-      userData: { email },
-    };
-  }
-
-  return {
-    success: true,
-    message:
-      "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني بنجاح.",
-    userData: { email },
-  };
+  redirect(role === "admin" ? "/admin/dashboard" : "/");
 }
