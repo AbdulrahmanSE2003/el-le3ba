@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import Input from "./Input";
 import AuthButton from "./AuthButton";
@@ -8,17 +8,22 @@ import Header from "./Header";
 import FormWrapper from "./FormWrapper";
 import FooterWrapper from "./FooterWrapper";
 import RedirectLink from "./RedirectLink";
-
-import Motion from "@/components/shared/Motion";
-// import { signUp } from "../actions";
-
-import { fadeInRight } from "../animations";
-
 import { registerBtns } from "../auth-btns";
 
+import Motion from "@/components/shared/Motion";
+import { fadeInRight } from "../animations";
+
+import { signup } from "../actions";
+import { showError, showSuccess } from "@/components/shared/notifications";
 
 export default function RegisterForm() {
-  // const [state, formAction, isPending] = useActionState(signUp, null);
+  const [state, formAction, isPending] = useActionState(signup, null);
+
+  useEffect(() => {
+    if (state?.error) {
+      showError(state?.error);
+    }
+  }, [state]);
 
   return (
     <Motion
@@ -34,7 +39,7 @@ export default function RegisterForm() {
         text="انضم اليوم وتحدَّ الجميع في مسابقات السرعة والذكاء!"
       />
 
-      {/* <FormWrapper action={formAction}>
+      <FormWrapper action={formAction}>
         {registerBtns.map((btn) => (
           <Input
             key={btn.name}
@@ -42,25 +47,25 @@ export default function RegisterForm() {
             defaultValue={state?.userData?.[btn.name] || ""}
             disabled={isPending}
           />
-        ))} */}
+        ))}
 
         {/* Submit button */}
-        {/* <FooterWrapper>
+        <FooterWrapper>
           <AuthButton
             title="إنشاء الحساب"
             type="submit"
             isLoading={isPending}
             className="mt-2"
-          /> */}
+          />
 
           {/* Redirect to Login */}
-          {/* <RedirectLink
+          <RedirectLink
             link="/login"
             linkTitle="تسجيل الدخول"
             text="لديك حساب بالفعل؟"
           />
         </FooterWrapper>
-      </FormWrapper> */}
+      </FormWrapper>
     </Motion>
   );
 }

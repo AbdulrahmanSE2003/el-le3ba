@@ -20,7 +20,6 @@ import { showError } from "@/components/shared/notifications";
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(signIn, null);
 
-  // show alert on error
   useEffect(() => {
     if (state?.error) {
       showError(state?.error);

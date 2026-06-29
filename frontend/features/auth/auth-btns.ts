@@ -26,7 +26,7 @@ export const registerBtns: RegisterBtn[] = [
   {
     label: "تأكيد كلمة المرور",
     type: "password",
-    name: "confirmPassword",
+    name: "passwordConfirm",
     placeholder: "••••••••",
     icon: Lock,
   },

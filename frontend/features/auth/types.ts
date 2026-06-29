@@ -1,20 +1,19 @@
 import { LucideIcon } from "lucide-react";
 
 export interface ActionState {
-  error: string;
+  error?: string;
   userData?: {
     name?: string;
     email?: string;
-    rememberMe?: boolean;
     password?: string;
-    confirmPassword?: string;
+    passwordConfirm?: string;
   };
 }
 
 export type RegisterBtn = {
   label: string;
   type: "text" | "email" | "password";
-  name: "name" | "email" | "password" | "confirmPassword";
+  name: "name" | "email" | "password" | "passwordConfirm";
   placeholder: string;
   icon: LucideIcon;
 };

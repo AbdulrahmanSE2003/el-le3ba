@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 // Show success message
-export function showSuccess(message: string) {
+export function showSuccess(message: string | null) {
   toast.success(message, {
     duration: 5000,
     position: "bottom-right",
@@ -15,7 +15,7 @@ export function showSuccess(message: string) {
 }
 
 // Show error message
-export function showError(message: string) {
+export function showError(message: string | null) {
   toast.error(message, {
     duration: 5000,
     position: "bottom-right",
@@ -28,8 +28,8 @@ export function showError(message: string) {
   });
 }
 
-// Show error message
-export function showInfo(message: string) {
+// Show info message
+export function showInfo(message: string | null) {
   toast.info(message, {
     duration: 5000,
     position: "bottom-right",
