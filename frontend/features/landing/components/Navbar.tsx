@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +13,7 @@ export function Navbar() {
 
   return (
     <>
-      {/* Overlay for Mobile Only*/}
+      {/* Overlay for Mobile Only */}
       <div
         className={`md:hidden fixed inset-0 top-16 bg-accent-foreground/20 backdrop-blur-sm transition-opacity duration-300 z-40 ${
           isOpen
@@ -22,7 +23,7 @@ export function Navbar() {
         onClick={() => setIsOpen(false)}
       />
 
-      <header className="sticky top-0 z-50 w-full border-b border-slate-100 bg-primary-foreground/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -31,11 +32,11 @@ export function Navbar() {
             </span>
           </Link>
 
-          {/* Burger Menu (md:hidden) */}
+          {/* Burger Icon */}
           <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="p-2 text-slate-600 hover:text-primary transition-colors focus:outline-none"
+              className="p-2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
               aria-label="Toggle Menu"
             >
               {isOpen ? (
@@ -46,8 +47,8 @@ export function Navbar() {
             </button>
           </div>
 
-          {/* Links in Desktop */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+          {/* Nav Links */}
+          <nav className="hidden md:flex items-center gap-6 text-md font-medium text-card-foreground">
             <Link href="/" className="text-primary font-semibold">
               الرئيسية
             </Link>
@@ -64,9 +65,9 @@ export function Navbar() {
               عن المنصة
             </Link>
           </nav>
-
-          {/* CTA md:*/}
+          {/* Desktop Buttons */}
           <div className="hidden md:flex items-center gap-4">
+            <ThemeToggle />
             <Button
               asChild
               className="bg-primary hover:bg-primary text-primary-foreground font-bold rounded-full px-6 transition-all hover:scale-105"
@@ -75,45 +76,53 @@ export function Navbar() {
             </Button>
             <Link
               href="/login"
-              className="text-sm font-medium text-slate-600 hover:text-primary transition-colors"
+              className="text-sm font-medium text-card-foreground hover:text-primary transition-colors"
             >
               دخول
             </Link>
           </div>
         </div>
 
-        {/* (Mobile Dropdown Menu) */}
+        {/* Mobile Menu */}
         <div
-          className={`md:hidden absolute top-16 left-0 w-full bg-primary-foreground border-b border-slate-100 transition-all duration-300 ease-in-out transform z-50 ${
+          className={`md:hidden absolute top-16 left-0 w-full bg-background border-b border-border transition-all duration-300 ease-in-out transform z-50 ${
             isOpen
               ? "opacity-100 translate-y-0 visible"
               : "opacity-0 -translate-y-4 invisible pointer-events-none"
           }`}
         >
-          <nav className="flex flex-col p-4 space-y-4 text-right font-medium text-slate-600">
+          <nav className="flex flex-col p-4 space-y-4 text-right font-medium text-muted-foreground">
             <Link
               href="/"
               onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-slate-50 hover:text-primary text-primary font-bold"
+              className="pb-2 border-b border-border hover:text-primary text-primary font-bold"
             >
               الرئيسية
             </Link>
             <Link
               href="/leaderboard"
               onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-slate-50 hover:text-primary"
+              className="pb-2 border-b border-border hover:text-primary"
             >
               المتصدرين
             </Link>
             <Link
               href="#about"
               onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-slate-50 hover:text-primary"
+              className="pb-2 border-b border-border hover:text-primary"
             >
               عن المنصة
             </Link>
 
-            <div className="flex flex-col gap-2 pt-2">
+            {/* In Mobile */}
+            <div className="flex flex-col gap-3 pt-2">
+              <div className="flex items-center justify-between pb-2 border-b border-border">
+                <span className="text-sm text-muted-foreground">
+                  مظهر اللعبة
+                </span>
+                <ThemeToggle />
+              </div>
+
               <Button
                 asChild
                 className="bg-primary hover:bg-primary text-primary-foreground font-bold rounded-xl w-full h-11"
@@ -125,7 +134,7 @@ export function Navbar() {
               <Button
                 asChild
                 variant="outline"
-                className="border-slate-200 text-slate-700 font-bold rounded-xl w-full h-11 bg-primary-foreground"
+                className="border-input text-foreground font-bold rounded-xl w-full h-11 bg-background"
               >
                 <Link href="/login" onClick={() => setIsOpen(false)}>
                   دخول
