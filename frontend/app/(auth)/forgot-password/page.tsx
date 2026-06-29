@@ -1,7 +1,11 @@
-// Forgot password page
+import ForgotPasswordForm from "@/features/auth/ForgotPasswordForm";
 
-const page = () => {
-  return <div>Forgot password page</div>;
+export const metadata = {
+  title: "استعادة كلمة المرور",
+  description: "أدخل بريدك الإلكتروني لاستعادة كلمة المرور الخاصة بك في اللعبة",
 };
 
-export default page;
+export default function ForgotPasswordPage() {
+  return <ForgotPasswordForm />;
+}
+

@@ -14,13 +14,14 @@ type CustomMotionProps<T extends ElementType> = {
   delay?: number;
   type?: Transition["type"];
   variants?: Variants;
-} & Omit<ComponentPropsWithoutRef<T>, "as" | "transition">;
+} & Omit<ComponentPropsWithoutRef<T>, "as"> &
+  Omit<FramerMotionProps, "children" | "transition" | "type">;
 
 export default function Motion<T extends ElementType = "div">({
   as,
   duration = 0.3,
   delay = 0,
-  type = "spring",
+  type = "tween",
   variants,
   children,
   ...props
