@@ -192,3 +192,76 @@
     scrollbar-color: var(--primary) transparent;
   }
 }
+
+/* ── Sidebar game animations ── */
+@layer components {
+  .sidebar-game-bg {
+    background: linear-gradient(
+      180deg,
+      var(--sidebar) 0%,
+      color-mix(in oklch, var(--sidebar), var(--sidebar-primary) 8%) 100%
+    );
+  }
+
+  .sidebar-game-glow {
+    background:
+      radial-gradient(
+        ellipse 80% 50% at 100% 0%,
+        color-mix(in oklch, var(--sidebar-primary), transparent 70%),
+        transparent
+      ),
+      radial-gradient(
+        ellipse 60% 40% at 0% 100%,
+        color-mix(in oklch, var(--accent), transparent 85%),
+        transparent
+      );
+    animation: sidebar-glow-pulse 4s ease-in-out infinite;
+  }
+
+  .sidebar-admin-bg {
+    background: linear-gradient(
+      180deg,
+      var(--sidebar) 0%,
+      color-mix(in oklch, var(--sidebar), var(--destructive) 6%) 100%
+    );
+  }
+
+  .sidebar-admin-glow {
+    background: radial-gradient(
+      ellipse 70% 45% at 100% 0%,
+      color-mix(in oklch, var(--destructive), transparent 75%),
+      transparent
+    );
+    animation: sidebar-glow-pulse 5s ease-in-out infinite;
+  }
+
+  .sidebar-xp-bar {
+    animation: xp-bar-shimmer 2.5s ease-in-out infinite;
+    background: linear-gradient(
+      90deg,
+      var(--primary),
+      var(--accent),
+      var(--primary)
+    );
+    background-size: 200% 100%;
+  }
+}
+
+@keyframes sidebar-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes xp-bar-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}

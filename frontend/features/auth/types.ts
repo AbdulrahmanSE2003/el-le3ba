@@ -11,11 +11,3 @@ export interface ActionState {
     passwordConfirm?: string;
   };
 }
-
-export type RegisterBtn = {
-  label: string;
-  type: "text" | "email" | "password";
-  name: "name" | "email" | "password" | "passwordConfirm";
-  placeholder: string;
-  icon: LucideIcon;
-};

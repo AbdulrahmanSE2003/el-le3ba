@@ -1,7 +1,6 @@
 import { Lock, Mail, User } from "lucide-react";
-import { RegisterBtn } from "./types";
 
-export const registerBtns: RegisterBtn[] = [
+export const registerBtns = [
   {
     label: "الاسم الكامل",
     type: "text",
