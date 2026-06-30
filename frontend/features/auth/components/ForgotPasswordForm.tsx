@@ -1,94 +1,74 @@
-// "use client";
+"use client";
 
-// import React, { useActionState } from "react";
+import { useActionState } from "react";
 
-// import Link from "next/link";
+import { Mail } from "lucide-react";
 
-// import { Mail, ArrowRight } from "lucide-react";
+import Input from "./Input";
+import Button from "./AuthButton";
+import SuccessCard from "./SuccessCard";
+import Header from "./Header";
+import FormWrapper from "./FormWrapper";
+import RedirectLink from "./RedirectLink";
+import FooterWrapper from "./FooterWrapper";
 
-// import Logo from "./MainTitle";
-// import Input from "./Input";
-// import Button from "./AuthButton";
-// import Motion from "@/components/shared/Motion";
-// import SuccessCard from "@/components/shared/SuccessCard";
-// import ErrorBanner from "@/components/shared/ErrorBanner";
+import { fadeInUp } from "../animations";
+import Motion from "@/components/shared/Motion";
 
-// import { fadeInUp } from "../animations";
+import { forgotPassword } from "../actions";
 
-// export default function ForgotPasswordForm() {
-//   const [state, formAction, isPending] = useActionState(forgotPassword, null);
+export default function ForgotPasswordForm() {
+  const [state, formAction, isPending] = useActionState(forgotPassword, null);
 
-//   return (
-//     <Motion
-//       as="div"
-//       variants={fadeInUp}
-//       duration={0.3}
-//       className="flex flex-col gap-6"
-//     >
-//       {/* Header section with logo */}
-//       <div className="flex flex-col items-center gap-2 text-center">
-//         <Logo size="lg" />
-//         <h2 className="font-display font-bold text-2xl text-dark dark:text-white mt-2">
-//           إستعادة كلمة المرور
-//         </h2>
-//         <p className="font-body text-mid text-base">
-//           أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة مرورك.
-//         </p>
-//       </div>
+  return (
+    <Motion
+      as="div"
+      variants={fadeInUp}
+      duration={0.3}
+      className="flex flex-col gap-6"
+    >
+      <Header
+        header="إستعادة كلمة السر"
+        text="اكتب بريدك الإلكتروني وهنبعتلك لك رابط عشان تجدد كلمة السر."
+      />
 
-//       {/* Success State: Replace form completely (no redirect) */}
-//       {state?.success ? (
-//         <SuccessCard
-//           title="تم إرسال رابط إعادة التعيين!"
-//           message={
-//             state.message ||
-//             "يرجى التحقق من صندوق البريد الوارد الخاص بك واتباع التعليمات لتغيير كلمة المرور."
-//           }
-//         >
-//           <Link
-//             href="/login"
-//             className="w-full mt-2 h-12 inline-flex items-center justify-center gap-2 font-body font-bold text-lg bg-primary text-white rounded-[18px] hover:bg-primary-mid transition-all hover:scale-[1.02] active:scale-[0.98] select-none"
-//           >
-//             <span>العودة لتسجيل الدخول</span>
-//             <ArrowRight className="w-5 h-5 rotate-180" />
-//           </Link>
-//         </SuccessCard>
-//       ) : (
-//         <form action={formAction} className="flex flex-col gap-4">
-//           {/* General error if any */}
-//           {state?.errors?.general && (
-//             <ErrorBanner message={state.errors.general[0]} />
-//           )}
+      {state?.success ? (
+        <SuccessCard
+          title="تم إرسال رابط إعادة التعيين!"
+          message={
+            state.message ||
+            "يرجى التحقق من صندوق البريد الوارد الخاص بك واتباع التعليمات لتغيير كلمة المرور."
+          }
+        >
+          <RedirectLink link="/login" linkTitle="العودة لتسجيل الدخول" />
+        </SuccessCard>
+      ) : (
+        <FormWrapper action={formAction}>
+          {/* Email input */}
+          <Input
+            label="البريد الإلكتروني"
+            type="email"
+            name="email"
+            placeholder="name@example.com"
+            icon={Mail}
+            error={state?.error}
+            defaultValue={state?.userData?.email || ""}
+            disabled={isPending}
+            required
+          />
 
-//           {/* Email input */}
-//           <Input
-//             label="البريد الإلكتروني"
-//             type="email"
-//             name="email"
-//             placeholder="name@example.com"
-//             icon={Mail}
-//             error={state?.errors?.email}
-//             defaultValue={state?.userData?.email || ""}
-//             disabled={isPending}
-//             required
-//           />
+          <FooterWrapper>
+            <Button
+              type="submit"
+              title="إرسال رابط التعيين"
+              isLoading={isPending}
+              className="mt-2"
+            />
 
-//           {/* Submit button */}
-//           <Button type="submit" isLoading={isPending} className="mt-2">
-//             إرسال رابط التعيين
-//           </Button>
-
-//           {/* Redirect to Login */}
-//           <div className="text-center font-body text-base text-mid mt-4">
-//             <Link
-//               href="/login"
-//               className="inline-flex items-center gap-2 text-primary font-bold hover:text-primary-mid hover:underline transition-colors"
-//             >
-//               <span>العودة إلى تسجيل الدخول</span>
-//             </Link>
-//           </div>
-//         </form>
-//       )}
-//     </Motion>
-//   );
-// }
+            <RedirectLink link="/login" linkTitle="العودة إلى تسجيل الدخول" />
+          </FooterWrapper>
+        </FormWrapper>
+      )}
+    </Motion>
+  );
+}

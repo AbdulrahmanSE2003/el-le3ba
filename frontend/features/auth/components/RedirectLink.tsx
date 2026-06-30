@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 interface RedirectLinkProps {
-  text: string;
+  text?: string;
   link: string;
   linkTitle: string;
 }

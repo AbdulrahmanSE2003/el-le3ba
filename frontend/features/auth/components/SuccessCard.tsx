@@ -9,15 +9,15 @@ interface SuccessCardProps {
 
 export default function SuccessCard({ title, message, children }: SuccessCardProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl text-center gap-4">
-      <div className="bg-emerald-100 dark:bg-emerald-900/40 p-3 rounded-full text-emerald-600 dark:text-emerald-400">
+    <div className="flex flex-col items-center justify-center p-6 bg-brand-success/10 dark:bg-brand-success/10 border border-brand-success/20 dark:border-brand-success/30 rounded-2xl text-center gap-4">
+      <div className="bg-brand-success/20 dark:bg-brand-success/20 p-3 rounded-full text-brand-success">
         <CheckCircle className="w-8 h-8" />
       </div>
       <div className="flex flex-col gap-2">
-        <h3 className="font-display font-bold text-xl text-emerald-800 dark:text-emerald-300">
+        <h3 className="font-bold text-xl text-brand-success">
           {title}
         </h3>
-        <p className="font-body text-emerald-600 dark:text-emerald-400 text-sm leading-relaxed">
+        <p className="text-brand-success dark:text-brand-success text-sm">
           {message}
         </p>
       </div>

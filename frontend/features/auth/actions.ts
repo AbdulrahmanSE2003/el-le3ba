@@ -42,7 +42,7 @@ export async function signIn(
       maxAge: 60 * 60 * 24,
     });
 
-    redirectPath = role === "admin" ? "/admin/dashboard" : "/";
+    redirectPath = role === "admin" ? "/admin/dashboard" : "/dashboard";
   } catch {
     return { error: "تعذر الاتصال بالخادم" };
   }
@@ -74,6 +74,66 @@ export async function signup(
       };
     }
   } catch {
+    return { error: "تعذر الاتصال بالخادم" };
+  }
+
+  redirect("/login");
+}
+
+export async function forgotPassword(
+  prevState: ActionState | null,
+  formData: FormData,
+): Promise<ActionState> {
+  const email = formData.get("email") as string;
+
+  try {
+    const res = await fetch(`${API_URL}/users/forgotPassword`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      return {
+        error: data.message || "فشل إرسال البريد الإلكتروني",
+        userData: { email },
+      };
+    }
+
+    const data = await res.json();
+    return {
+      success: true,
+      message: data.message || "تم إرسال رابط إعادة التعيين بنجاح",
+    };
+  } catch {
+    return { error: "تعذر الاتصال بالخادم" };
+  }
+}
+
+export async function resetPassword(
+  token: string,
+  prev: ActionState | null,
+  formData: FormData,
+): Promise<ActionState> {
+  const password = formData.get("password") as string;
+  const passwordConfirm = formData.get("passwordConfirm") as string;
+
+  const res = await fetch(`${API_URL}/users/resetPassword/${token}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password, passwordConfirm }),
+  });
+
+  try {
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        error: data.message || "فشل إعادة تعيين كلمة المرور",
+      };
+    }
+  } catch (error) {
     return { error: "تعذر الاتصال بالخادم" };
   }
 
