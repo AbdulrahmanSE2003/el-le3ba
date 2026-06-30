@@ -86,6 +86,10 @@ export const protect = catchAsync(
     ) {
       token = req.headers.authorization.split(" ")[1];
     }
+    // Then fall back to cookie  ← ADD THIS
+    else if (req.cookies?.jwt) {
+      token = req.cookies.jwt;
+    }
 
     if (!token) {
       return next(
@@ -151,13 +155,13 @@ export const forgotPassword = catchAsync(
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/reset-password/${resetToken}`;
-
+    const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
     try {
       await sendEmail({
         email: user.email,
         name: user.name,
-        subject: "Your password reset token (valid for 10 min)",
+        subject:
+          "رابط إعادة تعيين كلمة المرور الخاصة بك - اللعبة (صالح لمدة 10 دقائق)",
         resetURL,
       });
 

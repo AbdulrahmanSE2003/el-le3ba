@@ -2,6 +2,8 @@ import express from "express";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
+import cookieParser from "cookie-parser";
+
 import { corsConfig } from "./config/cors";
 import { globalErrorHandler } from "./middleware/errorMiddleware";
 
@@ -40,6 +42,7 @@ app.use(corsConfig);
 
 // ── Body parser ────────────────────────────────────────────
 app.use(express.json({ limit: "10kb" })); // body size limit
+app.use(cookieParser());
 
 // ── Security: NoSQL injection sanitization ─────────────────
 app.use(sanitizeInput);
