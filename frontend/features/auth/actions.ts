@@ -32,14 +32,15 @@ export async function signIn(
     }
 
     const resData = await res.json();
-    const token = resData.auth.token;
+    const token = resData.auth?.token;
     const role = resData.auth.user.role;
 
     const cookieStore = await cookies();
-    cookieStore.set("token", token, {
+    cookieStore.set("jwt", token, {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 60 * 60 * 24,
+      maxAge: 60 * 60 * 24 * 90,
+      path: "/",
     });
 
     redirectPath = role === "admin" ? "/admin/dashboard" : "/dashboard";
@@ -73,11 +74,22 @@ export async function signup(
         userData: { name, email, password, passwordConfirm },
       };
     }
+
+    const resData = await res.json();
+    const token = resData.auth?.token;
+
+    const cookieStore = await cookies();
+    cookieStore.set("jwt", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 90,
+      path: "/",
+    });
   } catch {
     return { error: "تعذر الاتصال بالخادم" };
   }
 
-  redirect("/login");
+  redirect("/dashboard");
 }
 
 export async function forgotPassword(
