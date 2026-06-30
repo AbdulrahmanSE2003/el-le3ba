@@ -5,6 +5,16 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --animate-marquee: marquee 15s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0%);
+    }
+    to {
+      transform: translateX(50%);
+    }
+  }
   /* ── Fonts ── */
   --font-sans: var(--font-body);
   --font-mono: var(--font-geist-mono);
