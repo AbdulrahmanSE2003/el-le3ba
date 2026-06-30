@@ -12,7 +12,7 @@ import FormWrapper from "./FormWrapper";
 import RedirectLink from "./RedirectLink";
 import FooterWrapper from "./FooterWrapper";
 
-import { fadeInUp } from "../animations";
+import { fadeInUp } from "../../../components/shared/animations";
 import Motion from "@/components/shared/Motion";
 
 import { forgotPassword } from "../actions";

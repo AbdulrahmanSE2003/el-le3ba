@@ -11,7 +11,7 @@ import RedirectLink from "./RedirectLink";
 import { registerBtns } from "../auth-btns";
 
 import Motion from "@/components/shared/Motion";
-import { fadeInRight } from "../animations";
+import { fadeInRight } from "../../../components/shared/animations";
 
 import { signup } from "../actions";
 import { showError, showSuccess } from "@/components/shared/notifications";

@@ -1,7 +1,7 @@
 import Motion from "@/components/shared/Motion";
-import { fadeInDown } from "../animations";
+import { fadeInDown } from "../../../components/shared/animations";
 
-import MainTitle from "./MainTitle";
+import MainTitle from "../../../components/sidebar/Logo";
 
 interface HeaderProps {
   header: string;
@@ -18,7 +18,7 @@ export default function Header({ header, text }: HeaderProps) {
       className="flex flex-col items-center gap-2 text-center"
     >
       <MainTitle />
-      
+
       <h2 className="font-bold text-2xl dark:text-foreground mt-2">{header}</h2>
       <p className="text-base">{text}</p>
     </Motion>

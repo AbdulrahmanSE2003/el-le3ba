@@ -2,7 +2,7 @@
 
 import { AlertTriangle, RotateCcw } from "lucide-react";
 import Button from "@/features/auth/components/AuthButton";
-import MainTitle from "@/features/auth/components/MainTitle";
+import MainTitle from "@/components/sidebar/Logo";
 
 export default function AuthError({
   reset,

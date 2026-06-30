@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { fadeInUp } from "../animations";
+import { fadeInUp } from "../../../components/shared/animations";
 import Motion from "@/components/shared/Motion";
 
 interface FooterWrapperProps {

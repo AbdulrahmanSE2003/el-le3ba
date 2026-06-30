@@ -1,4 +1,4 @@
-import MainTitle from "@/features/auth/components/MainTitle";
+import MainTitle from "@/components/sidebar/Logo";
 
 export default function AuthLoading() {
   return (
