@@ -87,7 +87,7 @@ export async function forgotPassword(
   const email = formData.get("email") as string;
 
   try {
-    const res = await fetch(`${API_URL}/users/forgotPassword`, {
+    const res = await fetch(`${API_URL}/users/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
