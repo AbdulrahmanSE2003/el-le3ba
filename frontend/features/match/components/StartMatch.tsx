@@ -14,10 +14,11 @@ const StartMatch = () => {
   const handleStart = async () => {
     setIsLoading(true);
     try {
-      const session = await startSession();
+      const { session } = await startSession();
+
       startGame(session.sessionId, session.questions);
       router.push(`/match/${session.sessionId}`);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
     } finally {
       setIsLoading(false);
