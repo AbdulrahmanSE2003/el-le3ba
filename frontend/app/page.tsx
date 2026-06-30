@@ -1,5 +1,7 @@
 import { HeroSection } from "@/features/landing/components/HeroSection";
 import { Navbar } from "@/features/landing/components/Navbar";
+import { FeaturesSection } from "../features/landing/components/FeaturesSection";
+import { CommunitySection } from "@/features/landing/components/CommunitySection";
 // import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 // export default function Home() {
@@ -74,6 +76,8 @@ export default function LandingPage() {
       {/* Page Content */}
       <main>
         <HeroSection />
+        <FeaturesSection />
+        <CommunitySection />
       </main>
     </div>
   );
