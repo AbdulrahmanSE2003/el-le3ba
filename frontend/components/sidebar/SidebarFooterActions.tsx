@@ -1,16 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { LogOut, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
-import { useState } from "react";
 
-import {
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
+import { SidebarFooter, SidebarMenu } from "@/components/ui/sidebar";
 
 import SidebarFooterBtn from "./SidebarFooterBtn";
 import { logout } from "@/features/auth/actions";
@@ -32,13 +25,15 @@ export function SidebarFooterActions({ className }: { className: string }) {
           title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
           onclick={toggleTheme}
           icon={theme === "dark" ? <Sun className="text-accent" /> : <Moon />}
+          className={`${theme === "dark" ? "bg-black text-accent" : "bg-white text-black"} hover:bg-accent`}
         />
 
         <SidebarFooterBtn
           title="تسجيل الخروج"
           tooltip="تسجيل الخروج"
-          icon={<LogOut className="text-red-500" />}
+          icon={<LogOut className="text-red-800" />}
           onclick={logout}
+          className="bg-red-400 hover:bg-red-500 mt-2"
         />
       </SidebarMenu>
     </SidebarFooter>

@@ -5,7 +5,7 @@ interface Props {
   icon: ReactNode;
 }
 
-export default function ModeIcon({ icon }: Props) {
+export default function Icon({ icon }: Props) {
   return (
     <Motion
       as="span"

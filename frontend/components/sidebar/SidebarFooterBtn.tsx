@@ -4,9 +4,10 @@ import Motion from "../shared/Motion";
 
 import { fadeInUp } from "../shared/animations";
 import { ReactNode } from "react";
-import ModeIcon from "./ModeIcon";
+import Icon from "./Icon";
+import { ComponentProps } from "react";
 
-interface Props {
+interface Props extends ComponentProps<"button"> {
   title: string;
   tooltip: string;
   onclick?: () => void;
@@ -18,6 +19,7 @@ export default function SidebarFooterBtn({
   icon,
   tooltip,
   onclick,
+  className,
 }: Props) {
   return (
     <SidebarMenuItem>
@@ -31,9 +33,9 @@ export default function SidebarFooterBtn({
         <SidebarMenuButton
           tooltip={tooltip}
           onClick={onclick || undefined}
-          className="transition-all hover:scale-105 cursor-pointer py-6 duration-300"
+          className={`transition-all hover:scale-105 cursor-pointer py-6 duration-300 ${className}`}
         >
-          <ModeIcon icon={icon} />
+          <Icon icon={icon} />
 
           <span>{title}</span>
         </SidebarMenuButton>
