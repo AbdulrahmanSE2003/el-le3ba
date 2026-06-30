@@ -77,7 +77,6 @@ export async function signup(
 
     const resData = await res.json();
     const token = resData.auth?.token;
-    const role = resData.auth?.user?.role;
 
     const cookieStore = await cookies();
     cookieStore.set("jwt", token, {
