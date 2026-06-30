@@ -202,8 +202,8 @@ backend/
 | GET    | `/`                            | Health check           | No   |
 | POST   | `/api/v1/users/signup`         | Register new user      | No   |
 | POST   | `/api/v1/users/login`          | Login user             | No   |
-| POST   | `/api/v1/users/forgotPassword` | Request password reset | No   |
-| PATCH  | `/api/v1/users/resetPassword`  | Reset password         | No   |
+| POST   | `/api/v1/users/forgot-password` | Request password reset | No   |
+| PATCH  | `/api/v1/users/reset-password`  | Reset password         | No   |
 
 ### Environment Variables
 

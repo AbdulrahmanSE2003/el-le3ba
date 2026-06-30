@@ -87,7 +87,7 @@ export async function forgotPassword(
   const email = formData.get("email") as string;
 
   try {
-    const res = await fetch(`${API_URL}/users/forgotPassword`, {
+    const res = await fetch(`${API_URL}/users/forgot-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
@@ -119,7 +119,7 @@ export async function resetPassword(
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
-  const res = await fetch(`${API_URL}/users/resetPassword/${token}`, {
+  const res = await fetch(`${API_URL}/users/reset-password/${token}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password, passwordConfirm }),
