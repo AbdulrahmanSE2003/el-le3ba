@@ -25,7 +25,7 @@ export function SidebarFooterActions({ className }: { className: string }) {
           title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
           onclick={toggleTheme}
           icon={theme === "dark" ? <Sun className="text-accent" /> : <Moon />}
-          className={`${theme === "dark" ? "bg-black text-accent" : "bg-white text-black"} hover:bg-accent`}
+          className={`${theme === "dark" ? "bg-black text-white hover:bg-black hover:text-accent" : "bg-white text-black hover:bg-white hover:text-accent"}`}
         />
 
         <SidebarFooterBtn

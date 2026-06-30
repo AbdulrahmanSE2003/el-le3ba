@@ -18,7 +18,7 @@ export function AppSidebar() {
 
         <SidebarFooterActions className="mt-auto" />
       </div>
-      <SidebarRail />
+      {/* <SidebarRail /> */}
     </Sidebar>
   );
 }
