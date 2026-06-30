@@ -2,20 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { startSession } from "../api/index";
 
 const StartMatch = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const startSession = async () => {
+  const startSessionFn = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/v1/sessions/start", {
-        method: "POST",
-        credentials: "include", // ← this sends the cookie
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      const data = await res.json();
+      const data = await startSession();
+      console.log(data);
       console.log(data);
       setIsLoading(false);
     } catch (error) {
@@ -28,8 +23,9 @@ const StartMatch = () => {
   };
   return (
     <Button
-      onClick={startSession}
-      className={`px-6 py-6 cursor-pointer text-lg`}
+      onClick={startSessionFn}
+      disabled={isLoading}
+      className={`px-6 py-6 cursor-pointer text-lg `}
     >
       {isLoading ? "جار بدأ اللعبة..." : "ابدأ اللعبة"}
     </Button>
