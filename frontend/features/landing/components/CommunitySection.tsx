@@ -1,7 +1,6 @@
 "use client";
 
 import Motion from "@/components/shared/Motion";
-/* ── Import animation variants ── */
 import { fadeInUp, scaleIn } from "@/components/shared/animations";
 
 type BadgeItem = {

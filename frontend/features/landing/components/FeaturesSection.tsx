@@ -3,11 +3,11 @@
 import Image from "next/image";
 import { CheckCircle2, Timer, Zap } from "lucide-react";
 import Motion from "@/components/shared/Motion";
-/* ── Import animations variants ── */
 import {
   fadeInUp,
   fadeInLeft,
   fadeInRight,
+  fadeInDown,
 } from "@/components/shared/animations";
 
 export function FeaturesSection() {
@@ -124,38 +124,78 @@ export function FeaturesSection() {
 
             {/* Grid items animate smoothly within the content block */}
             <div className="grid grid-cols-2 gap-4 pt-4">
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-success/40 transition-colors">
-                <span className="block font-black text-brand-success text-lg mb-1">
-                  تكنولوجيا
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  واكب أحدث التقنيات
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-primary/40 transition-colors">
-                <span className="block font-black text-primary text-lg mb-1">
-                  تاريخ
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  تحديات في عمق التاريخ
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-yellow/40 transition-colors">
-                <span className="block font-black text-brand-yellow-dark dark:text-brand-yellow text-lg mb-1">
-                  رياضة
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  لتحدي اللياقة والنشاط
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-indigo-400/40 transition-colors">
-                <span className="block font-black text-indigo-500 text-lg mb-1">
-                  منهج
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  لاختبار معلوماتك الدراسية
-                </span>
-              </div>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInDown}
+                delay={0.3}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-success/40 transition-colors">
+                  <span className="block font-black text-brand-success text-lg mb-1">
+                    تكنولوجيا
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    واكب أحدث التقنيات
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInLeft}
+                delay={0.4}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-primary/40 transition-colors">
+                  <span className="block font-black text-primary text-lg mb-1">
+                    تاريخ
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    تحديات في عمق التاريخ
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInLeft}
+                delay={0.5}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-yellow/40 transition-colors">
+                  <span className="block font-black text-brand-yellow-dark dark:text-brand-yellow text-lg mb-1">
+                    رياضة
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    لتحدي اللياقة والنشاط
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}
+                delay={0.6}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-indigo-400/40 transition-colors">
+                  <span className="block font-black text-indigo-500 text-lg mb-1">
+                    منهج
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    لاختبار معلوماتك الدراسية
+                  </span>
+                </div>
+              </Motion>
             </div>
           </Motion>
 
