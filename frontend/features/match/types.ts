@@ -28,3 +28,38 @@ export interface AnswerResponse {
   correctAnswers?: number;
   bestStreak?: number;
 }
+
+export interface Member {
+  _id: number;
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    avatar: null | string;
+  };
+  teamId: string;
+  role: string;
+}
+
+export interface Event {
+  _id: string;
+  title: string;
+  createdBy: string;
+  startTime: Date;
+  endTime: Date;
+  status: "scheduled" | "running" | "finished";
+  maxAttempts: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Team {
+  _id: string;
+  teamName: string;
+  teamCode: string;
+  teamLeader: string;
+  totalGames: number;
+  points: number;
+  createdAt: Date;
+  updatedAt: Date;
+}

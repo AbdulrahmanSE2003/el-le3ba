@@ -154,7 +154,6 @@ export async function resetPassword(
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete("token");
-  cookieStore.delete("role");
+  cookieStore.delete("jwt");
   redirect("/login");
 }

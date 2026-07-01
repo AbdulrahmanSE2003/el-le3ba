@@ -7,9 +7,15 @@ import { SidebarFooter, SidebarMenu } from "@/components/ui/sidebar";
 
 import SidebarFooterBtn from "./SidebarFooterBtn";
 import { logout } from "@/features/auth/actions";
+import { useEffect, useState } from "react";
 
 export function SidebarFooterActions({ className }: { className: string }) {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
 
   function toggleTheme() {
     setTheme(theme === "dark" ? "light" : "dark");

@@ -57,3 +57,40 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     resHandler(res, 200, "leaderboard", leaderboard);
   }
 });
+
+export const getMyRank = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated", 401));
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership)
+    return next(new AppError("Invalid operation, no such a team", 404));
+
+  const myEntry = await Leaderboard.findOne({
+    teamId: membership.teamId,
+    eventId,
+  });
+
+  const rank = myEntry
+    ? (await Leaderboard.countDocuments({
+        eventId,
+        totalPoints: { $gt: myEntry.totalPoints },
+      })) + 1
+    : null;
+
+  resHandler(res, 200, "MyRank", {
+    rank,
+    totalPoints: myEntry?.totalPoints || 0,
+  });
+});
