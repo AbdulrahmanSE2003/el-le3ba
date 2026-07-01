@@ -4,7 +4,6 @@ import StartMatch from "@/features/match/components/StartMatch";
 import RulesSection from "./RulesSection";
 import { Event, Member, Team } from "../types";
 import { useUserStore } from "@/store/userStore";
-
 const Lobby = ({
   event,
   team,
@@ -47,35 +46,6 @@ const Lobby = ({
 
       {/* Game Rules */}
       <RulesSection />
-
-      {/* Team Stats */}
-      <div className={`w-full grid md:grid-cols-2 gap-3`}>
-        {/* Total Points */}
-        <div
-          className={`w-full flex flex-col items-center gap-y-4 border border-primary/30 bg-primary/15 " +
-      "dark:border-primary/20 dark:bg-primary/5 rounded-lg p-4`}
-        >
-          <span className={`text-xs text-muted-foreground`}>مجموع النقاط</span>
-          <span className={`text-5xl text-accent font-display font-bold`}>
-            {" "}
-            {team.team.points}
-          </span>
-        </div>
-
-        {/* Rank */}
-        <div
-          className={`w-full flex flex-col items-center gap-y-4 border border-primary/30 bg-primary/15 " +
-      "dark:border-primary/20 dark:bg-primary/5 rounded-lg p-4`}
-        >
-          <span className={`text-xs text-muted-foreground`}>
-            الترتيب الحالي
-          </span>
-          <span className={`text-5xl text-accent font-display font-bold`}>
-            {" "}
-            {team.team.points}
-          </span>
-        </div>
-      </div>
     </div>
   );
 };

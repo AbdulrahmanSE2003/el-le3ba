@@ -89,7 +89,7 @@ export const getMyRank = catchAsync(async (req, res, next) => {
       })) + 1
     : null;
 
-  resHandler(res, 200, "My Rank", {
+  resHandler(res, 200, "MyRank", {
     rank,
     totalPoints: myEntry?.totalPoints || 0,
   });

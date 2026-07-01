@@ -27,13 +27,13 @@ const LobbySkeleton = () => {
   return (
     <div className="space-y-6">
       <div className={`flex items-center justify-end gap-3`}>
-        <Skeleton className="w-32 h-6 rounded-lg" />
-        <Skeleton className="w-32 h-6 rounded-lg" />
+        <Skeleton className="w-32 h-6 rounded-lg bg-primary/20" />
+        <Skeleton className="w-32 h-6 rounded-lg bg-primary/20" />
       </div>
 
       {/* Team Name Skeleton */}
       <div className="relative">
-        <Skeleton className="w-48 h-8" />
+        <Skeleton className="w-48 h-8 bg-primary/20" />
       </div>
 
       {/* Team Members Skeleton */}
@@ -41,12 +41,12 @@ const LobbySkeleton = () => {
         <MemberCardSkeleton />
         <MemberCardSkeleton />
         <MemberCardSkeleton />
-        <MemberCardSkeleton />
-        <MemberCardSkeleton />
+        {/* <MemberCardSkeleton />
+        <MemberCardSkeleton /> */}
       </div>
 
       {/* Start Match Button Skeleton */}
-      <Skeleton className="w-full h-10 rounded-lg" />
+      <Skeleton className="w-full h-16 rounded-lg bg-primary/20 " />
 
       {/* Rules Skeleton */}
       <RulesSectionSkeleton />

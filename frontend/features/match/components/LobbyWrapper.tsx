@@ -2,6 +2,10 @@ import Lobby from "@/features/match/components/Lobby";
 import { apiServer } from "@/lib/apiServer";
 import { Event, Team, Member } from "@/features/match/types";
 
+import TeamStatsPreview from "./TeamStatsPreview";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
 // ─── Types for API responses ───────────────────────────────────────
 interface TeamApiResponse {
   status: boolean;
@@ -58,6 +62,18 @@ const LobbyWrapper = async () => {
       </div>
 
       <Lobby event={event} team={teamData} />
+
+      {/* Team Stats */}
+      <Suspense
+        fallback={
+          <Skeleton className="h-32 rounded-lg bg-transparent w-full grid md:grid-cols-2 gap-3">
+            <Skeleton className="w-full h-32 bg-primary/10 rounded-lg animate-pulse" />
+            <Skeleton className="w-full h-32 bg-primary/10 rounded-lg animate-pulse" />
+          </Skeleton>
+        }
+      >
+        <TeamStatsPreview eventId={event._id} />
+      </Suspense>
     </>
   );
 };
