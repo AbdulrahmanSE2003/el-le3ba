@@ -42,8 +42,8 @@ const MemberCard = ({ member }: { member: Member }) => {
       {/* Name */}
       <p className="text-sm font-medium capitalize">
         {member.userId?.name.at(0)?.toUpperCase() +
-          member.userId?.name.slice(1)}
-        {user?._id.toString() === member.userId?._id.toString() ? "(أنا)" : ""}
+          member.userId?.name.slice(1)}{" "}
+        {user?._id.toString() === member.userId?._id.toString() ? "(أنت)" : ""}
       </p>
 
       {/* Status */}

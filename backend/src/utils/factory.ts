@@ -38,7 +38,7 @@ export const getOne = <T>(Model: Model<T>): RequestHandler => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const doc = await Model.findById(id);
+    const doc = await Model.findById(id).select("-__v");
 
     if (!doc) {
       return next(

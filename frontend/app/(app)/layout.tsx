@@ -8,6 +8,25 @@ import {
 } from "@/components/ui/sidebar";
 import StoreInitializer from "@/store/storeInitializer";
 import { cookies } from "next/headers";
+import { apiServer } from "@/lib/apiServer";
+
+interface UserAPIResponse {
+  status: boolean;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    role: "student" | "admin";
+    avatar: string | null;
+    totalScore: number;
+    gamesPlayed: number;
+    gamesWon: number;
+    currentStreak: number;
+    bestStreak: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
 
 async function getProfile() {
   const cookieStore = await cookies();
@@ -16,17 +35,10 @@ async function getProfile() {
   if (!token) return null;
 
   try {
-    // جلب بيانات المستخدم الحالي باستخدام التوكن
-    const res = await fetch("http://127.0.0.1:5000/api/v1/users/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      next: { revalidate: 0 },
-    });
-
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.user;
+    const res = await apiServer<UserAPIResponse>("get", "/users/me");
+    if (!res.status) return null;
+    const { user } = res.data;
+    return user;
   } catch {
     return null;
   }
