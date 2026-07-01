@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Member } from "../types";
+import { useUserStore } from "@/store/userStore";
 
 const MemberCard = ({ member }: { member: Member }) => {
   const statusClass = true
@@ -8,6 +9,8 @@ const MemberCard = ({ member }: { member: Member }) => {
 
   const statusLabel = true ? "متصل" : "غير متصل";
 
+  const { user } = useUserStore();
+  console.log(`UserId: ${user?._id.toString()}`);
   return (
     <div
       className={
@@ -40,6 +43,7 @@ const MemberCard = ({ member }: { member: Member }) => {
       <p className="text-sm font-medium capitalize">
         {member.userId?.name.at(0)?.toUpperCase() +
           member.userId?.name.slice(1)}
+        {user?._id.toString() === member.userId?._id.toString() ? "(أنا)" : ""}
       </p>
 
       {/* Status */}

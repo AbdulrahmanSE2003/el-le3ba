@@ -1,7 +1,10 @@
+"use client";
 import MemberCard from "@/features/match/components/memberCard";
 import StartMatch from "@/features/match/components/StartMatch";
 import RulesSection from "./RulesSection";
 import { Event, Member, Team } from "../types";
+import { useUserStore } from "@/store/userStore";
+import { Hourglass } from "lucide-react";
 
 const Lobby = ({
   event,
@@ -10,7 +13,13 @@ const Lobby = ({
   event: Event;
   team: { team: Team; members: Member[] };
 }) => {
-  // We need to get user role here from zustand store
+  const { user } = useUserStore();
+
+  const isCaptain = user?._id.toString() === team.team.teamLeader.toString();
+
+  console.log(`UserId: ${user?._id.toString()}`);
+  console.log(`captainId: ${team.team.teamLeader.toString()}`);
+
   return (
     <div className="space-y-6">
       {/* Team Name */}
@@ -27,7 +36,14 @@ const Lobby = ({
       </div>
 
       {/* Start Game */}
-      {<StartMatch />}
+      {isCaptain ? (
+        <StartMatch />
+      ) : (
+        <div className={`w-full border-dashed border-accent`}>
+          <Hourglass />
+          <p>قول للكابتن يبدأ بسرعة 😶</p>
+        </div>
+      )}
 
       {/* Game Rules */}
       <RulesSection />
