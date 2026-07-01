@@ -1,5 +1,8 @@
 "use client";
 
+import Motion from "@/components/shared/Motion";
+import { fadeInUp, scaleIn } from "@/components/shared/animations";
+
 type BadgeItem = {
   id: string;
   titleEn: string;
@@ -80,8 +83,15 @@ export function CommunitySection() {
   return (
     <section className="py-20 bg-secondary text-foreground overflow-hidden border-b border-border/40">
       <div className="container mx-auto px-4 md:px-8 text-center">
-        {/* Main Title*/}
-        <div className="max-w-2xl mx-auto mb-16">
+        {/* ── Section Header Animation ── */}
+        <Motion
+          as="div"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          className="max-w-2xl mx-auto mb-16"
+        >
           <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4 text-foreground">
             مجتمع تنافسي وحيوي
           </h2>
@@ -89,11 +99,19 @@ export function CommunitySection() {
             نظام الأوسمة والليدربورد بيخليك دائماً متحمس تطور من نفسك وتنافس
             الفرق الثانية.
           </p>
-        </div>
+        </Motion>
 
-        {/* ── Infinite Marquee ── */}
-        <div className="relative w-full max-w-5xl mx-auto mb-16 p-1 rounded-3xl bg-card border border-border/60 shadow-xl shadow-primary/5 overflow-hidden">
-          {/*  (Fading Effect)  */}
+        {/* ── Infinite Marquee Banner Animation ── */}
+        <Motion
+          as="div"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={scaleIn}
+          duration={0.4}
+          className="relative w-full max-w-5xl mx-auto mb-16 p-1 rounded-3xl bg-card border border-border/60 shadow-xl shadow-primary/5 overflow-hidden"
+        >
+          {/* (Fading Effect)  */}
           <div className="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
 
@@ -138,13 +156,19 @@ export function CommunitySection() {
               </div>
             </div>
           </div>
-        </div>
+        </Motion>
 
-        {/* Badge fixed*/}
+        {/* ── Fixed Badge Grid Animation with Stagger ── */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-10 max-w-5xl mx-auto pt-4">
-          {badges.map((badge) => (
-            <div
+          {badges.map((badge, index) => (
+            <Motion
               key={badge.id}
+              as="div"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              variants={fadeInUp}
+              delay={index * 0.05} /* Stagger animation effect */
               className="flex flex-col items-center space-y-3 transition-transform duration-300 hover:scale-110 cursor-pointer min-w-[70px]"
             >
               <div
@@ -160,7 +184,7 @@ export function CommunitySection() {
                   {badge.titleEn}
                 </span>
               </div>
-            </div>
+            </Motion>
           ))}
         </div>
       </div>

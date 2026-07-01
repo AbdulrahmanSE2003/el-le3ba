@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Motion from "@/components/shared/Motion";
+import { fadeInUp, scaleIn } from "@/components/shared/animations";
 import {
   ArrowLeft,
   PlayCircle,
@@ -19,26 +23,62 @@ export function HeroSection() {
       <div className="absolute top-1/4 left-1/4 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl dark:bg-primary/5" />
       <div className="absolute bottom-1/4 right-1/4 -z-10 h-72 w-72 rounded-full bg-accent/10 blur-3xl dark:bg-accent/5" />
 
-      <div className="absolute top-20 left-12 hidden lg:flex animate-bounce [animation-duration:4s] flex-col items-center justify-center h-14 w-14 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-amber-500 transform -rotate-12">
+      {/* ── Floating Icons Animations ── */}
+      <Motion
+        as="div"
+        initial="hidden"
+        animate="visible"
+        variants={scaleIn}
+        delay={0.6}
+        className="absolute top-20 left-12 hidden lg:flex animate-bounce [animation-duration:4s] flex-col items-center justify-center h-14 w-14 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-amber-500 transform -rotate-12"
+      >
         <Trophy className="h-7 w-7" />
-      </div>
+      </Motion>
 
-      <div className="absolute top-32 right-16 hidden lg:flex animate-bounce [animation-duration:5s] flex-col items-center justify-center h-16 w-16 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-rose-500 transform rotate-12">
+      <Motion
+        as="div"
+        initial="hidden"
+        animate="visible"
+        variants={scaleIn}
+        delay={0.7}
+        className="absolute top-32 right-16 hidden lg:flex animate-bounce [animation-duration:5s] flex-col items-center justify-center h-16 w-16 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-rose-500 transform rotate-12"
+      >
         <Target className="h-8 w-8" />
-      </div>
+      </Motion>
 
-      <div className="absolute bottom-24 left-24 hidden lg:flex animate-bounce [animation-duration:4.5s] flex-col items-center justify-center h-12 w-12 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-cyan-500 transform rotate-45">
+      <Motion
+        as="div"
+        initial="hidden"
+        animate="visible"
+        variants={scaleIn}
+        delay={0.8}
+        className="absolute bottom-24 left-24 hidden lg:flex animate-bounce [animation-duration:4.5s] flex-col items-center justify-center h-12 w-12 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-cyan-500 transform rotate-45"
+      >
         <Zap className="h-6 w-6" />
-      </div>
+      </Motion>
 
-      <div className="absolute bottom-36 right-28 hidden lg:flex animate-bounce [animation-duration:6s] flex-col items-center justify-center h-14 w-14 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-yellow-500 transform -rotate-6">
+      <Motion
+        as="div"
+        initial="hidden"
+        animate="visible"
+        variants={scaleIn}
+        delay={0.9}
+        className="absolute bottom-36 right-28 hidden lg:flex animate-bounce [animation-duration:6s] flex-col items-center justify-center h-14 w-14 rounded-2xl bg-card shadow-xl shadow-primary/5 border border-border text-yellow-500 transform -rotate-6"
+      >
         <Sparkles className="h-6 w-6" />
-      </div>
+      </Motion>
 
       {/* Hero Content */}
       <div className="relative max-w-3xl mx-auto flex flex-col items-center z-10">
-        {/* Icons */}
-        <div className="flex items-center space-x-0 space-x-reverse mb-6">
+        {/* ── Top Avatar/Emoji Row Animation ── */}
+        <Motion
+          as="div"
+          initial="hidden"
+          animate="visible"
+          variants={scaleIn}
+          delay={0.1}
+          className="flex items-center space-x-0 space-x-reverse mb-6"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-md text-lg border border-border">
             ⚡
           </div>
@@ -54,30 +94,58 @@ export function HeroSection() {
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-card shadow-md text-lg border border-border">
             📚
           </div>
-        </div>
+        </Motion>
 
-        {/* Badge */}
-        <span className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary mb-6 border border-border shadow-sm">
+        {/* ── Badge Animation ── */}
+        <Motion
+          as="span"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          delay={0.2}
+          className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary mb-6 border border-border shadow-sm"
+        >
           ✨ أقوى تحدي في الجامعة
-        </span>
+        </Motion>
 
-        {/* Main Title */}
-        <h1 className="text-4xl font-black text-foreground sm:text-6xl tracking-tight leading-[1.1] mb-6">
+        {/* ── Main Title Animation ── */}
+        <Motion
+          as="h1"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          delay={0.3}
+          className="text-4xl font-black text-foreground sm:text-6xl tracking-tight leading-[1.1] mb-6"
+        >
           تحدى أصحابك.. <br />
           <span className="text-primary relative inline-block mt-2">
             سيطر على الليدربورد
             <span className="absolute -bottom-1 -right-2 h-3 w-3 rounded-full bg-brand-success inline-block animate-pulse"></span>
           </span>
-        </h1>
+        </Motion>
 
-        {/* Description */}
-        <p className="text-base sm:text-xl text-muted-foreground max-w-xl font-medium leading-relaxed mb-10">
+        {/* ── Description Animation ── */}
+        <Motion
+          as="p"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          delay={0.4}
+          className="text-base sm:text-xl text-muted-foreground max-w-xl font-medium leading-relaxed mb-10"
+        >
           أقوى تجربة كويزات تعليمية في الجامعة. العب، اكسب، ونافس الكل في جو من
           الحماس والمتعة.
-        </p>
+        </Motion>
 
-        {/* (CTA) */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+        {/* ── Call To Action Buttons Animation ── */}
+        <Motion
+          as="div"
+          initial="hidden"
+          animate="visible"
+          variants={fadeInUp}
+          delay={0.5}
+          className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto"
+        >
           <Button
             asChild
             size="lg"
@@ -99,7 +167,7 @@ export function HeroSection() {
               اللعبة
             </Link>
           </Button>
-        </div>
+        </Motion>
       </div>
     </section>
   );
