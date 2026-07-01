@@ -63,3 +63,13 @@ export interface Team {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// ===============================Game Types===============================
+export type GamePhase =
+  | "intro"
+  | "countdown"
+  | "question"
+  | "correct"
+  | "wrong"
+  | "timeout"
+  | "finished";

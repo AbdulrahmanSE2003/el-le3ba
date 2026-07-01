@@ -1,7 +1,6 @@
 "use client";
 
 import { AlertTriangle, RotateCcw } from "lucide-react";
-import Button from "@/features/auth/components/AuthButton";
 import MainTitle from "@/components/sidebar/Logo";
 
 export default function AuthError({
@@ -35,6 +34,7 @@ export default function AuthError({
         onClick={reset}
         className="rounded-md bg-primary px-4 py-2 text-primary-foreground hover:opacity-90 transition cursor-pointer"
       >
+        <RotateCcw className="w-4 h-4 inline-block mr-2" />
         إعادة المحاولة
       </button>
 
