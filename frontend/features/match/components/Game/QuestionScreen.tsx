@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { useGameStore } from "@/store/gameStore";
-import { submitAnswer } from "../../api";
+import { getSessionResult, submitAnswer } from "../../api";
 import useQuestionTimer from "../../hooks/useQuestionTimer";
 import useSessionTimer from "../../hooks/useSessionTimer";
 
@@ -41,10 +41,11 @@ export default function QuestionScreen() {
     if (!sessionId && !restoredRef.current) {
       restoredRef.current = true;
       const ok = restoreGame();
-      if (!ok) router.replace("/match");
+      if (!ok) {
+        router.replace("/profile");
+      }
     }
   }, [sessionId, restoreGame, router]);
-
   // ── Per-question state ──────────────────────────────
   const question = questions[currentIndex];
   const [answered, setAnswered] = useState(false);
@@ -102,11 +103,10 @@ export default function QuestionScreen() {
       setLastAnswer(res);
       setOverlay(true);
 
-      setTimeout(() => {
+      setTimeout(async () => {
         setOverlay(false);
         if (res.sessionComplete) {
-          const id = sessionId;
-          resetGame();
+          const id = sessionId!;
           router.replace(`/match/result/${id}`);
           return;
         }

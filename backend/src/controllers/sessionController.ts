@@ -16,7 +16,7 @@ const BASE_SCORE = 15;
 const STREAK_BONUS = 5;
 const STREAK_MILESTONE = 5;
 const SESSION_DURATION_MS = 7 * 60 * 1000; // 7 minutes
-const QUESTIONS_PER_SESSION = 20;
+const QUESTIONS_PER_SESSION = 2;
 const MIN_TEAM_SIZE = 2;
 
 // ============================================================

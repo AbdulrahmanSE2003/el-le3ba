@@ -58,6 +58,8 @@ export const getSessionStatus = async (
 ): Promise<SessionStatus> => {
   try {
     const res = await api.get(`/sessions/${sessionId}`);
+    console.log("result page response:", JSON.stringify(res.data)); // ← ضيف دي
+
     const d = res.data.sessionDetails;
     return {
       status: "completed",
@@ -69,6 +71,12 @@ export const getSessionStatus = async (
     const axiosErr = err as {
       response?: { status?: number; data?: { message?: string } };
     };
+    console.log(
+      "result page error:",
+      axiosErr?.response?.status,
+      axiosErr?.response?.data,
+    ); // ← وديه
+
     const status = axiosErr?.response?.status;
     const message = axiosErr?.response?.data?.message ?? "";
     if (status === 404) return { status: "not_found" };

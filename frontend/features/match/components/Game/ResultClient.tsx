@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSessionStatus, type SessionResult } from "../../api";
 import { Trophy, Target, Zap, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useGameStore } from "@/store/gameStore";
 
 interface Props {
   details?: SessionResult;
@@ -20,6 +21,15 @@ export default function ResultClient({
   const router = useRouter();
   const [details, setDetails] = useState<SessionResult | null>(initial ?? null);
   const [loading, setLoading] = useState(!!poll);
+  console.log("poll status:", status);
+
+  const { resetGame } = useGameStore();
+
+  useEffect(() => {
+    if (details) {
+      resetGame();
+    }
+  }, [details, resetGame]);
 
   useEffect(() => {
     if (!poll || !sessionId || details) return;
@@ -98,7 +108,7 @@ export default function ResultClient({
 
         <Link
           href="/match"
-          className="w-full cursor-pointer rounded-xl bg-primary py-4 text-lg font-semibold text-white transition-all hover:bg-primary/90"
+          className="w-full cursor-pointer rounded-lg bg-primary py-2 px-4 text-lg font-semibold text-white transition-all hover:bg-primary/90"
         >
           يلا عـاللوبي
         </Link>
