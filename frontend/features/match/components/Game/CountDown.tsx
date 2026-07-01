@@ -12,7 +12,7 @@ export default function Countdown({ onFinish }: Props) {
 
   useEffect(() => {
     if (count === 0) {
-      const t = setTimeout(onFinish, 700);
+      const t = setTimeout(onFinish, 1000);
       return () => clearTimeout(t);
     }
 
@@ -45,7 +45,7 @@ export default function Countdown({ onFinish }: Props) {
           }}
           className="text-9xl font-black text-primary"
         >
-          {count === 0 ? "GO!" : count}
+          {count === 0 ? "يلااااا!" : count}
         </motion.div>
       </AnimatePresence>
     </div>

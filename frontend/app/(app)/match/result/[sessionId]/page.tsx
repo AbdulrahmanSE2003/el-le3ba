@@ -1,8 +1,8 @@
-import Quiz from "@/features/match/components/Game/Quiz";
 import { apiServer } from "@/lib/apiServer";
 import { redirect } from "next/navigation";
+import ResultClient from "@/features/match/components/Game/ResultClient";
 
-interface SessionDetailsResponse {
+interface SessionResultResponse {
   status: boolean;
   sessionDetails: {
     score: number;
@@ -15,23 +15,22 @@ interface Props {
   params: Promise<{ sessionId: string }>;
 }
 
-const page = async ({ params }: Props) => {
+const ResultPage = async ({ params }: Props) => {
   const { sessionId } = await params;
 
+  let initialDetails: SessionResultResponse["sessionDetails"] | null = null;
+
   try {
-    const res = await apiServer<SessionDetailsResponse>("get", `/sessions/${sessionId}`);
-    const details = res.data?.sessionDetails;
-    if (details) {
-      redirect(`/match/result/${sessionId}`);
-    }
+    const res = await apiServer<SessionResultResponse>("get", `/sessions/${sessionId}`);
+    initialDetails = res.data.sessionDetails;
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { status?: number; data?: { message?: string } } };
+    const axiosErr = err as {
+      response?: { status?: number; data?: { message?: string } };
+    };
     const status = axiosErr?.response?.status;
     const message = axiosErr?.response?.data?.message ?? "";
 
-    if (status === 404) {
-      redirect("/match");
-    }
+    if (status === 404) redirect("/match");
 
     if (message?.includes("under processing")) {
       return (
@@ -45,11 +44,11 @@ const page = async ({ params }: Props) => {
     }
   }
 
-  return (
-    <section className="bg-background h-screen text-foreground">
-      <Quiz />
-    </section>
-  );
+  if (initialDetails) {
+    return <ResultClient details={initialDetails} />;
+  }
+
+  return <ResultClient sessionId={sessionId} poll />;
 };
 
-export default page;
+export default ResultPage;

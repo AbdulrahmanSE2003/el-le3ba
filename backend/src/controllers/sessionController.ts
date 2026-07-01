@@ -10,11 +10,12 @@ import { AppError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 import { getAll } from "../utils/factory";
 import resHandler from "../utils/resHandler";
+import { finalizeSession } from "../utils/finalizeSession";
 
 const BASE_SCORE = 15;
 const STREAK_BONUS = 5;
 const STREAK_MILESTONE = 5;
-const SESSION_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+const SESSION_DURATION_MS = 7 * 60 * 1000; // 7 minutes
 const QUESTIONS_PER_SESSION = 20;
 const MIN_TEAM_SIZE = 2;
 
@@ -96,8 +97,10 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
   if (session.status !== "running")
     return next(new AppError("This session is no longer active.", 400));
 
-  if (session.expiresAt.getTime() < Date.now())
+  if (session.expiresAt.getTime() < Date.now()) {
+    await finalizeSession(session, "expired");
     return next(new AppError("Session has expired.", 400));
+  }
 
   // ── 2. Verify user belongs to this session's team ─────────
   const membership = await TeamMembership.findOne({ userId });
@@ -180,63 +183,9 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
     });
   }
 
-  // ── 8. Last question — finalize session in a transaction ──
-  const MSession = await mongoose.startSession();
-  MSession.startTransaction();
+  // ── 8. Last question — finalize session ────────────────────
+  await finalizeSession(session, "completed");
 
-  try {
-    // Finalize session fields
-    session.status = "completed";
-    session.completedAt = new Date();
-    session.endReason = "completed";
-    session.finalScore = session.answerLogs.reduce(
-      (total, log) => total + log.score,
-      0,
-    );
-
-    await session.save({ session: MSession });
-
-    // Update leaderboard entry (create if first game, update if not)
-    await Leaderboard.findOneAndUpdate(
-      { teamId: session.teamId, eventId: session.eventId },
-      {
-        $inc: {
-          totalPoints: session.finalScore,
-          sessionsPlayed: 1,
-        },
-        $set: { lastPlayedSession: new Date() },
-      },
-      { upsert: true, session: MSession, new: true },
-    );
-
-    // Update team lifetime stats
-    await Team.findByIdAndUpdate(
-      session.teamId,
-      { $inc: { points: session.finalScore, totalGames: 1 } },
-      { session: MSession },
-    );
-
-    // Update all team members' lifetime stats
-    const teamMembers = await TeamMembership.find({
-      teamId: session.teamId,
-    });
-    const memberIds = teamMembers.map((m) => m.userId);
-
-    await User.updateMany(
-      { _id: { $in: memberIds } },
-      { $inc: { gamesPlayed: 1, totalScore: session.finalScore } },
-      { session: MSession },
-    );
-
-    await MSession.commitTransaction();
-  } catch (error) {
-    await MSession.abortTransaction();
-    throw error;
-  } finally {
-    MSession.endSession();
-  }
-
-  // Return final result
   resHandler(res, 200, "answerDetails", {
     isCorrect,
     score,
@@ -264,8 +213,13 @@ export const getSessionResult = catchAsync(async (req, res, next) => {
   const session = await Session.findOne({ _id: sessionId });
   if (!session) return next(new AppError("There is no such a session", 404));
 
-  if (session.status === "running")
-    return next(new AppError("Session is not completed yet", 400));
+  if (session.status === "running") {
+    if (session.expiresAt.getTime() < Date.now()) {
+      await finalizeSession(session, "expired");
+    } else {
+      return next(new AppError("Session is not completed yet", 400));
+    }
+  }
 
   if (session.endReason === "flagged")
     return next(

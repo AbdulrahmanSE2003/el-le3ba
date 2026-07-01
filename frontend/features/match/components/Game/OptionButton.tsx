@@ -48,6 +48,7 @@ export default function OptionButton({
       hover:bg-primary/5
       disabled:pointer-events-none
       disabled:opacity-60
+      cursor-pointer
       "
     >
       {text}

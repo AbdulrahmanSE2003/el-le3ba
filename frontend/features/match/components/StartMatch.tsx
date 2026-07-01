@@ -19,6 +19,7 @@ const StartMatch = () => {
 
       setGame({
         sessionId: session.sessionId,
+        sessionExpiresAt: session.expiresAt,
         questions: session.questions,
       });
       router.push(`/match/${session.sessionId}`);

@@ -16,7 +16,7 @@ export default function MatchLayout({
   storeInitializer,
 }: MatchLayoutProps) {
   const pathname = usePathname();
-  const isMatchRoute = /^\/match\/[^/]+$/.test(pathname);
+  const isMatchRoute = /^\/match\/(?:result\/)?[^/]+$/.test(pathname);
 
   if (isMatchRoute) {
     return (

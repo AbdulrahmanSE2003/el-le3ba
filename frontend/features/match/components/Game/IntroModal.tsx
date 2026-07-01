@@ -29,7 +29,7 @@ export default function IntroModal({ onStart }: Props) {
           }}
           transition={{
             repeat: Infinity,
-            duration: 2,
+            duration: 2.5,
           }}
           className="text-7xl mb-6"
         >

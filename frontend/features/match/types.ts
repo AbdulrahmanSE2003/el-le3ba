@@ -1,5 +1,5 @@
 // src/features/match/types/index.ts
-export type QuestionType = "mcq" | "ab" | "oddOneOut" | "numberExact";
+export type QuestionType = "mcq" | "a/b" | "oddOneOut" | "numberExact" | "speed";
 
 export interface Question {
   _id: string;
