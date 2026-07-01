@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { startSession } from "../api/index";
 import { useGameStore } from "@/store/gameStore";
+import { Gamepad2 } from "lucide-react";
 
 const StartMatch = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,8 +27,12 @@ const StartMatch = () => {
   };
 
   return (
-    <Button onClick={handleStart} className="px-6 py-6 cursor-pointer text-lg">
+    <Button
+      onClick={handleStart}
+      className="px-6 py-8 cursor-pointer w-full font-display font-semibold text-2xl"
+    >
       {isLoading ? "جار بدأ اللعبة..." : "ابدأ اللعبة"}
+      <Gamepad2 className={`size-6`} />
     </Button>
   );
 };

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { Gamepad2, Shield } from "lucide-react";
 
 import { SidebarHeader, useSidebar } from "@/components/ui/sidebar";
-import Logo from "./Logo";
+// import Logo from "./Logo";
+import Logo from "../shared/Logo";
 import Motion from "../shared/Motion";
 import { fadeInDown } from "../shared/animations";
 
@@ -32,7 +33,8 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
               initial="hidden"
               animate="visible"
             >
-              <Logo size="lg" />
+              {/* <Logo size="lg" /> */}
+              <Logo className="w-full h-auto" />
             </Motion>
           )}
 
