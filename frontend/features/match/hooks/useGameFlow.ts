@@ -1,8 +1,13 @@
-export type GamePhase =
-  | "intro"
-  | "countdown"
-  | "question"
-  | "correct"
-  | "wrong"
-  | "timeout"
-  | "finished";
+"use client";
+
+import { useState } from "react";
+import { GamePhase } from "../types";
+
+export default function useGameFlow() {
+  const [phase, setPhase] = useState<GamePhase>("intro");
+
+  return {
+    phase,
+    setPhase,
+  };
+}

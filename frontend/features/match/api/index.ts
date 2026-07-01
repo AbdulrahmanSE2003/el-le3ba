@@ -17,7 +17,7 @@ export const submitAnswer = async (
     timeTaken,
   });
 
-  return res.data;
+  return res.data.answerDetails;
 };
 
 export const abandonSession = async (sessionId: string): Promise<void> => {

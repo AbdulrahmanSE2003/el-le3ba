@@ -1,31 +1,58 @@
-// src/store/game-store.ts
 import { create } from "zustand";
-import { Question, AnswerResponse } from "@/features/match/types";
 
-interface GameStore {
-  sessionId: string | null;
-  questions: Question[];
-  currentIndex: number;
-  totalScore: number;
-  currentStreak: number;
-  lastAnswer: AnswerResponse | null;
-
-  // actions
-  startGame: (sessionId: string, questions: Question[]) => void;
-  nextQuestion: () => void;
-  setLastAnswer: (answer: AnswerResponse) => void;
-  resetGame: () => void;
+export interface GameQuestion {
+  _id: string;
+  question: string;
+  category: string;
+  duration: number;
+  options?: string[];
 }
 
-export const useGameStore = create<GameStore>((set) => ({
+export interface LastAnswer {
+  isCorrect: boolean;
+  score: number;
+  totalScore: number;
+  currentStreak: number;
+  correctAnswer?: string;
+  sessionComplete: boolean;
+}
+
+interface GameState {
+  sessionId: string | null;
+
+  questions: GameQuestion[];
+
+  currentIndex: number;
+
+  totalScore: number;
+
+  currentStreak: number;
+
+  lastAnswer: LastAnswer | null;
+
+  setGame: (payload: { sessionId: string; questions: GameQuestion[] }) => void;
+
+  nextQuestion: () => void;
+
+  resetGame: () => void;
+
+  setLastAnswer: (answer: LastAnswer) => void;
+}
+
+export const useGameStore = create<GameState>((set) => ({
   sessionId: null,
+
   questions: [],
+
   currentIndex: 0,
+
   totalScore: 0,
+
   currentStreak: 0,
+
   lastAnswer: null,
 
-  startGame: (sessionId, questions) =>
+  setGame: ({ sessionId, questions }) =>
     set({
       sessionId,
       questions,
@@ -36,7 +63,9 @@ export const useGameStore = create<GameStore>((set) => ({
     }),
 
   nextQuestion: () =>
-    set((state) => ({ currentIndex: state.currentIndex + 1 })),
+    set((state) => ({
+      currentIndex: state.currentIndex + 1,
+    })),
 
   setLastAnswer: (answer) =>
     set({
