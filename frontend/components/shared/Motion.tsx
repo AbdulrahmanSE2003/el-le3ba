@@ -1,45 +1,38 @@
 "use client";
 
-import React, { ElementType, ComponentPropsWithoutRef } from "react";
-import {
-  motion,
-  Variants,
-  Transition,
-  MotionProps as FramerMotionProps,
-} from "framer-motion";
+import { motion, Variants, Transition } from "framer-motion";
 
-type CustomMotionProps<T extends ElementType> = {
-  as?: T;
+type MotionTag = keyof typeof motion;
+
+type MotionProps = {
+  as?: MotionTag;
   duration?: number;
   delay?: number;
   type?: Transition["type"];
   variants?: Variants;
-} & Omit<ComponentPropsWithoutRef<T>, "as"> &
-  Omit<FramerMotionProps, "children" | "transition" | "type">;
+  children?: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+  style?: React.CSSProperties;
+  [key: string]: unknown;
+};
 
-export default function Motion<T extends ElementType = "div">({
-  as,
+export default function Motion({
+  as = "div",
   duration = 0.3,
   delay = 0,
   type = "tween",
   variants,
   children,
   ...props
-}: CustomMotionProps<T>) {
-  const Component = (motion[as as keyof typeof motion] ||
-    motion.div) as React.ComponentType<
-    FramerMotionProps & { children?: React.ReactNode }
-  >;
+}: MotionProps) {
+  const Component = (motion[as] ?? motion.div) as React.ElementType;
 
   return (
     <Component
       {...props}
       variants={variants}
-      transition={{
-        type,
-        duration,
-        delay,
-      }}
+      transition={{ type, duration, delay }}
     >
       {children}
     </Component>

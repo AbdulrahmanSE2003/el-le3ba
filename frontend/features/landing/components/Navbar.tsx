@@ -116,12 +116,7 @@ export function Navbar() {
 
             {/* In Mobile */}
             <div className="flex flex-col gap-3 pt-2">
-              <div className="flex items-center justify-between pb-2 border-b border-border">
-                <span className="text-sm text-muted-foreground">
-                  مظهر اللعبة
-                </span>
-                <ThemeToggle />
-              </div>
+              <ThemeToggle />
 
               <Button
                 asChild

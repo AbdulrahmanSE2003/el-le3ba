@@ -2,12 +2,27 @@
 
 import Image from "next/image";
 import { CheckCircle2, Timer, Zap } from "lucide-react";
+import Motion from "@/components/shared/Motion";
+import {
+  fadeInUp,
+  fadeInLeft,
+  fadeInRight,
+  fadeInDown,
+} from "@/components/shared/animations";
 
 export function FeaturesSection() {
   return (
     <section className="py-20 bg-background text-foreground overflow-hidden">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-20">
+        {/* ── Section Header Animation ── */}
+        <Motion
+          as="div"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeInUp}
+          className="text-center max-w-2xl mx-auto mb-20"
+        >
           <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-4 text-foreground">
             داخل الحلبة
           </h2>
@@ -15,10 +30,20 @@ export function FeaturesSection() {
             نظام لعب متطور يجمع بين الذكاء والسرعة والمخاطرة. اكتشف أوضاع اللعب
             المختلفة.
           </p>
-        </div>
+        </Motion>
 
+        {/* ── Feature Row 1 ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-24">
-          <div className="relative order-2 lg:order-1 flex justify-center lg:justify-start">
+          {/* Image slide from left */}
+          <Motion
+            as="div"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInLeft}
+            delay={0.1}
+            className="relative order-2 lg:order-1 flex justify-center lg:justify-start"
+          >
             <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5 max-w-md md:max-w-xl">
               <Image
                 src="/images/feature-1.png"
@@ -28,9 +53,18 @@ export function FeaturesSection() {
                 className="rounded-2xl w-full object-cover"
               />
             </div>
-          </div>
+          </Motion>
 
-          <div className="space-y-6 order-1 lg:order-2 text-right lg:pr-8">
+          {/* Content slide from right */}
+          <Motion
+            as="div"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInRight}
+            delay={0.2}
+            className="space-y-6 order-1 lg:order-2 text-right lg:pr-8"
+          >
             <span className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-semibold text-primary border border-border">
               🎮 الوضع الكلاسيكي
             </span>
@@ -62,11 +96,21 @@ export function FeaturesSection() {
                 </span>
               </li>
             </ul>
-          </div>
+          </Motion>
         </div>
 
+        {/* ── Feature Row 2 ── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6 text-right lg:pl-8">
+          {/* Content slide from left */}
+          <Motion
+            as="div"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInLeft}
+            delay={0.2}
+            className="space-y-6 text-right lg:pl-8"
+          >
             <span className="inline-flex items-center rounded-full bg-brand-yellow-dark/10 px-3 py-1 text-xs font-semibold text-brand-yellow-dark dark:text-brand-yellow border border-brand-yellow/20">
               🎲 وضع المخاطرة (Risk Game)
             </span>
@@ -78,43 +122,93 @@ export function FeaturesSection() {
               بـ 30 نقطة للأسئلة الصعبة عشان تقفز للمركز الأول في ثواني.
             </p>
 
+            {/* Grid items animate smoothly within the content block */}
             <div className="grid grid-cols-2 gap-4 pt-4">
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-success/40 transition-colors">
-                <span className="block font-black text-brand-success text-lg mb-1">
-                  تكنولوجيا
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  واكب أحدث التقنيات
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-primary/40 transition-colors">
-                <span className="block font-black text-primary text-lg mb-1">
-                  تاريخ
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  تحديات في عمق التاريخ
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-yellow/40 transition-colors">
-                <span className="block font-black text-brand-yellow-dark dark:text-brand-yellow text-lg mb-1">
-                  رياضة
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  لتحدي اللياقة والنشاط
-                </span>
-              </div>
-              <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-indigo-400/40 transition-colors">
-                <span className="block font-black text-indigo-500 text-lg mb-1">
-                  منهج
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  لاختبار معلوماتك الدراسية
-                </span>
-              </div>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInDown}
+                delay={0.3}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-success/40 transition-colors">
+                  <span className="block font-black text-brand-success text-lg mb-1">
+                    تكنولوجيا
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    واكب أحدث التقنيات
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInLeft}
+                delay={0.4}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-primary/40 transition-colors">
+                  <span className="block font-black text-primary text-lg mb-1">
+                    تاريخ
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    تحديات في عمق التاريخ
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInLeft}
+                delay={0.5}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-brand-yellow/40 transition-colors">
+                  <span className="block font-black text-brand-yellow-dark dark:text-brand-yellow text-lg mb-1">
+                    رياضة
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    لتحدي اللياقة والنشاط
+                  </span>
+                </div>
+              </Motion>
+              <Motion
+                as="div"
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={fadeInUp}
+                delay={0.6}
+                className=""
+              >
+                <div className="p-4 rounded-2xl bg-card border border-border text-center hover:border-indigo-400/40 transition-colors">
+                  <span className="block font-black text-indigo-500 text-lg mb-1">
+                    منهج
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    لاختبار معلوماتك الدراسية
+                  </span>
+                </div>
+              </Motion>
             </div>
-          </div>
+          </Motion>
 
-          <div className="relative flex justify-center lg:justify-end">
+          {/* Image slide from right */}
+          <Motion
+            as="div"
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={fadeInRight}
+            delay={0.1}
+            className="relative flex justify-center lg:justify-end"
+          >
             <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5 max-w-md md:max-w-xl">
               <Image
                 src="/images/feature-2.png"
@@ -124,7 +218,7 @@ export function FeaturesSection() {
                 className="rounded-2xl w-full object-cover"
               />
             </div>
-          </div>
+          </Motion>
         </div>
       </div>
     </section>
