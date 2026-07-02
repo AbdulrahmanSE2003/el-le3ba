@@ -1,5 +1,11 @@
 import { ReactNode } from "react";
-import MatchLayout from "./MatchLayout";
+
+import { AppSidebar } from "@/components/sidebar/AppSidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import StoreInitializer from "@/store/storeInitializer";
 import { cookies } from "next/headers";
 import { apiServer } from "@/lib/apiServer";
@@ -25,23 +31,32 @@ interface UserAPIResponse {
 async function getProfile() {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt")?.value;
+
   if (!token) return null;
 
   try {
     const res = await apiServer<UserAPIResponse>("get", "/users/me");
     if (!res.status) return null;
-    return res.data.user;
+    const { user } = res.data;
+    return user;
   } catch {
     return null;
   }
 }
-
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();
-
   return (
-    <MatchLayout storeInitializer={<StoreInitializer user={user} />}>
-      {children}
-    </MatchLayout>
+    // NOTE: Need AuthProvider to wrap the entire app with AuthProvider to provide authentication context
+    // NOTE: DON'T DELETE AuthProvider
+    <SidebarProvider>
+      <AppSidebar />
+      <div>
+        <SidebarTrigger className="text-primary fixed z-50 top-5 hover:text-primary/80 duration-300 cursor-pointer" />{" "}
+      </div>
+      <SidebarInset>
+        <StoreInitializer user={user} />
+        <section className="flex-1 overflow-auto">{children}</section>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
