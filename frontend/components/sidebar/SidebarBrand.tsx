@@ -19,27 +19,19 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isCollapsed = state === "collapsed";
 
   return (
-    <SidebarHeader className="pb-3 bg-muted overflow-hidden">
+    <SidebarHeader className="pb-3 overflow-hidden border-b">
       <Link
         href={href}
-        className="flex flex-col justify-center items-center rounded-lg duration-300 p-3 border border-primary hover:bg-amber-100 hover:text-white"
+        className="flex justify-center items-center duration-300 p-3"
       >
-        <div className="flex flex-col justify-center items-center gap-3">
-          {!isCollapsed && (
-            <Motion
-              as="div"
-              variants={fadeInDown}
-              initial="hidden"
-              animate="visible"
-            >
-              <Logo size="lg" />
-            </Motion>
-          )}
-
-          <div className="w-fit text-primary text-2xl">
-            {isAdmin ? <Shield /> : <Gamepad2 />}
-          </div>
-        </div>
+        <Motion
+          as="div"
+          variants={fadeInDown}
+          initial="hidden"
+          animate="visible"
+        >
+          <Logo size={isCollapsed ? "xs" : "sm"} />
+        </Motion>
       </Link>
     </SidebarHeader>
   );

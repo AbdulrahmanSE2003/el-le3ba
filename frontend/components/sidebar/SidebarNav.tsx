@@ -47,7 +47,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
               visible: { opacity: 1, x: 0, transition: {} },
             }}
           >
-            <SidebarMenuItem>
+            <SidebarMenuItem className={`hover:-translate-x-1 duration-300 rounded-md ${!isActive ? "hover:bg-primary/30" : ""}`}>
               {isActive && (
                 <motion.span
                   layoutId="sidebar-active-pill"
@@ -56,9 +56,14 @@ export function SidebarNav({ items }: SidebarNavProps) {
               )}
 
               <SidebarMenuButton
+                tooltip={{
+                  children: item.title,
+                  className:
+                    "[&_svg]:hidden! bg-primary text-primary-foreground border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
+                }}
                 asChild
                 isActive={isActive}
-                className="mb-5 z-10 self-stretch relative cursor-pointer text-white duration-300 transition-all p-6 hover:text-accent"
+                className={`mb-5 z-10 self-stretch relative cursor-pointer text-muted-foreground duration-300 transition-all p-6 ${isActive && "text-white"}`}
               >
                 <Link href={item.href} className="w-full flex items-center">
                   <item.icon className=" duration-300" />

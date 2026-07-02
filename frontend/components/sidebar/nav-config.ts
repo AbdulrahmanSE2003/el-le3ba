@@ -19,7 +19,7 @@ export interface NavItem {
 
 export const userNavItems: NavItem[] = [
   {
-    title: "لوحة التحكم",
+    title: "الرئيسية",
     href: "/dashboard",
     icon: LayoutDashboard,
   },
@@ -35,7 +35,12 @@ export const userNavItems: NavItem[] = [
     icon: Trophy,
   },
   {
-    title: "الملف الشخصي",
+    title: "فريقـي",
+    href: "/team",
+    icon: Users,
+  },
+  {
+    title: "حسابي",
     href: "/profile",
     icon: User,
   },

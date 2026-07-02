@@ -3,7 +3,7 @@
 import { LogOut, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { SidebarFooter, SidebarMenu } from "@/components/ui/sidebar";
+import { SidebarFooter, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
 
 import SidebarFooterBtn from "./SidebarFooterBtn";
 import { logout } from "@/features/auth/actions";
@@ -11,21 +11,24 @@ import { logout } from "@/features/auth/actions";
 export function SidebarFooterActions({ className }: { className: string }) {
   const { theme, setTheme } = useTheme();
 
+  const { state } = useSidebar();
+  const isCollapsed = state === "collapsed";
+
   function toggleTheme() {
     setTheme(theme === "dark" ? "light" : "dark");
   }
 
   return (
     <SidebarFooter
-      className={`border-t justify-self-end border-border p-5 ${className}`}
+      className={`border-t border-border ${className}`}
     >
-      <SidebarMenu>
+      <SidebarMenu className={`p-5 list-none flex flex-col ${isCollapsed ? "items-center" : "items-stretch"}`}>
         <SidebarFooterBtn
           tooltip="تبديل المظهر"
           title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
           onclick={toggleTheme}
           icon={theme === "dark" ? <Sun className="text-accent" /> : <Moon />}
-          className={`${theme === "dark" ? "bg-black text-white hover:bg-black hover:text-accent" : "bg-white text-black hover:bg-white hover:text-accent"}`}
+          className={`${theme === "dark" ? "bg-black text-white hover:bg-black hover:text-accent" : "bg-black text-white hover:bg-black/90"}`}
         />
 
         <SidebarFooterBtn
@@ -33,7 +36,7 @@ export function SidebarFooterActions({ className }: { className: string }) {
           tooltip="تسجيل الخروج"
           icon={<LogOut className="text-red-800" />}
           onclick={logout}
-          className="bg-red-400 hover:bg-red-500 mt-2"
+          className="bg-red-500 hover:bg-red-500/90 mt-2"
         />
       </SidebarMenu>
     </SidebarFooter>

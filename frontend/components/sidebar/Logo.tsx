@@ -1,10 +1,10 @@
 interface MainTitleProps {
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xs";
 }
 
 export default function Logo({ size = "md" }: MainTitleProps) {
   const sizeClasses = {
-    xs: "text-xl",
+    xs: "text-sm",
     sm: "text-3xl",
     md: "text-4xl",
     lg: "text-5xl",
