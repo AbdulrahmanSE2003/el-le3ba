@@ -15,9 +15,6 @@ const Lobby = ({
 
   const isCaptain = user?._id.toString() === team.team.teamLeader.toString();
 
-  console.log(`UserId: ${user?._id.toString()}`);
-  console.log(`captainId: ${team.team.teamLeader.toString()}`);
-
   return (
     <div className="space-y-6">
       {/* Team Name */}

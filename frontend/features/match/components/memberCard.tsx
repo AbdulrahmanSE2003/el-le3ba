@@ -10,7 +10,6 @@ const MemberCard = ({ member }: { member: Member }) => {
   const statusLabel = true ? "متصل" : "غير متصل";
 
   const { user } = useUserStore();
-  console.log(`UserId: ${user?._id.toString()}`);
   return (
     <div
       className={

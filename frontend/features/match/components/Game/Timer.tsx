@@ -5,37 +5,20 @@ import { useEffect, useState } from "react";
 interface TimerProps {
   duration: number;
   time: number;
-  setTime: (newTime: number | ((prev: number) => number)) => void;
-  onExpire?: () => void;
 }
 
 const RADIUS = 32;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const Timer = ({ duration, time, setTime, onExpire }: TimerProps) => {
+const Timer = ({ duration, time }: TimerProps) => {
   const [shake, setShake] = useState(false);
 
-  // reset shake when question changes
+  // Control shake animation purely based on the current time state
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setShake(false);
-  }, [duration]);
-
-  // countdown
-  useEffect(() => {
-    if (time <= 0) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setShake(true);
-      onExpire?.();
-      return;
-    }
-
-    const timerId = setInterval(() => {
-      setTime((prev) => prev - 1);
-    }, 1000);
-
-    return () => clearInterval(timerId);
-  }, [time, onExpire, setTime]);
+    if (time === duration) setShake(false);
+    if (time <= 0) setShake(true);
+  }, [time, duration]);
 
   const offset = CIRCUMFERENCE - (time / duration) * CIRCUMFERENCE;
   const isUrgent = time <= 5 && time > 0;
@@ -79,7 +62,7 @@ const Timer = ({ duration, time, setTime, onExpire }: TimerProps) => {
 
       <div
         className={`
-          relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-300
+          relative flex h-32 w-32 items-center justify-center rounded-full transition-all duration-300
           ${isUrgent ? "animate-pulse" : ""}
           ${shake ? "animate-custom-shake" : ""}
         `}
@@ -114,7 +97,7 @@ const Timer = ({ duration, time, setTime, onExpire }: TimerProps) => {
         </svg>
 
         <div
-          className={`absolute inset-0 flex items-center justify-center text-2xl font-black tracking-tighter select-none font-mono transition-colors duration-300 ${activeColor.text}`}
+          className={`absolute inset-0 flex select-none items-center justify-center font-mono text-2xl font-black tracking-tighter transition-colors duration-300 ${activeColor.text}`}
         >
           {time}
         </div>

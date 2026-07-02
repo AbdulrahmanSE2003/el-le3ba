@@ -10,14 +10,18 @@ import { Gamepad2 } from "lucide-react";
 const StartMatch = () => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { startGame } = useGameStore();
+  const { setGame } = useGameStore.getState();
 
   const handleStart = async () => {
     setIsLoading(true);
     try {
       const { session } = await startSession();
 
-      startGame(session.sessionId, session.questions);
+      setGame({
+        sessionId: session.sessionId,
+        sessionExpiresAt: session.expiresAt,
+        questions: session.questions,
+      });
       router.push(`/match/${session.sessionId}`);
     } catch (error: unknown) {
       console.error(error);
