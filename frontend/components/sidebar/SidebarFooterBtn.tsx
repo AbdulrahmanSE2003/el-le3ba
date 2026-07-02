@@ -1,11 +1,12 @@
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
-import Motion from "../shared/Motion";
-
-import { fadeInUp } from "../shared/animations";
 import { ReactNode } from "react";
-import Icon from "./Icon";
 import { ComponentProps } from "react";
+
+import Motion from "../shared/Motion";
+import { fadeInUp } from "../shared/animations";
+
+import Icon from "./Icon";
 
 interface Props extends ComponentProps<"button"> {
   title: string;

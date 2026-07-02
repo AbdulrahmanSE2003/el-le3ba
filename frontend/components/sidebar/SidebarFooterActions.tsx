@@ -1,14 +1,24 @@
 "use client";
 
 import { LogOut, Moon, Sun } from "lucide-react";
+
 import { useTheme } from "next-themes";
 
-import { SidebarFooter, SidebarMenu, useSidebar } from "@/components/ui/sidebar";
+import {
+  SidebarFooter,
+  SidebarMenu,
+  useSidebar,
+} from "@/components/ui/sidebar";
 
 import SidebarFooterBtn from "./SidebarFooterBtn";
+
 import { logout } from "@/features/auth/actions";
 
-export function SidebarFooterActions({ className }: { className: string }) {
+interface Props {
+  className: string;
+}
+
+export function SidebarFooterActions({ className }: Props) {
   const { theme, setTheme } = useTheme();
 
   const { state } = useSidebar();
@@ -19,10 +29,10 @@ export function SidebarFooterActions({ className }: { className: string }) {
   }
 
   return (
-    <SidebarFooter
-      className={`border-t border-border ${className}`}
-    >
-      <SidebarMenu className={`p-5 list-none flex flex-col ${isCollapsed ? "items-center" : "items-stretch"}`}>
+    <SidebarFooter className={`border-t border-border ${className}`}>
+      <SidebarMenu
+        className={`p-5 list-none flex flex-col ${isCollapsed ? "items-center" : "items-stretch"}`}
+      >
         <SidebarFooterBtn
           tooltip="تبديل المظهر"
           title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}

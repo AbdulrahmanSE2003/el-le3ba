@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Gamepad2, Shield } from "lucide-react";
 
 import { SidebarHeader, useSidebar } from "@/components/ui/sidebar";
+
 import Logo from "./Logo";
+
 import Motion from "../shared/Motion";
 import { fadeInDown } from "../shared/animations";
 
@@ -15,6 +16,7 @@ interface SidebarBrandProps {
 export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isAdmin = variant === "admin";
   const href = isAdmin ? "/admin/dashboard" : "/dashboard";
+
   const { state } = useSidebar(); // "expanded" | "collapsed"
   const isCollapsed = state === "collapsed";
 

@@ -3,19 +3,11 @@ import {
   Gamepad2,
   LayoutDashboard,
   Settings,
-  Shield,
   Trophy,
   User,
   Users,
-  type LucideIcon,
 } from "lucide-react";
-
-export interface NavItem {
-  title: string;
-  href: string;
-  icon: LucideIcon;
-  badge?: string;
-}
+import { NavItem } from "./types";
 
 export const userNavItems: NavItem[] = [
   {

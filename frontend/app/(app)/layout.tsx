@@ -50,6 +50,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     // NOTE: DON'T DELETE AuthProvider
     <SidebarProvider>
       <AppSidebar />
+      <SidebarTrigger className="text-primary hover:text-primary/80 duration-300 cursor-pointer" />{" "}
       <SidebarInset>
         <StoreInitializer user={user} />
         <section className="flex-1 overflow-auto">{children}</section>

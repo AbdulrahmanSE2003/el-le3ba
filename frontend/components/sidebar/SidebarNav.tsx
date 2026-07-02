@@ -1,16 +1,13 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
 
-import {
-  SidebarMenuButton,
-  SidebarMenuItem,
-  useSidebar,
-} from "@/components/ui/sidebar";
+import { SidebarMenu, useSidebar } from "@/components/ui/sidebar";
 
-import type { NavItem } from "./nav-config";
+import type { NavItem } from "./types";
+
+import SidebarNavBtn from "./SidebarNavBtn";
+
 import Motion from "../shared/Motion";
 
 interface SidebarNavProps {
@@ -19,21 +16,21 @@ interface SidebarNavProps {
 
 export function SidebarNav({ items }: SidebarNavProps) {
   const pathname = usePathname();
-  const { state } = useSidebar(); // "expanded" | "collapsed"
+
+  const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <Motion
-      as="div"
       variants={{
         hidden: {},
         visible: { transition: { staggerChildren: 0.2 } },
       }}
       initial="hidden"
       animate="visible"
-      className={`p-5 list-none flex flex-col ${isCollapsed ? "items-center" : ""} overflow-hidden`}
+      className={`p-5 list-none flex flex-col ${isCollapsed ? "items-center" : "items-stretch"}`}
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
         const isActive =
           pathname === item.href ||
           (item.href !== "/" && pathname.startsWith(`${item.href}/`));
@@ -47,30 +44,15 @@ export function SidebarNav({ items }: SidebarNavProps) {
               visible: { opacity: 1, x: 0, transition: {} },
             }}
           >
-            <SidebarMenuItem className={`hover:-translate-x-1 duration-300 rounded-md ${!isActive ? "hover:bg-primary/30" : ""}`}>
-              {isActive && (
-                <motion.span
-                  layoutId="sidebar-active-pill"
-                  className={`absolute w-full h-full bg-primary rounded-md`}
-                />
-              )}
-
-              <SidebarMenuButton
-                tooltip={{
-                  children: item.title,
-                  className:
-                    "[&_svg]:hidden! bg-primary text-primary-foreground border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
-                }}
-                asChild
-                isActive={isActive}
-                className={`mb-5 z-10 self-stretch relative cursor-pointer text-muted-foreground duration-300 transition-all p-6 ${isActive && "text-white"}`}
-              >
-                <Link href={item.href} className="w-full flex items-center">
-                  <item.icon className=" duration-300" />
-                  <span className="font-body ms-1">{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <SidebarNavBtn
+              key={item.href}
+              href={item.href}
+              title={item.title}
+              tooltip={item.title}
+              icon={<item.icon className="duration-300" />}
+              isActive={isActive}
+              delay={0.1 + index * 0.05}
+            />
           </Motion>
         );
       })}

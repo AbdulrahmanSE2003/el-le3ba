@@ -1,12 +1,13 @@
 "use client";
 
-import { Sidebar, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 
 import { SidebarBrand } from "./SidebarBrand";
 import { SidebarFooterActions } from "./SidebarFooterActions";
 import { SidebarNav } from "./SidebarNav";
-import { adminNavItems } from "./nav-config";
 import SidebarWrapper from "./SidebarWrapper";
+
+import { adminNavItems } from "./nav-config";
 
 export function AdminSidebar() {
   return (
@@ -14,7 +15,9 @@ export function AdminSidebar() {
       <SidebarWrapper>
         <SidebarBrand variant="admin" />
 
-        <SidebarNav items={adminNavItems} />
+        <SidebarContent className="min-h-0 flex-1 overflow-hidden">
+          <SidebarNav items={adminNavItems} />
+        </SidebarContent>
 
         <SidebarFooterActions className="mt-auto" />
       </SidebarWrapper>

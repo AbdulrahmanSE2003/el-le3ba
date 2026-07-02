@@ -6,6 +6,8 @@ interface Props {
 
 export default function SidebarWrapper({ children }: Props) {
   return (
-    <div className="flex h-full flex-col bg-white dark:bg-card">{children}</div>
+    <div className="flex h-full flex-col overflow-hidden bg-white dark:bg-card">
+      {children}
+    </div>
   );
 }

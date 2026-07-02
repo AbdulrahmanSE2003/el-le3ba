@@ -1,13 +1,13 @@
 "use client";
 
-import { Sidebar, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 
 import { SidebarBrand } from "./SidebarBrand";
 import { SidebarFooterActions } from "./SidebarFooterActions";
 import { SidebarNav } from "./SidebarNav";
+import SidebarWrapper from "./SidebarWrapper";
 
 import { userNavItems } from "./nav-config";
-import SidebarWrapper from "./SidebarWrapper";
 
 export function AppSidebar() {
   return (
@@ -15,7 +15,9 @@ export function AppSidebar() {
       <SidebarWrapper>
         <SidebarBrand variant="user" />
 
-        <SidebarNav items={userNavItems} />
+        <SidebarContent className="min-h-0 flex-1 overflow-hidden">
+          <SidebarNav items={userNavItems} />
+        </SidebarContent>
 
         <SidebarFooterActions className="mt-auto" />
       </SidebarWrapper>
