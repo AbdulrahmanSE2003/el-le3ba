@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 
 import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 
-import Motion from "../shared/Motion";
+import { motion } from "framer-motion";
 
 import Icon from "./Icon";
 
@@ -31,11 +31,10 @@ export default function SidebarNavBtn({
       className={`hover:-translate-x-1 duration-300 rounded-md ${!isActive ? "hover:bg-primary/30" : ""}`}
     >
       {isActive && (
-        <Motion
-          as="span"
+        <motion.span
           layoutId="active-sidebar"
-          transition={{ transform: { origin:"none" } }}
-          className={`absolute inset-x-0 h-full bg-primary rounded-md`}
+          layout="position"
+          className="absolute inset-0 rounded-md bg-primary"
         />
       )}
 
