@@ -7,12 +7,14 @@ import { useTheme } from "next-themes";
 import {
   SidebarFooter,
   SidebarMenu,
+  SidebarMenuButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 
 import SidebarFooterBtn from "./SidebarFooterBtn";
 
 import { logout } from "@/features/auth/actions";
+import { useEffect, useState } from "react";
 
 interface Props {
   className: string;
@@ -20,12 +22,22 @@ interface Props {
 
 export function SidebarFooterActions({ className }: Props) {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   function toggleTheme() {
     setTheme(theme === "dark" ? "light" : "dark");
+  }
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <SidebarMenuButton title="جاري التحميل..." onClick={toggleTheme} />;
   }
 
   return (

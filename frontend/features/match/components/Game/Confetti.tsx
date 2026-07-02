@@ -14,8 +14,6 @@ interface ConfettiStyles {
   duration: number;
   delay: number;
   size: number;
-  rotate: number;
-  isCircle: boolean;
 }
 
 function Confetti({ index }: ConfettiProps) {
@@ -27,18 +25,16 @@ function Confetti({ index }: ConfettiProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setConfig({
       left: `${Math.random() * 100}%`,
-      duration: 5 + Math.random() * 4,
+      duration: 2 + Math.random() * 2,
       delay: Math.random() * 0.8,
       size: 6 + Math.random() * 8,
-      rotate: Math.random() * 360,
-      isCircle: Math.random() > 0.5,
     });
   }, []);
 
   // Return null on the server side so nothing is mismatched during hydration
   if (!config) return null;
 
-  const { left, duration, delay, size, rotate, isCircle } = config;
+  const { left, duration, delay, size } = config;
 
   return (
     <motion.div
@@ -49,14 +45,13 @@ function Confetti({ index }: ConfettiProps) {
         width: size,
         height: size,
         backgroundColor: color,
-        borderRadius: isCircle ? "50%" : "2px",
+        borderRadius: "50%",
         zIndex: 9999,
         pointerEvents: "none",
       }}
-      initial={{ y: -20, rotate, opacity: 1 }}
+      initial={{ y: -20, opacity: 1 }}
       animate={{
         y: "110vh",
-        rotate: rotate + 360 * 3,
         opacity: [1, 1, 0],
       }}
       transition={{ duration, delay, ease: "easeIn" }}

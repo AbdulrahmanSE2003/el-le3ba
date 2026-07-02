@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, memo } from "react";
 import { useRouter } from "next/navigation";
 import { getSessionStatus, type SessionResult } from "../../api";
 import { Trophy, Target, Zap, Loader2, Home } from "lucide-react";
@@ -32,6 +32,17 @@ const itemVariants: Variants = {
   },
 };
 
+const ConfettiRain = memo(({ count }: { count: number }) => {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <Confetti key={i} index={i} />
+      ))}
+    </>
+  );
+});
+ConfettiRain.displayName = "ConfettiRain";
+
 export default function ResultClient({
   details: initial,
   sessionId,
@@ -42,27 +53,32 @@ export default function ResultClient({
   const [details, setDetails] = useState<SessionResult | null>(initial ?? null);
   const [loading, setLoading] = useState(!!poll);
   const [showConfetti, setShowConfetti] = useState(false);
-  const confettiCount = 60;
+  const confettiCount = 120;
 
-  // reset game after result shown
   useEffect(() => {
     if (details) {
       resetGame();
-      // delay confetti slightly
-      setTimeout(() => setShowConfetti(true), 400);
-      setTimeout(() => setShowConfetti(false), 4000);
+
+      const startTimer = setTimeout(() => setShowConfetti(true), 400);
+      const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
+
+      return () => {
+        clearTimeout(startTimer);
+        clearTimeout(stopTimer);
+      };
     }
   }, [details, resetGame]);
 
-  // polling
   useEffect(() => {
     if (!poll || !sessionId || details) return;
     let cancelled = false;
+    let timeoutId: NodeJS.Timeout;
 
     const fetchResult = async () => {
       try {
         const status = await getSessionStatus(sessionId);
         if (cancelled) return;
+
         if (status.status === "completed") {
           setDetails(status);
           setLoading(false);
@@ -72,15 +88,17 @@ export default function ResultClient({
           router.replace("/match");
           return;
         }
-        setTimeout(fetchResult, 3000);
+        timeoutId = setTimeout(fetchResult, 3000);
       } catch {
-        setTimeout(fetchResult, 3000);
+        timeoutId = setTimeout(fetchResult, 3000);
       }
     };
 
     fetchResult();
+
     return () => {
       cancelled = true;
+      if (timeoutId) clearTimeout(timeoutId);
     };
   }, [sessionId, poll, details, router]);
 
@@ -109,12 +127,8 @@ export default function ResultClient({
       className="relative flex min-h-screen items-center justify-center bg-background p-6 text-foreground overflow-hidden"
       dir="rtl"
     >
-      {/* Confetti */}
       <AnimatePresence>
-        {showConfetti &&
-          Array.from({ length: confettiCount }).map((_, i) => (
-            <Confetti key={i} index={i} />
-          ))}
+        {showConfetti && <ConfettiRain count={confettiCount} />}
       </AnimatePresence>
 
       {/* Glow background */}
@@ -143,7 +157,7 @@ export default function ResultClient({
         <motion.div variants={itemVariants}>
           <h1 className="text-4xl font-black">النتيجة النهائية 🎉</h1>
           <p className="mt-2 text-muted-foreground text-sm">
-            أديت أداء رائع، استمر!
+            عاش يا شباب ، استمرووا 💪🏻
           </p>
         </motion.div>
 
@@ -167,7 +181,7 @@ export default function ResultClient({
           <div className="rounded-2xl border border-border bg-card p-5 flex flex-col items-center gap-2">
             <Zap className="h-6 w-6 text-orange-500" />
             <p className="text-3xl font-black">{details.bestStreak}</p>
-            <p className="text-xs text-muted-foreground">أفضل سلسلة</p>
+            <p className="text-xs text-muted-foreground">أعلى ستريك</p>
           </div>
         </motion.div>
 
