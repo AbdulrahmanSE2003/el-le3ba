@@ -5,7 +5,7 @@ import { Suspense } from "react";
 const page = async () => {
   return (
     <section className="h-full">
-      <div className="container mx-auto w-full md:w-1/2 p-4 space-y-6">
+      <div className="container mx-auto w-full  p-4 space-y-6">
         <Suspense fallback={<LobbySkeleton />}>
           <LobbyWrapper />
         </Suspense>
