@@ -5,6 +5,8 @@ import { Event, Team, Member } from "@/features/match/types";
 import TeamStatsPreview from "./TeamStatsPreview";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AxiosError } from "axios";
+import NoTeam from "@/components/shared/NoTeam";
 
 // ─── Types for API responses ───────────────────────────────────────
 interface TeamApiResponse {
@@ -28,21 +30,30 @@ interface AttemptsApiResponse {
 }
 
 const LobbyWrapper = async () => {
-  const [teamRes, eventRes] = await Promise.all([
-    apiServer<TeamApiResponse>("get", "/teams/my-team"),
-    apiServer<EventApiResponse>("get", "/events/current"),
-  ]);
+  let teamData: TeamApiResponse["team"] | null = null;
+  let event: Event | null = null;
 
-  const teamData = teamRes.data?.team;
-  const event = eventRes.data?.event;
+  try {
+    const [teamRes, eventRes] = await Promise.all([
+      apiServer<TeamApiResponse>("get", "/teams/my-team"),
+      apiServer<EventApiResponse>("get", "/events/current"),
+    ]);
 
-  // Handle missing data gracefully
-  if (!teamData || !event) {
-    return (
-      <section className="h-full flex items-center justify-center">
-        <p className="text-foreground">لا يوجد فريق أو حدث حالي</p>
-      </section>
-    );
+    teamData = teamRes.data.team;
+    event = eventRes.data.event;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      const message = error.response?.data?.message;
+
+      if (
+        error.response?.status === 400 &&
+        message === "You are not in a team."
+      ) {
+        return <NoTeam />;
+      }
+    }
+
+    throw error;
   }
 
   const teamAttempts = await apiServer<AttemptsApiResponse>(

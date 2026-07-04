@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema<IUser>(
         validator: function (this: any, el: string) {
           return el === this.password;
         },
-        message: "Passwords are not the same!",
+        message: "كلمات المرور يجب ان تكون متطابقة",
       },
     },
 
