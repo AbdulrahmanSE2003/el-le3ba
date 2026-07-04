@@ -46,8 +46,6 @@ async function getProfile() {
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();
   return (
-    // NOTE: Need AuthProvider to wrap the entire app with AuthProvider to provide authentication context
-    // NOTE: DON'T DELETE AuthProvider
     <SidebarProvider>
       <AppSidebar />
       <div>

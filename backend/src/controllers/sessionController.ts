@@ -278,7 +278,8 @@ export const abandonSession = catchAsync(async (req, res, next) => {
 
   await session.save();
 
-  resHandler(res, 200, "session", session);
+  // resHandler(res, 200, "session", session);
+  res.status(200).json({ status: true });
 });
 
 // ============================================================

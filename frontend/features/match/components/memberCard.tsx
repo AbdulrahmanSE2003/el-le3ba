@@ -51,8 +51,7 @@ const MemberCard = ({ member }: MemberCardProps) => {
 
       {/* Name */}
       <p className="text-sm font-medium capitalize">
-        {member.name?.charAt(0)?.toUpperCase() +
-          member.name?.slice(1)}{" "}
+        {member.name?.charAt(0)?.toUpperCase() + member.name?.slice(1)}{" "}
         {isCurrentUser ? "(أنت)" : ""}
       </p>
 

@@ -28,28 +28,12 @@ export default function OptionButton({
       transition={{
         delay: index * 0.08,
       }}
-      whileHover={{
-        scale: 1.03,
-        y: -2,
-      }}
       whileTap={{
-        scale: 0.96,
+        border: "#5b5fef",
       }}
       disabled={disabled}
       onClick={onClick}
-      className="
-      h-16
-      rounded-xl
-      border
-      border-border
-      bg-card
-      transition-all
-      hover:border-primary
-      hover:bg-primary/5
-      disabled:pointer-events-none
-      disabled:opacity-60
-      cursor-pointer
-      "
+      className="h-16 hover:scale-103 -translate-y-2 hover:border-primary focus:border-primary rounded-xl border border-border active:border-primary bg-card transition-all duration-300 over:border-primary hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer shadow"
     >
       {text}
     </motion.button>

@@ -5,6 +5,7 @@ import { connectSocket, disconnectSocket, getSocket } from "@/lib/socket";
 import { useLobbyStore } from "@/store/lobbyStore";
 import { useGameStore } from "@/store/gameStore";
 import type { GameStartedPayload, PresenceMember } from "@/lib/socket";
+import { toast } from "sonner";
 
 interface UseLobbySocketProps {
   teamId: string;
@@ -13,7 +14,7 @@ interface UseLobbySocketProps {
 
 export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
   const router = useRouter();
-  const { setMembers, setConnected, setError, setGameStarted } =
+  const { setMembers, setConnected, setError, setGameStarted, members } =
     useLobbyStore();
   const setGame = useGameStore((s) => s.setGame);
 
@@ -72,9 +73,27 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
       socket.off("game-error", handleGameError);
       disconnectSocket();
     };
-  }, [teamId, userId, router, setMembers, setConnected, setError, setGameStarted, setGame]);
+  }, [
+    teamId,
+    userId,
+    router,
+    setMembers,
+    setConnected,
+    setError,
+    setGameStarted,
+    setGame,
+  ]);
 
   const startGame = useCallback(() => {
+    const connectedMembers = members.filter((member) => member.isOnline);
+
+    if (connectedMembers.length < 2) {
+      toast.warning(
+        ".يعني انت شايف ان دا يصح تلعب لوحدك ، كمل التيم بتاعك وتعالى",
+      );
+      return;
+    }
+
     const socket = getSocket();
     if (socket.connected) {
       socket.emit("start-game", { teamId, userId });
