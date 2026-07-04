@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 export function proxy(request: NextRequest) {
   const token = request.cookies.get("jwt")?.value;
   const { pathname } = request.nextUrl;
+  const isLandingPage = pathname === "/";
 
   const isAuthPage =
+    isLandingPage ||
     pathname.startsWith("/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password") ||
