@@ -2,6 +2,7 @@ import validator from "validator";
 import bcrypt from "bcryptjs";
 import mongoose, { Document, Model } from "mongoose";
 import crypto from "crypto";
+import { AVATARS } from "../constants";
 
 export interface IUser extends Document {
   name: string;
@@ -67,18 +68,7 @@ const userSchema = new mongoose.Schema<IUser>(
     avatar: {
       type: String,
       default: null,
-      enum: [
-        "avatar1.png",
-        "avatar2.png",
-        "avatar3.png",
-        "avatar4.png",
-        "avatar5.png",
-        "avatar6.png",
-        "avatar7.png",
-        "avatar8.png",
-        "avatar9.png",
-        "avatar10.png",
-      ],
+      enum: AVATARS,
     },
 
     role: {

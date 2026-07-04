@@ -14,19 +14,24 @@ import leaderboardRoutes from "./routes/leaderboardRoutes";
 import sessionRoutes from "./routes/sessionRoutes";
 import questionRoutes from "./routes/questionRoutes";
 import { sanitizeInput } from "./middleware/sanitize";
+import path from "path";
 
 const app = express();
 
 // ── Security: HTTP headers ─────────────────────────────────
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 
 // ── Security: Rate limiting ────────────────────────────────
-// const limiter = rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100, // max 100 requests per IP per window
-//   message: "Too many requests from this IP, please try again later.",
-// });
-// app.use("/api", limiter);
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requests per IP per window
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use("/api", limiter);
 
 // ── Security: Stricter limiter for auth routes ─────────────
 const authLimiter = rateLimit({
@@ -62,6 +67,8 @@ app.use("/api/v1/leaderboard", leaderboardRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/questions", questionRoutes);
 
+// app.use("/avatars", express.static(path.join(__dirname, "../public/avatars")));
+app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
 // ── Global error handler ───────────────────────────────────
 app.use(globalErrorHandler);
 

@@ -16,6 +16,7 @@ const teamSchema = new mongoose.Schema(
       type: String,
       required: true,
       maxlength: [20, "Team name can't be more than 20 characters"],
+      unique: true,
     },
 
     teamCode: {
