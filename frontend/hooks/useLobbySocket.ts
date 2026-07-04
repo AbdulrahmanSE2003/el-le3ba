@@ -1,8 +1,10 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { connectSocket, disconnectSocket, getSocket } from "@/lib/socket";
 import { useLobbyStore } from "@/store/lobbyStore";
+import { useGameStore } from "@/store/gameStore";
+import type { GameStartedPayload, PresenceMember } from "@/lib/socket";
 
 interface UseLobbySocketProps {
   teamId: string;
@@ -13,51 +15,73 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
   const router = useRouter();
   const { setMembers, setConnected, setError, setGameStarted } =
     useLobbyStore();
+  const setGame = useGameStore((s) => s.setGame);
 
   useEffect(() => {
+    if (!teamId || !userId) return;
+
     const socket = connectSocket();
 
-    // ── Connection ─────────────────────────────────────────
-    socket.on("connect", () => {
+    const handleConnect = () => {
       setConnected(true);
       socket.emit("join-lobby", { teamId, userId });
-    });
+    };
 
-    socket.on("disconnect", () => {
+    const handleDisconnect = () => {
       setConnected(false);
-    });
+    };
 
-    // ── Presence updates ───────────────────────────────────
-    socket.on("team-presence", (members) => {
+    const handleTeamPresence = (members: PresenceMember[]) => {
       setMembers(members);
-    });
+    };
 
-    // ── Game started — redirect all members ───────────────
-    socket.on("game-started", (payload) => {
+    const handleGameStarted = (payload: GameStartedPayload) => {
       setGameStarted(payload);
+      setGame({
+        sessionId: payload.sessionId,
+        teamId,
+        eventId: "",
+        sessionExpiresAt: payload.expiresAt,
+        questions: payload.questions.map((q) => ({
+          _id: q._id,
+          question: q.question,
+          type: q.type,
+          category: q.category,
+          duration: q.duration,
+          options: q.options ?? undefined,
+        })),
+      });
       router.push(`/match/${payload.sessionId}`);
-    });
+    };
 
-    // ── Errors from server ─────────────────────────────────
-    socket.on("game-error", ({ message }) => {
+    const handleGameError = ({ message }: { message: string }) => {
       setError(message);
-    });
+    };
+
+    socket.on("connect", handleConnect);
+    socket.on("disconnect", handleDisconnect);
+    socket.on("team-presence", handleTeamPresence);
+    socket.on("game-started", handleGameStarted);
+    socket.on("game-error", handleGameError);
 
     return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-      socket.off("team-presence");
-      socket.off("game-started");
-      socket.off("game-error");
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("team-presence", handleTeamPresence);
+      socket.off("game-started", handleGameStarted);
+      socket.off("game-error", handleGameError);
       disconnectSocket();
     };
-  }, [teamId, userId]);
+  }, [teamId, userId, router, setMembers, setConnected, setError, setGameStarted, setGame]);
 
-  // ── Start game (captain only) ──────────────────────────
-  const startGame = () => {
+  const startGame = useCallback(() => {
     const socket = getSocket();
-    socket.emit("start-game", { teamId, userId });
-  };
+    if (socket.connected) {
+      socket.emit("start-game", { teamId, userId });
+    } else {
+      setError("Not connected to server");
+    }
+  }, [teamId, userId, setError]);
 
   return { startGame };
 };

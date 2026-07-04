@@ -1,4 +1,3 @@
-// store/gameStore.ts
 import { create } from "zustand";
 
 import type { QuestionType } from "@/features/match/types";
@@ -56,24 +55,27 @@ interface GameState {
   setLastAnswer: (answer: LastAnswer) => void;
   restoreGame: () => boolean;
   resetGame: () => void;
-  getTeamId: () => string | null; // ← Helper to get teamId
+  getTeamId: () => string | null;
 }
 
 function persist(state: GameState) {
   if (typeof window === "undefined") return;
+  if (!state.sessionId) return;
   try {
     const data: PersistedData = {
-      sessionId: state.sessionId!,
-      teamId: state.teamId!,
-      eventId: state.eventId!,
-      sessionExpiresAt: state.sessionExpiresAt!,
+      sessionId: state.sessionId,
+      teamId: state.teamId ?? "",
+      eventId: state.eventId ?? "",
+      sessionExpiresAt: state.sessionExpiresAt ?? "",
       questions: state.questions,
       currentIndex: state.currentIndex,
       totalScore: state.totalScore,
       currentStreak: state.currentStreak,
     };
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {}
+  } catch {
+    // Storage not available
+  }
 }
 
 function loadPersisted(): Partial<GameState> | null {
@@ -103,7 +105,9 @@ function clearPersisted() {
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(STORAGE_KEY);
-  } catch {}
+  } catch {
+    // Storage not available
+  }
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -160,8 +164,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     clearPersisted();
     set({
       sessionId: null,
-      teamId: null, // ← Reset
-      eventId: null, // ← Reset
+      teamId: null,
+      eventId: null,
       sessionExpiresAt: null,
       questions: [],
       currentIndex: 0,

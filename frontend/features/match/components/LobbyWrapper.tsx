@@ -61,7 +61,7 @@ const LobbyWrapper = async () => {
         <div className="text-foreground text-sm">{event.title}</div>
       </div>
 
-      <Lobby event={event} team={teamData} />
+      <Lobby team={{ team: teamData.team }} />
 
       {/* Team Stats */}
       <Suspense

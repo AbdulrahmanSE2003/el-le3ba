@@ -2,23 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { startSession } from "../api/index";
-import { useGameStore } from "@/store/gameStore";
 import { Gamepad2 } from "lucide-react";
 
 const StartMatch = ({ onClick }: { onClick: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const { setGame } = useGameStore.getState();
 
   const handleStart = async () => {
     setIsLoading(true);
     try {
-      const { session } = await startSession();
-      router.push(`/match/${session.sessionId}`);
-    } catch (error: unknown) {
-      console.error(error);
+      await onClick();
+    } catch {
+      // Error handling is done by the caller
     } finally {
       setIsLoading(false);
     }
@@ -27,6 +21,7 @@ const StartMatch = ({ onClick }: { onClick: () => void }) => {
   return (
     <Button
       onClick={handleStart}
+      disabled={isLoading}
       className="px-6 py-8 cursor-pointer w-full font-display font-semibold text-2xl"
     >
       {isLoading ? "جار بدأ اللعبة..." : "ابدأ اللعبة"}

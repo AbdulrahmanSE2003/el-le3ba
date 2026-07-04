@@ -103,6 +103,8 @@ export const initSocket = (io: Server) => {
         // Emit to ALL team members
         io.to(teamId).emit("game-started", {
           sessionId: session._id,
+          teamId,
+          eventId: event._id,
           questions: questionsForClient,
           expiresAt: session.expiresAt,
         });

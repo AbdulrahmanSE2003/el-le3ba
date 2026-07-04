@@ -3,9 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import axios from "axios";
 
 import { useGameStore } from "@/store/gameStore";
-import { getSessionResult, submitAnswer } from "../../api";
+import { submitAnswer } from "../../api";
 import useQuestionTimer from "../../hooks/useQuestionTimer";
 import useSessionTimer from "../../hooks/useSessionTimer";
 
@@ -46,15 +47,14 @@ export default function QuestionScreen() {
       }
     }
   }, [sessionId, restoreGame, router]);
+
   // ── Per-question state ──────────────────────────────
   const question = questions[currentIndex];
   const [answered, setAnswered] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
-  // eslint-disable-next-line react-hooks/purity
-  const nowTime = Date.now();
-  const startTimeRef = useRef(nowTime);
+  const startTimeRef = useRef(0);
 
   // Reset per-question state when question changes
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function QuestionScreen() {
 
     try {
       const res = await submitAnswer(
-        sessionId!,
+        sessionId ?? "",
         question._id,
         answer || " ",
         timeTaken,
@@ -103,19 +103,23 @@ export default function QuestionScreen() {
       setLastAnswer(res);
       setOverlay(true);
 
-      setTimeout(async () => {
+      setTimeout(() => {
         setOverlay(false);
         if (res.sessionComplete) {
-          const id = sessionId!;
+          const id = sessionId;
           router.replace(`/match/result/${id}`);
           return;
         }
         nextQuestion();
       }, 2000);
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "حدث خطأ في الإرسال";
+      let msg = "حدث خطأ في الإرسال";
+      if (axios.isAxiosError(err)) {
+        msg =
+          err.response?.data?.message ??
+          (err.response?.data as Record<string, string>)?.message ??
+          msg;
+      }
 
       const isTerminal =
         msg.includes("expired") ||

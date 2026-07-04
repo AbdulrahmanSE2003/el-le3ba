@@ -1,18 +1,16 @@
-// features/match/components/memberCard.tsx
 "use client";
 
 import Image from "next/image";
 import { useUserStore } from "@/store/userStore";
-import { Member } from "../types";
+import type { PresenceMember } from "@/lib/socket";
 
 interface MemberCardProps {
-  member: Member;
-  isConnected: boolean;
+  member: PresenceMember;
 }
 
-const MemberCard = ({ member, isConnected }: MemberCardProps) => {
+const MemberCard = ({ member }: MemberCardProps) => {
   const { user } = useUserStore();
-  const isCurrentUser = user?._id.toString() === member.userId.toString();
+  const isCurrentUser = user?._id === member.userId;
 
   return (
     <div
@@ -29,17 +27,17 @@ const MemberCard = ({ member, isConnected }: MemberCardProps) => {
           "text-foreground/80 flex items-center justify-center overflow-hidden"
         }
       >
-        {member.userId.avatar ? (
+        {member.avatar ? (
           <Image
-            src={member.userId.avatar}
-            alt={`${member.userId.name} avatar`}
+            src={member.avatar}
+            alt={`${member.name} avatar`}
             width={48}
             height={48}
             className="rounded-full"
           />
         ) : (
           <span className="text-lg font-semibold">
-            {member.userId.name?.slice(0, 2).toUpperCase()}
+            {member.name?.slice(0, 2).toUpperCase()}
           </span>
         )}
       </div>
@@ -47,14 +45,14 @@ const MemberCard = ({ member, isConnected }: MemberCardProps) => {
       {/* Online Status Indicator */}
       <div
         className={`absolute top-2 right-2 w-3 h-3 rounded-full border-2 border-background ${
-          isConnected ? "bg-green-500" : "bg-gray-400"
+          member.isOnline ? "bg-green-500" : "bg-gray-400"
         }`}
       />
 
       {/* Name */}
       <p className="text-sm font-medium capitalize">
-        {member.userId.name?.charAt(0)?.toUpperCase() +
-          member.userId.name?.slice(1)}{" "}
+        {member.name?.charAt(0)?.toUpperCase() +
+          member.name?.slice(1)}{" "}
         {isCurrentUser ? "(أنت)" : ""}
       </p>
 

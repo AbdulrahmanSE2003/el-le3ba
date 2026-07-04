@@ -1,26 +1,13 @@
 import { create } from "zustand";
-
-interface Member {
-  userId: string;
-  name: string;
-  avatar: string | null;
-  role: "captain" | "member";
-  isOnline: boolean;
-}
-
-interface GameStartedPayload {
-  sessionId: string;
-  questions: unknown[];
-  expiresAt: string;
-}
+import type { PresenceMember, GameStartedPayload } from "@/lib/socket";
 
 interface LobbyStore {
-  members: Member[];
+  members: PresenceMember[];
   isConnected: boolean;
   error: string | null;
   gameStarted: GameStartedPayload | null;
 
-  setMembers: (members: Member[]) => void;
+  setMembers: (members: PresenceMember[]) => void;
   setConnected: (val: boolean) => void;
   setError: (err: string | null) => void;
   setGameStarted: (payload: GameStartedPayload) => void;

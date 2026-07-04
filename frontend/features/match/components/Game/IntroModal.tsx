@@ -41,7 +41,7 @@ export default function IntroModal({ onStart }: Props) {
         <p className="text-muted-foreground mb-10 leading-8">
           أمامكم 20 سؤال.
           <br />
-          السرعةة بتفرق في النتيجة النهائية.
+          السرعة بتفرق في النتيجة النهائية.
         </p>
 
         <motion.button

@@ -11,14 +11,13 @@ export const submitAnswer = async (
   submittedAnswer: string,
   timeTaken: number,
 ) => {
-  if (!submitAnswer) submittedAnswer = " ";
   const res = await api.post(`/sessions/${sessionId}/answer`, {
     questionId,
-    submittedAnswer,
+    submittedAnswer: submittedAnswer || " ",
     timeTaken,
   });
 
-  return res.data.answerDetails;
+  return res.data.answerDetails as import("@/store/gameStore").LastAnswer;
 };
 
 export const abandonSession = async (sessionId: string): Promise<void> => {
