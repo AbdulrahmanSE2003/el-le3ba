@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-import { SidebarMenu, useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 
 import type { NavItem } from "./types";
 

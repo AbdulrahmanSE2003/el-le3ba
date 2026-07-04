@@ -46,8 +46,6 @@ async function getProfile() {
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();
   return (
-    // NOTE: Need AuthProvider to wrap the entire app with AuthProvider to provide authentication context
-    // NOTE: DON'T DELETE AuthProvider
     <SidebarProvider>
       <AppSidebar />
       <div>
@@ -55,7 +53,9 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </div>
       <SidebarInset>
         <StoreInitializer user={user} />
-        <section className="flex-1 overflow-auto">{children}</section>
+        <section className="flex-1 overflow-auto">
+          <div className={`container mx-auto w-full md:w-3/5`}>{children}</div>
+        </section>
       </SidebarInset>
     </SidebarProvider>
   );

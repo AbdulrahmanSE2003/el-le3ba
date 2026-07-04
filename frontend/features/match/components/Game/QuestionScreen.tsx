@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
+import axios from "axios";
 
 import { useGameStore } from "@/store/gameStore";
-import { getSessionResult, submitAnswer } from "../../api";
+import { submitAnswer } from "../../api";
 import useQuestionTimer from "../../hooks/useQuestionTimer";
 import useSessionTimer from "../../hooks/useSessionTimer";
 
@@ -16,6 +17,9 @@ import OptionButton from "./OptionButton";
 import ProgressBar from "./ProgressBar";
 import ResultOverlay from "./ResultOverlay";
 import SessionExpiredOverlay from "./SessionExpiredOverlay";
+import { Button } from "@/components/ui/button";
+import api from "@/lib/axios";
+import { AlertModal } from "@/components/shared/AlertModal";
 
 export default function QuestionScreen() {
   const {
@@ -46,15 +50,15 @@ export default function QuestionScreen() {
       }
     }
   }, [sessionId, restoreGame, router]);
+
   // ── Per-question state ──────────────────────────────
   const question = questions[currentIndex];
   const [answered, setAnswered] = useState(false);
   const [overlay, setOverlay] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
-  // eslint-disable-next-line react-hooks/purity
-  const nowTime = Date.now();
-  const startTimeRef = useRef(nowTime);
+  const startTimeRef = useRef(0);
+  const [showModal, setShowModal] = useState(false);
 
   // Reset per-question state when question changes
   useEffect(() => {
@@ -95,7 +99,7 @@ export default function QuestionScreen() {
 
     try {
       const res = await submitAnswer(
-        sessionId!,
+        sessionId ?? "",
         question._id,
         answer || " ",
         timeTaken,
@@ -103,19 +107,23 @@ export default function QuestionScreen() {
       setLastAnswer(res);
       setOverlay(true);
 
-      setTimeout(async () => {
+      setTimeout(() => {
         setOverlay(false);
         if (res.sessionComplete) {
-          const id = sessionId!;
+          const id = sessionId;
           router.replace(`/match/result/${id}`);
           return;
         }
         nextQuestion();
       }, 2000);
     } catch (err: unknown) {
-      const msg =
-        (err as { response?: { data?: { message?: string } } })?.response?.data
-          ?.message ?? "حدث خطأ في الإرسال";
+      let msg = "حدث خطأ في الإرسال";
+      if (axios.isAxiosError(err)) {
+        msg =
+          err.response?.data?.message ??
+          (err.response?.data as Record<string, string>)?.message ??
+          msg;
+      }
 
       const isTerminal =
         msg.includes("expired") ||
@@ -132,6 +140,16 @@ export default function QuestionScreen() {
       setError(msg);
       lockRef.current = false;
       setAnswered(false);
+    }
+  };
+
+  const handleAbandon = async () => {
+    try {
+      const res = await api.post(`/sessions/${sessionId}/abandon`);
+      console.log(res);
+      redirect("/match");
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -162,8 +180,9 @@ export default function QuestionScreen() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          className={`relative`}
         >
-          <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6">
+          <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 ">
             <Header
               current={currentIndex}
               total={questions.length}
@@ -171,20 +190,16 @@ export default function QuestionScreen() {
               streak={currentStreak}
               sessionTimeLeft={sessionTimeLeft}
             />
-
             <Timer time={time} duration={question.duration} />
-
             <QuestionCard
               category={question.category}
               question={question.question}
             />
-
             {error && (
               <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-center text-red-500">
                 {error}
               </div>
             )}
-
             {hasOptions ? (
               <div className="grid md:grid-cols-2 gap-4">
                 {question.options!.map((option, index) => (
@@ -229,8 +244,23 @@ export default function QuestionScreen() {
                 </button>
               </div>
             )}
-
             <ProgressBar current={currentIndex} total={questions.length} />
+            <Button
+              variant="destructive"
+              onClick={() => setShowModal(true)}
+              className="absolute bottom-4 left-4 cursor-pointer px-5 py-5 text-md"
+            >
+              انسحب من الماتش
+            </Button>
+            <AlertModal
+              open={showModal}
+              onOpenChange={setShowModal}
+              title="الانسحاب من الماتش"
+              description="سيتم إنهاء الجلسة ولن تتمكن من استكمال اللعبة. هل أنت متأكد؟"
+              confirmText="انسحاب"
+              cancelText="إلغاء"
+              onConfirm={handleAbandon}
+            />
           </div>
         </motion.div>
       </AnimatePresence>

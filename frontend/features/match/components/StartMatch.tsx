@@ -1,41 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { startSession } from "../api/index";
-import { useGameStore } from "@/store/gameStore";
 import { Gamepad2 } from "lucide-react";
 
-const StartMatch = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
-  const { setGame } = useGameStore.getState();
-
+const StartMatch = ({ onClick }: { onClick: () => void }) => {
   const handleStart = async () => {
-    setIsLoading(true);
     try {
-      const { session } = await startSession();
-
-      setGame({
-        sessionId: session.sessionId,
-        sessionExpiresAt: session.expiresAt,
-        questions: session.questions,
-      });
-      router.push(`/match/${session.sessionId}`);
-    } catch (error: unknown) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      await onClick();
+    } catch (error) {
+      throw error;
     }
   };
 
   return (
     <Button
       onClick={handleStart}
-      className="px-6 py-8 cursor-pointer w-full font-display font-semibold text-2xl"
+      className="px-6 py-8 cursor-pointer w-full hover:scale-101 active:scale-97 transition-all duration-300 font-display font-semibold text-2xl"
     >
-      {isLoading ? "جار بدأ اللعبة..." : "ابدأ اللعبة"}
+      ابدأ اللعبة
       <Gamepad2 className={`size-6`} />
     </Button>
   );

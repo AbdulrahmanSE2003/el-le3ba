@@ -2,18 +2,23 @@
 import MemberCard from "@/features/match/components/memberCard";
 import StartMatch from "@/features/match/components/StartMatch";
 import RulesSection from "./RulesSection";
-import { Event, Member, Team } from "../types";
+import { Team } from "../types";
 import { useUserStore } from "@/store/userStore";
-const Lobby = ({
-  event,
-  team,
-}: {
-  event: Event;
-  team: { team: Team; members: Member[] };
-}) => {
+import { useLobbyStore } from "@/store/lobbyStore";
+import { useLobbySocket } from "@/hooks/useLobbySocket";
+
+const Lobby = ({ team }: { team: { team: Team } }) => {
   const { user } = useUserStore();
 
-  const isCaptain = user?._id.toString() === team.team.teamLeader.toString();
+  const { startGame } = useLobbySocket({
+    teamId: team.team._id,
+    userId: user?._id || "",
+  });
+  const { members, error } = useLobbyStore();
+
+  if (error) return <div className="text-destructive text-sm">{error}</div>;
+
+  const isCaptain = user?._id === team.team.teamLeader;
 
   return (
     <div className="space-y-6">
@@ -25,19 +30,25 @@ const Lobby = ({
 
       {/* Team Members */}
       <div className="grid grid-cols-3 gap-3">
-        {team.members.map((member) => (
-          <MemberCard key={member._id} member={member} />
+        {members.map((member) => (
+          <MemberCard key={member.userId} member={member} />
         ))}
       </div>
 
       {/* Start Game */}
-      {isCaptain ? (
-        <StartMatch />
-      ) : (
+      {!isCaptain ? (
         <div
           className={`w-full bg-accent/15 rounded-lg border-2 border-dashed border-accent/50 p-3 flex items-center justify-center`}
         >
           <p>قول للكابتن يبدأ بسرعة 😶</p>
+        </div>
+      ) : isCaptain ? (
+        <StartMatch onClick={startGame} />
+      ) : (
+        <div
+          className={`w-full bg-neutral-500/15 rounded-lg border-2 border-dashed border-neutral-500/50 p-3 py-4 flex items-center justify-center`}
+        >
+          <p>واحدة واحدة ، لسا قدامنا وقت طويييل</p>
         </div>
       )}
 

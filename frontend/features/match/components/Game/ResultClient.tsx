@@ -53,7 +53,7 @@ export default function ResultClient({
   const [details, setDetails] = useState<SessionResult | null>(initial ?? null);
   const [loading, setLoading] = useState(!!poll);
   const [showConfetti, setShowConfetti] = useState(false);
-  const confettiCount = 120;
+  const confettiCount = 180;
 
   useEffect(() => {
     if (details) {

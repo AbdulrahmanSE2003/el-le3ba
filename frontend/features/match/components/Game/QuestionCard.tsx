@@ -30,7 +30,7 @@ export default function QuestionCard({ category, question }: Props) {
         duration: 0.45,
         ease: "easeInOut",
       }}
-      className="w-full rounded-2xl border border-border bg-card p-6"
+      className="w-full rounded-2xl border border-border bg-card p-6 shadow"
     >
       <span className="mb-3 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
         {category}

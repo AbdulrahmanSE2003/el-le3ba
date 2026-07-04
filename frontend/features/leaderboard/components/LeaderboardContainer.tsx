@@ -49,7 +49,7 @@ const initialMockData: LeaderboardUser[] = [
 ];
 
 export function LeaderboardContainer() {
-  const [data, setData] = useState<LeaderboardUser[]>(initialMockData);
+  const [data] = useState<LeaderboardUser[]>(initialMockData);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const topThree = data.filter((user) => user.rank <= 3);

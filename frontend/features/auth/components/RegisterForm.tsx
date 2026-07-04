@@ -14,7 +14,7 @@ import Motion from "@/components/shared/Motion";
 import { fadeInRight } from "../../../components/shared/animations";
 
 import { signup } from "../actions";
-import { showError, showSuccess } from "@/components/shared/notifications";
+import { showError } from "@/components/shared/notifications";
 
 export default function RegisterForm() {
   const [state, formAction, isPending] = useActionState(signup, null);

@@ -1,4 +1,3 @@
-// src/features/match/types/index.ts
 export type QuestionType = "mcq" | "a/b" | "oddOneOut" | "numberExact" | "speed";
 
 export interface Question {
@@ -27,30 +26,31 @@ export interface AnswerResponse {
   finalScore?: number;
   correctAnswers?: number;
   bestStreak?: number;
+  correctAnswer?: string;
 }
 
 export interface Member {
-  _id: number;
+  _id: string;
   userId: {
     _id: string;
     name: string;
     email: string;
-    avatar: null | string;
+    avatar: string | null;
   };
   teamId: string;
-  role: string;
+  role: "captain" | "member";
 }
 
 export interface Event {
   _id: string;
   title: string;
   createdBy: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
   status: "scheduled" | "running" | "finished";
   maxAttempts: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Team {
@@ -60,11 +60,10 @@ export interface Team {
   teamLeader: string;
   totalGames: number;
   points: number;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: string;
+  updatedAt: string;
 }
 
-// ===============================Game Types===============================
 export type GamePhase =
   | "intro"
   | "countdown"

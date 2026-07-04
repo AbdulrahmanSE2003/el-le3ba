@@ -145,7 +145,7 @@ export async function resetPassword(
         error: data.message || "فشل إعادة تعيين كلمة المرور",
       };
     }
-  } catch (error) {
+  } catch {
     return { error: "تعذر الاتصال بالخادم" };
   }
 
