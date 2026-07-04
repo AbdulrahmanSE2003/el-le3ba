@@ -11,13 +11,14 @@ import { catchAsync } from "../utils/catchAsync";
 import { getAll } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 import { finalizeSession } from "../utils/finalizeSession";
-
-const BASE_SCORE = 15;
-const STREAK_BONUS = 5;
-const STREAK_MILESTONE = 5;
-const SESSION_DURATION_MS = 7 * 60 * 1000; // 7 minutes
-const QUESTIONS_PER_SESSION = 5;
-const MIN_TEAM_SIZE = 2;
+import {
+  BASE_SCORE,
+  MIN_TEAM_SIZE,
+  QUESTIONS_PER_SESSION,
+  SESSION_DURATION_MS,
+  STREAK_BONUS,
+  STREAK_MILESTONE,
+} from "../constants";
 
 // ============================================================
 // POST /sessions/start

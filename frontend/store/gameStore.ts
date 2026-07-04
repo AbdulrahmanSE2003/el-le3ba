@@ -1,3 +1,4 @@
+// store/gameStore.ts
 import { create } from "zustand";
 
 import type { QuestionType } from "@/features/match/types";
@@ -24,6 +25,8 @@ const STORAGE_KEY = "el-le3ba-game";
 
 interface PersistedData {
   sessionId: string;
+  teamId: string;
+  eventId: string;
   sessionExpiresAt: string;
   questions: GameQuestion[];
   currentIndex: number;
@@ -33,6 +36,8 @@ interface PersistedData {
 
 interface GameState {
   sessionId: string | null;
+  teamId: string | null;
+  eventId: string | null;
   sessionExpiresAt: string | null;
   questions: GameQuestion[];
   currentIndex: number;
@@ -42,6 +47,8 @@ interface GameState {
 
   setGame: (payload: {
     sessionId: string;
+    teamId: string;
+    eventId: string;
     sessionExpiresAt: string;
     questions: GameQuestion[];
   }) => void;
@@ -49,6 +56,7 @@ interface GameState {
   setLastAnswer: (answer: LastAnswer) => void;
   restoreGame: () => boolean;
   resetGame: () => void;
+  getTeamId: () => string | null; // ← Helper to get teamId
 }
 
 function persist(state: GameState) {
@@ -56,6 +64,8 @@ function persist(state: GameState) {
   try {
     const data: PersistedData = {
       sessionId: state.sessionId!,
+      teamId: state.teamId!,
+      eventId: state.eventId!,
       sessionExpiresAt: state.sessionExpiresAt!,
       questions: state.questions,
       currentIndex: state.currentIndex,
@@ -75,6 +85,8 @@ function loadPersisted(): Partial<GameState> | null {
     if (!data.sessionId || !data.questions?.length) return null;
     return {
       sessionId: data.sessionId,
+      teamId: data.teamId,
+      eventId: data.eventId,
       sessionExpiresAt: data.sessionExpiresAt,
       questions: data.questions,
       currentIndex: data.currentIndex,
@@ -96,6 +108,8 @@ function clearPersisted() {
 
 export const useGameStore = create<GameState>((set, get) => ({
   sessionId: null,
+  teamId: null,
+  eventId: null,
   sessionExpiresAt: null,
   questions: [],
   currentIndex: 0,
@@ -103,9 +117,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   currentStreak: 0,
   lastAnswer: null,
 
-  setGame: ({ sessionId, sessionExpiresAt, questions }) => {
+  setGame: ({ sessionId, teamId, eventId, sessionExpiresAt, questions }) => {
     const state = {
       sessionId,
+      teamId,
+      eventId,
       sessionExpiresAt,
       questions,
       currentIndex: 0,
@@ -144,6 +160,8 @@ export const useGameStore = create<GameState>((set, get) => ({
     clearPersisted();
     set({
       sessionId: null,
+      teamId: null, // ← Reset
+      eventId: null, // ← Reset
       sessionExpiresAt: null,
       questions: [],
       currentIndex: 0,
@@ -151,5 +169,9 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentStreak: 0,
       lastAnswer: null,
     });
+  },
+
+  getTeamId: () => {
+    return get().teamId;
   },
 }));

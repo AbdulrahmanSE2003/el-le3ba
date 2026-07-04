@@ -7,7 +7,7 @@ import { startSession } from "../api/index";
 import { useGameStore } from "@/store/gameStore";
 import { Gamepad2 } from "lucide-react";
 
-const StartMatch = () => {
+const StartMatch = ({ onClick }: { onClick: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { setGame } = useGameStore.getState();
@@ -16,12 +16,6 @@ const StartMatch = () => {
     setIsLoading(true);
     try {
       const { session } = await startSession();
-
-      setGame({
-        sessionId: session.sessionId,
-        sessionExpiresAt: session.expiresAt,
-        questions: session.questions,
-      });
       router.push(`/match/${session.sessionId}`);
     } catch (error: unknown) {
       console.error(error);

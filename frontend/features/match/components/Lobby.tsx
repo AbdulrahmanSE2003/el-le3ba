@@ -4,6 +4,8 @@ import StartMatch from "@/features/match/components/StartMatch";
 import RulesSection from "./RulesSection";
 import { Event, Member, Team } from "../types";
 import { useUserStore } from "@/store/userStore";
+import { useLobbyStore } from "@/store/lobbyStore";
+import { useLobbySocket } from "@/hooks/useLobbySocket";
 const Lobby = ({
   event,
   team,
@@ -12,6 +14,14 @@ const Lobby = ({
   team: { team: Team; members: Member[] };
 }) => {
   const { user } = useUserStore();
+
+  const { startGame } = useLobbySocket({
+    teamId: team.team._id,
+    userId: user?._id || "",
+  });
+  const { members, isConnected, error } = useLobbyStore();
+
+  if (error) return <div className="text-destructive text-sm">{error}</div>;
 
   const isCaptain = user?._id.toString() === team.team.teamLeader.toString();
 
@@ -25,14 +35,18 @@ const Lobby = ({
 
       {/* Team Members */}
       <div className="grid grid-cols-3 gap-3">
-        {team.members.map((member) => (
-          <MemberCard key={member._id} member={member} />
+        {members.map((member) => (
+          <MemberCard
+            key={member.userId}
+            member={member}
+            isConnected={isConnected}
+          />
         ))}
       </div>
 
       {/* Start Game */}
       {isCaptain ? (
-        <StartMatch />
+        <StartMatch onClick={startGame} />
       ) : (
         <div
           className={`w-full bg-accent/15 rounded-lg border-2 border-dashed border-accent/50 p-3 flex items-center justify-center`}

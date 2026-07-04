@@ -19,13 +19,18 @@ const page = async ({ params }: Props) => {
   const { sessionId } = await params;
 
   try {
-    const res = await apiServer<SessionDetailsResponse>("get", `/sessions/${sessionId}`);
+    const res = await apiServer<SessionDetailsResponse>(
+      "get",
+      `/sessions/${sessionId}`,
+    );
     const details = res.data?.sessionDetails;
     if (details) {
       redirect(`/match/result/${sessionId}`);
     }
   } catch (err: unknown) {
-    const axiosErr = err as { response?: { status?: number; data?: { message?: string } } };
+    const axiosErr = err as {
+      response?: { status?: number; data?: { message?: string } };
+    };
     const status = axiosErr?.response?.status;
     const message = axiosErr?.response?.data?.message ?? "";
 
