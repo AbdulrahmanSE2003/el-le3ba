@@ -8,7 +8,6 @@ import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
 
 export const getLeaderboard = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
   const eventId = req.query.eventId as string;
@@ -64,7 +63,6 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
 });
 
 export const getMyRank = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
   const eventId = req.query.eventId as string;

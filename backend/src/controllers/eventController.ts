@@ -22,8 +22,6 @@ export const getAllEvents = getAll(Event, {
 });
 
 export const createEvent = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
-
   const newEvent = await Event.create({
     title: req.body.title,
     createdBy: req.user._id,

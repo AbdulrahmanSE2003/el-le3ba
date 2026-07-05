@@ -46,7 +46,6 @@ export const createTeam = catchAsync(async (req, res, next) => {
 });
 
 export const joinTeam = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const isInTeam = await TeamMembership.exists({ userId });
@@ -70,7 +69,6 @@ export const joinTeam = catchAsync(async (req, res, next) => {
 });
 
 export const getMyTeam = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const userTeam = await TeamMembership.findOne({ userId });
@@ -85,7 +83,6 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
 });
 
 export const deleteMyTeam = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const userTeam = await Team.findOne({ teamLeader: userId });
@@ -110,7 +107,6 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
 });
 
 export const leaveTeam = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const userMembership = await TeamMembership.findOne({ userId });
@@ -177,7 +173,6 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
 
 export const changeCaptain = catchAsync(async (req, res, next) => {
   // Getting user id and ensure he is the captain
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const team = await Team.findOne({ teamLeader: userId });
@@ -224,7 +219,6 @@ export const changeCaptain = catchAsync(async (req, res, next) => {
 
 export const changeTeamName = catchAsync(async (req, res, next) => {
   // Getting user id and ensure he is the captain
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const team = await Team.findOne({ teamLeader: userId });
@@ -243,7 +237,6 @@ export const changeTeamName = catchAsync(async (req, res, next) => {
 
 export const kickMember = catchAsync(async (req, res, next) => {
   // Getting user id and ensure he is the captain
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
   const userId = req.user._id;
 
   const team = await Team.findOne({ teamLeader: userId });
@@ -271,8 +264,6 @@ export const kickMember = catchAsync(async (req, res, next) => {
 });
 
 export const getTeamAttempts = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not authenticated.", 401));
-
   const { eventId } = req.query;
   if (!eventId) return next(new AppError("eventId is required.", 400));
 

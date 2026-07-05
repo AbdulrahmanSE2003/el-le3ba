@@ -9,7 +9,7 @@ import { sendEmail } from "../utils/sendEmail";
 import resHandler from "../utils/resHandler";
 
 interface AuthRequest extends Request {
-  user?: IUser;
+  user: IUser;
 }
 
 const signToken = (id: string): string => {
@@ -132,9 +132,7 @@ export const protect = catchAsync(
 
 export const restrictTo = (...roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return next(new AppError("You are not logged in", 401));
-    }
+    
 
     if (!roles.includes(req.user.role)) {
       return next(
