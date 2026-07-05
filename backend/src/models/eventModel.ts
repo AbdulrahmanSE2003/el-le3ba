@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-interface IEvent extends Document {
+export interface IEvent extends Document {
   title: string;
   createdBy: mongoose.Types.ObjectId;
   startTime: Date;
