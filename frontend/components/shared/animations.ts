@@ -43,3 +43,12 @@ export const scaleIn: Variants = {
     },
   },
 };
+
+export const containerVariants: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.2,
+      },
+    },
+  };

@@ -8,7 +8,6 @@ import { ActionState } from "./types";
 import { tryCatch } from "@/components/shared/try-catch";
 import { authenticate } from "./auth-service";
 
-
 export async function signIn(
   prevState: ActionState | null,
   formData: FormData,

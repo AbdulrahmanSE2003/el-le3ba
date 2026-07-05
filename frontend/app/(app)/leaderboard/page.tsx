@@ -2,8 +2,8 @@ import { LeaderboardContainer } from "@/features/leaderboard/components/Leaderbo
 
 export default function LeaderboardPage() {
   return (
-    <main className="pt-4">
+    <main className="">
       <LeaderboardContainer />
     </main>
   );
-}
+}``
