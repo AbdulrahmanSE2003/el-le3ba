@@ -1,4 +1,4 @@
-import { tryCatch } from "@/components/shared/try-catch.ts";
+import { tryCatch } from "@/components/shared/try-catch";
 import { cookies } from "next/headers";
 
 type AuthResponse = {

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { ActionState } from "./types";
 
-import { tryCatch } from "@/components/shared/try-catch.ts";
+import { tryCatch } from "@/components/shared/try-catch";
 import { authenticate } from "./auth-service";
 
 
