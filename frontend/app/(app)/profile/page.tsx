@@ -1,7 +1,9 @@
-// Profile page
+import ProfileContainer from "@/features/profile/components/ProfileContainer";
 
-const page = () => {
-  return <div>Profile page</div>;
-};
-
-export default page;
+export default function ProfilePage() {
+  return (
+    <main>
+      <ProfileContainer />
+    </main>
+  );
+}
