@@ -24,7 +24,7 @@ export const initSocket = (io: Server) => {
       if (!teamOnlineMembers.has(teamId)) {
         teamOnlineMembers.set(teamId, new Set());
       }
-      teamOnlineMembers.get(teamId)!.add(userId);
+      teamOnlineMembers.get(teamId)!.add(String(userId));
 
       // Get all team members
       const members = await TeamMembership.find({ teamId }).populate(
@@ -39,7 +39,7 @@ export const initSocket = (io: Server) => {
         name: m.userId.name,
         avatar: m.userId.avatar,
         role: m.role,
-        isOnline: onlineIds.has(m.userId._id.toString()),
+        isOnline: onlineIds.has(String(m.userId._id)),
       }));
 
       // Broadcast to whole room

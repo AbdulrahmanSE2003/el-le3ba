@@ -26,12 +26,12 @@ app.use(
 );
 
 // ── Security: Rate limiting ────────────────────────────────
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requests per IP per window
-  message: "Too many requests from this IP, please try again later.",
-});
-app.use("/api", limiter);
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // max 100 requests per IP per window
+//   message: "Too many requests from this IP, please try again later.",
+// });
+// app.use("/api", limiter);
 
 // ── Security: Stricter limiter for auth routes ─────────────
 const authLimiter = rateLimit({

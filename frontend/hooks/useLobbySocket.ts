@@ -19,7 +19,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
   const setGame = useGameStore((s) => s.setGame);
 
   useEffect(() => {
-    if (!teamId || !userId) return;
+    if (!teamId || !userId || userId.trim() === "") return;
 
     const socket = connectSocket();
 
@@ -100,7 +100,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     } else {
       setError("Not connected to server");
     }
-  }, [teamId, userId, setError]);
+  }, [teamId, userId, setError, members]);
 
   return { startGame };
 };

@@ -60,6 +60,7 @@ const LobbyWrapper = async () => {
     "get",
     `/teams/${teamData.team._id}/attempts?eventId=${event._id}`,
   );
+
   const { attempts } = teamAttempts?.data?.attempts;
   const attemptsLeft = event.maxAttempts - attempts;
   return (

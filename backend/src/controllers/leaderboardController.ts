@@ -25,6 +25,7 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
   if (req.user.role === "student") {
     // Getting top 50 teams points
     const top50 = await Leaderboard.find({ eventId })
+      .populate("teamId", "teamName teamCode")
       .sort({ totalPoints: -1 })
       .limit(50);
 
@@ -45,7 +46,11 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
         })) + 1
       : null;
 
-    resHandler(res, 200, "Leaderboard", { ranking: top50, rank });
+    resHandler(res, 200, "Leaderboard", {
+      results: top50.length,
+      ranking: top50,
+      rank,
+    });
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
       .filter()

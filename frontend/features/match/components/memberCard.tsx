@@ -23,17 +23,17 @@ const MemberCard = ({ member }: MemberCardProps) => {
       {/* Avatar */}
       <div
         className={
-          "bg-primary/30 border border-primary/50 w-12 h-12 rounded-full " +
-          "text-foreground/80 flex items-center justify-center overflow-hidden"
+          "bg-primary/30 border border-primary/50 w-14 h-14 rounded-full " +
+          "text-foreground/80 flex items-center justify-center overflow-hidden relative border-2 border-primary"
         }
       >
         {member.avatar ? (
           <Image
-            src={member.avatar}
+            unoptimized
+            src={`http://localhost:5000/avatars/${member?.avatar}`}
             alt={`${member.name} avatar`}
-            width={48}
-            height={48}
-            className="rounded-full"
+            fill
+            className="rounded-full object-cover"
           />
         ) : (
           <span className="text-lg font-semibold">
