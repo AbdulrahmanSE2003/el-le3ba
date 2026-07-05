@@ -25,7 +25,6 @@ import {
 // Captain only — starts a new game session for their team
 // ============================================================
 export const startSession = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
   // 1. Verify there is a running event
@@ -85,7 +84,6 @@ export const startSession = catchAsync(async (req, res, next) => {
 // Any team member — submits one answer for one question
 // ============================================================
 export const submitAnswer = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated.", 401));
   const userId = req.user._id;
 
   const sessionId = req.params.id;
@@ -203,7 +201,6 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
 // Any team member - gets the session result (score - correctAnswers count - best streak)
 // ============================================================
 export const getSessionResult = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
   const sessionId = req.params.id;
@@ -251,7 +248,6 @@ export const getSessionResult = catchAsync(async (req, res, next) => {
 // Only captains and admins - can end leave
 // ============================================================
 export const abandonSession = catchAsync(async (req, res, next) => {
-  if (!req.user) return next(new AppError("Not Authenticated", 401));
   const userId = req.user._id;
 
   const membership = await TeamMembership.findOne({ userId });

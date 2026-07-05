@@ -7,7 +7,13 @@ import {
   resetPassword,
   signUp,
 } from "../controllers/authController";
-import { getMe, getMyId } from "../controllers/userController";
+import {
+  changePassword,
+  deleteMe,
+  getMe,
+  getMyId,
+  updateMe,
+} from "../controllers/userController";
 
 const userRoutes = express.Router();
 
@@ -19,6 +25,7 @@ userRoutes.patch("/reset-password/:resetToken", resetPassword);
 
 userRoutes.use(protect);
 
-userRoutes.route("/me").get(getMyId, getMe);
-// TODO: will have (GET) getMe, (PATCH) updateMe, (DELETE) deleteMe
+userRoutes.route("/me").get(getMyId, getMe).patch(updateMe).delete(deleteMe);
+userRoutes.route("/me/change-password").patch(changePassword);
+
 export default userRoutes;
