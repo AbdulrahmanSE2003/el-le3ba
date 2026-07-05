@@ -5,7 +5,9 @@ import { redirect } from "next/navigation";
 
 import { ActionState } from "./types";
 
-const API_URL = "http://127.0.0.1:5000/api/v1";
+import { tryCatch } from "@/components/shared/try-catch.ts";
+import { authenticate } from "./auth-service";
+
 
 export async function signIn(
   prevState: ActionState | null,
@@ -14,41 +16,13 @@ export async function signIn(
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
-  let redirectPath: string;
+  const result = await authenticate("users/login", { email, password });
 
-  try {
-    const res = await fetch(`${API_URL}/users/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    if (!res.ok) {
-      const data = await res.json();
-      return {
-        error: data.message || "بيانات غير صحيحة",
-        userData: { email, password },
-      };
-    }
-
-    const resData = await res.json();
-    const token = resData.auth?.token;
-    const role = resData.auth.user.role;
-
-    const cookieStore = await cookies();
-    cookieStore.set("jwt", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 90,
-      path: "/",
-    });
-
-    redirectPath = role === "admin" ? "/admin/dashboard" : "/dashboard";
-  } catch {
-    return { error: "تعذر الاتصال بالخادم" };
+  if (!result.success) {
+    return { error: result.error, userData: result.userData };
   }
 
-  redirect(redirectPath);
+  redirect(result.redirectPath as string);
 }
 
 export async function signup(
@@ -60,36 +34,18 @@ export async function signup(
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
-  try {
-    const res = await fetch(`${API_URL}/users/signup`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, passwordConfirm }),
-    });
+  const result = await authenticate("users/signup", {
+    name,
+    email,
+    password,
+    passwordConfirm,
+  });
 
-    if (!res.ok) {
-      const data = await res.json();
-      return {
-        error: data.message || "فشل إنشاء الحساب",
-        userData: { name, email, password, passwordConfirm },
-      };
-    }
-
-    const resData = await res.json();
-    const token = resData.auth?.token;
-
-    const cookieStore = await cookies();
-    cookieStore.set("jwt", token, {
-      httpOnly: true,
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 90,
-      path: "/",
-    });
-  } catch {
-    return { error: "تعذر الاتصال بالخادم" };
+  if (!result.success) {
+    return { error: result.error, userData: result.userData };
   }
 
-  redirect("/dashboard");
+  redirect(result.redirectPath as string);
 }
 
 export async function forgotPassword(
@@ -98,29 +54,13 @@ export async function forgotPassword(
 ): Promise<ActionState> {
   const email = formData.get("email") as string;
 
-  try {
-    const res = await fetch(`${API_URL}/users/forgot-password`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+  const result = await tryCatch("users/forgot-password", "POST", { email });
 
-    if (!res.ok) {
-      const data = await res.json();
-      return {
-        error: data.message || "فشل إرسال البريد الإلكتروني",
-        userData: { email },
-      };
-    }
-
-    const data = await res.json();
-    return {
-      success: true,
-      message: data.message || "تم إرسال رابط إعادة التعيين بنجاح",
-    };
-  } catch {
-    return { error: "تعذر الاتصال بالخادم" };
+  if (!result.success) {
+    return { error: result.error, userData: result.userData };
   }
+
+  return { success: result.success, message: result.message };
 }
 
 export async function resetPassword(
@@ -131,22 +71,13 @@ export async function resetPassword(
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
-  const res = await fetch(`${API_URL}/users/reset-password/${token}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ password, passwordConfirm }),
+  const result = await tryCatch(`users/reset-password/${token}`, "PATCH", {
+    password,
+    passwordConfirm,
   });
 
-  try {
-    const data = await res.json();
-
-    if (!res.ok) {
-      return {
-        error: data.message || "فشل إعادة تعيين كلمة المرور",
-      };
-    }
-  } catch {
-    return { error: "تعذر الاتصال بالخادم" };
+  if (!result.success) {
+    return { error: result.error };
   }
 
   redirect("/login");
