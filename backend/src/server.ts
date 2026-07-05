@@ -8,6 +8,7 @@ import { connectDB } from "./config/db";
 import { startSessionExpirationJob } from "./jobs/sessionExpiry";
 import { corsOptions } from "./config/cors";
 import { initSocket } from "./socket";
+import { startEventExpirationJob } from "./jobs/eventStatus";
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: corsOptions });
@@ -20,5 +21,6 @@ connectDB().then(() => {
   httpServer.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`🚀 Server running on PORT ${PORT}`);
     startSessionExpirationJob();
+    startEventExpirationJob();
   });
 });
