@@ -46,7 +46,11 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
         })) + 1
       : null;
 
-    resHandler(res, 200, "Leaderboard", { ranking: top50, rank });
+    resHandler(res, 200, "Leaderboard", {
+      results: top50.length,
+      ranking: top50,
+      rank,
+    });
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
       .filter()
