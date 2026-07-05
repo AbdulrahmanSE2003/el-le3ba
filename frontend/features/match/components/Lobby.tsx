@@ -8,13 +8,14 @@ import { useLobbyStore } from "@/store/lobbyStore";
 import { useLobbySocket } from "@/hooks/useLobbySocket";
 
 const Lobby = ({ team }: { team: { team: Team } }) => {
-  const { user } = useUserStore();
+  const { user, isHydrated } = useUserStore();
 
   const { startGame } = useLobbySocket({
     teamId: team.team._id,
-    userId: user?._id || "",
+    userId: user?._id ?? "",
   });
   const { members, error } = useLobbyStore();
+  if (!isHydrated || !user) return null;
 
   if (error) return <div className="text-destructive text-sm">{error}</div>;
 

@@ -5,10 +5,8 @@ import { redirect } from "next/navigation";
 
 import { ActionState } from "./types";
 
-import { tryCatch } from "@/components/shared/try-catch.ts";
+import { tryCatch } from "@/components/shared/try-catch";
 import { authenticate } from "./auth-service";
-
-const API_URL = "http://127.0.0.1:5000/api/v1";
 
 export async function signIn(
   prevState: ActionState | null,
