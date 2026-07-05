@@ -1,13 +1,8 @@
 import { tryCatch } from "@/components/shared/try-catch";
+
 import { cookies } from "next/headers";
 
-type AuthResponse = {
-  success?: boolean;
-  error?: string;
-  userData?: object;
-  redirectPath?: string;
-  message?: string;
-};
+import { AuthResponse } from "./types";
 
 export async function authenticate(
   url: string,

@@ -9,3 +9,12 @@ export interface ActionState {
     passwordConfirm?: string;
   };
 }
+
+export type AuthResponse = {
+  success?: boolean;
+  error?: string;
+  userData?: object;
+  redirectPath?: string;
+  message?: string;
+};
+

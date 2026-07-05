@@ -50,6 +50,7 @@ export default function Input({ label, icon, error, ...props }: InputProps) {
 
         <input
           {...props}
+          required
           id={props.name}
           type={props.type === "password" && showPassword ? "text" : props.type}
           className={`
