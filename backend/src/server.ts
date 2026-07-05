@@ -17,7 +17,7 @@ initSocket(io);
 const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
-  httpServer.listen(PORT, () => {
+  httpServer.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`🚀 Server running on PORT ${PORT}`);
     startSessionExpirationJob();
   });

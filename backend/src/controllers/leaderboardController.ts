@@ -25,6 +25,7 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
   if (req.user.role === "student") {
     // Getting top 50 teams points
     const top50 = await Leaderboard.find({ eventId })
+      .populate("teamId", "teamName teamCode")
       .sort({ totalPoints: -1 })
       .limit(50);
 
