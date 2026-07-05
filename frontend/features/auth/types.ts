@@ -18,4 +18,3 @@ export type AuthResponse = {
   redirectPath?: string;
   message?: string;
 };
-

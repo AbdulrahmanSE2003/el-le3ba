@@ -1,14 +1,11 @@
 "use client";
 
-import { motion, Variants, Transition } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 
 type MotionTag = keyof typeof motion;
 
-type MotionProps = {
+export type MotionProps = {
   as?: MotionTag;
-  duration?: number;
-  delay?: number;
-  type?: Transition["type"];
   variants?: Variants;
   children?: React.ReactNode;
   className?: string;
@@ -19,9 +16,6 @@ type MotionProps = {
 
 export default function Motion({
   as = "div",
-  duration = 0.3,
-  delay = 0,
-  type = "tween",
   variants,
   children,
   ...props
@@ -29,11 +23,7 @@ export default function Motion({
   const Component = (motion[as] ?? motion.div) as React.ElementType;
 
   return (
-    <Component
-      {...props}
-      variants={variants}
-      transition={{ type, duration, delay }}
-    >
+    <Component {...props} variants={variants}>
       {children}
     </Component>
   );
