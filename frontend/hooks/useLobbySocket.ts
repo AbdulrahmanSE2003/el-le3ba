@@ -27,6 +27,8 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     };
     const socket = connectSocket();
 
+    // test for push
+
     if (socket.connected) {
       handleConnect();
     }
