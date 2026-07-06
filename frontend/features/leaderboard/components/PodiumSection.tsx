@@ -2,7 +2,7 @@
 
 import Motion from "@/components/shared/Motion";
 import { fadeInUp } from "@/components/shared/animations";
-import { Crown, Medal, Shield } from "lucide-react";
+import { Crown, Star, Shield } from "lucide-react";
 import { LeaderboardUser } from "../types";
 
 interface PodiumSectionProps {
@@ -16,7 +16,7 @@ export function PodiumSection({ topThree }: PodiumSectionProps) {
   const third = topThree.find((u) => u.rank === 3);
 
   return (
-    <div className="relative bg-card border border-border/60 rounded-3xl p-8 max-w-4xl mx-auto shadow-xl shadow-black/5 overflow-hidden mb-8">
+    <div className="relative bg-card border border-border/60 rounded-3xl p-8 pb-0 max-w-4xl mx-auto shadow-xl shadow-black/5 overflow-hidden mb-8">
       {/* Subtle background tech grid layout for the podium box */}
       <div className="absolute inset-0 bg-[radial-gradient(var(--border)_1px,transparent_1px)] bg-[size:1.5rem_1.5rem] opacity-20 pointer-events-none" />
 
@@ -112,7 +112,7 @@ export function PodiumSection({ topThree }: PodiumSectionProps) {
             </span>
             {/* Podium Base */}
             <div className="w-full h-24 bg-gradient-to-t from-amber-700/10 to-card border-t-2 border-x-2 border-amber-600/30 rounded-t-2xl flex items-center justify-center shadow-inner">
-              <Medal className="h-7 w-7 text-amber-600" />
+              <Star className="h-7 w-7 text-amber-600" />
             </div>
           </Motion>
         )}

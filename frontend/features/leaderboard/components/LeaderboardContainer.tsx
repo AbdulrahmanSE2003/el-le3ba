@@ -1,70 +1,70 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 
-import { useState } from "react";
-import { RotateCw } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { RotateCw, Loader2 } from "lucide-react";
 import Motion from "@/components/shared/Motion";
 import { fadeInUp } from "@/components/shared/animations";
 import { PodiumSection } from "./PodiumSection";
 import { LeaderboardList } from "./LeaderboardList";
 import { LeaderboardUser } from "../types";
+import {
+  fetchCurrentEventId,
+  fetchLeaderboard,
+} from "../api/leaderboardService";
 
-// Premium Initial Mock Data mirroring your exact screenshots structure
-const initialMockData: LeaderboardUser[] = [
-  { rank: 1, name: "فرسان BATU", points: 4850, change: "none" },
-  { rank: 2, name: "الصاعقة", points: 3980, change: "none" },
-  { rank: 3, name: "النخبة", points: 4200, change: "none" },
-  { rank: 4, name: "أبطال الكلية", points: 3750, change: "up", changeValue: 1 },
-  { rank: 5, name: "المتحدون", points: 3600, change: "down", changeValue: 2 },
-  { rank: 6, name: "رياح الشمال", points: 3420, change: "none" },
-  {
-    rank: 7,
-    name: "الفارس الأزرق",
-    points: 3200,
-    change: "up",
-    changeValue: 3,
-  },
-  {
-    rank: 8,
-    name: "أسود المدينة",
-    points: 3100,
-    change: "down",
-    changeValue: 1,
-  },
-  {
-    rank: 9,
-    name: "عباقرة إسكندرية",
-    points: 2950,
-    change: "up",
-    changeValue: 1,
-  },
-  { rank: 10, name: "ذوي الهمم", points: 2900, change: "none" },
-  {
-    rank: 12,
-    name: "فريق النجوم",
-    points: 2800,
-    change: "up",
-    changeValue: 2,
-    isUserTeam: true,
-  },
-];
+// Single state object instead of multiple separate useState calls,
+// so one setState call updates everything at once.
+interface LeaderboardState {
+  data: LeaderboardUser[];
+  isLoading: boolean;
+  isRefreshing: boolean;
+}
+
+const INITIAL_STATE: LeaderboardState = {
+  data: [],
+  isLoading: true,
+  isRefreshing: false,
+};
 
 export function LeaderboardContainer() {
-  const [data] = useState<LeaderboardUser[]>(initialMockData);
-  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [state, setState] = useState<LeaderboardState>(INITIAL_STATE);
 
-  const topThree = data.filter((user) => user.rank <= 3);
-  const remainingUsers = data.filter((user) => user.rank > 3);
+  const loadData = useCallback(async (isRefresh = false) => {
+    if (isRefresh) {
+      setState((prev) => ({ ...prev, isRefreshing: true }));
+    }
 
-  const handleRefresh = () => {
-    setIsRefreshing(true);
-    // Simulate API fetch refresh trigger
-    setTimeout(() => {
-      setIsRefreshing(false);
-    }, 1000);
-  };
+    try {
+      const eventId = await fetchCurrentEventId();
+      const data = await fetchLeaderboard(eventId);
+      setState({ data, isLoading: false, isRefreshing: false });
+    } catch (error) {
+      console.error("Failed to load leaderboard:", error);
+      setState((prev) => ({ ...prev, isLoading: false, isRefreshing: false }));
+    }
+  }, []);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const handleRefresh = () => loadData(true);
+
+  const topThree = state.data.filter((user) => user.rank <= 3);
+  const remainingUsers = state.data.filter((user) => user.rank > 3);
+
+  if (state.isLoading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center gap-3 text-muted-foreground">
+        <Loader2 className="h-8 w-8 animate-spin text-brand" />
+        <p className="text-sm font-medium">جاري تحميل لوحة الصدارة...</p>
+      </div>
+    );
+  }
 
   return (
-    <section className="py-8 bg-background min-h-screen text-foreground px-4 md:px-8 relative overflow-hidden">
+    <section className="bg-background min-h-screen text-foreground px-4 md:px-8 relative overflow-hidden">
       {/* Upper Layout Header */}
       <div className="max-w-4xl mx-auto flex items-center justify-between mb-10">
         <Motion
@@ -90,11 +90,11 @@ export function LeaderboardContainer() {
         {/* Refresh Action Trigger */}
         <button
           onClick={handleRefresh}
-          disabled={isRefreshing}
+          disabled={state.isRefreshing}
           className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-muted-foreground hover:text-brand transition-colors disabled:opacity-50"
         >
           <RotateCw
-            className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+            className={`h-4 w-4 ${state.isRefreshing ? "animate-spin" : ""}`}
           />
           تحديث
         </button>
