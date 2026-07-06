@@ -2,7 +2,7 @@ import MainTitle from "@/components/sidebar/Logo";
 
 export default function AuthLoading() {
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-12">
+    <div className="flex flex-col h-screen items-center justify-center gap-6 py-12">
       {/* Pulsing logo */}
       <div className="animate-pulse">
         <MainTitle />
