@@ -32,7 +32,16 @@ export const getMe = catchAsync(async (req, res, next) => {
       .sort({ completedAt: -1 })
       .limit(5);
 
-    const highestScore = await Session.findOne({
+    const bestStreakSession = await Session.findOne({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("bestStreak")
+      .sort({ bestStreak: -1 });
+
+    const bestStreak = bestStreakSession?.bestStreak ?? 0;
+
+    const highestScoreSession = await Session.findOne({
       teamId: membership.teamId,
       status: "completed",
     })
@@ -40,11 +49,16 @@ export const getMe = catchAsync(async (req, res, next) => {
       .sort({ finalScore: -1 })
       .limit(1);
 
-    resHandler(res, 200, "userData", {
-      user,
+    const highestScore = highestScoreSession?.finalScore ?? 0;
+
+    const userData = {
+      ...user.toObject(),
       lastSessions,
-      highestScore: highestScore?.finalScore ?? 0,
-    });
+      highestScore,
+      bestStreak,
+    };
+
+    resHandler(res, 200, "userData", userData);
   } else {
     resHandler(res, 200, "userData", user);
   }
