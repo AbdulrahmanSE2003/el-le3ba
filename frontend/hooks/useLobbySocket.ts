@@ -21,12 +21,15 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
   useEffect(() => {
     if (!teamId || !userId || userId.trim() === "") return;
 
-    const socket = connectSocket();
-
     const handleConnect = () => {
       setConnected(true);
       socket.emit("join-lobby", { teamId, userId });
     };
+    const socket = connectSocket();
+
+    if (socket.connected) {
+      handleConnect();
+    }
 
     const handleDisconnect = () => {
       setConnected(false);

@@ -12,8 +12,10 @@ export default function Logo({ size = "md" }: MainTitleProps) {
 
   return (
     <div>
-      <h1 className={`text-primary font-black ${sizeClasses[size]} duration-300`}>
-        اللعبـ<span className="text-accent font-black">ة</span>
+      <h1
+        className={`text-primary font-black ${sizeClasses[size]} duration-300`}
+      >
+        اللعبـ<span className="text-accent font-black">ة.</span>
       </h1>
     </div>
   );

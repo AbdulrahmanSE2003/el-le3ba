@@ -1,4 +1,6 @@
+import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
@@ -10,7 +12,20 @@ export const getMyId = catchAsync(async (req, res, next) => {
   next();
 });
 
-export const getMe = getOne(User);
+export const getMe = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user)
+    return next(
+      new AppError("Invalid operation, there is no such a user.", 400),
+    );
+
+  // Getting user team
+  const membership = await TeamMembership.findOne({ userId: req.user._id });
+  if (membership) {
+    // TODO: Getting last 5 matches
+    const last5Sessions = await Session.find({ teamId: membership.teamId });
+  }
+});
 
 export const updateMe = catchAsync(async (req, res, next) => {
   if ("password" in req.body || "passwordConfirm" in req.body) {
