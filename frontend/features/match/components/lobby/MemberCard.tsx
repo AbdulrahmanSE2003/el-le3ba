@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { memo } from "react";
 import { useUserStore } from "@/store/userStore";
 import type { PresenceMember } from "@/lib/socket";
 
@@ -8,7 +9,7 @@ interface MemberCardProps {
   member: PresenceMember;
 }
 
-const MemberCard = ({ member }: MemberCardProps) => {
+const MemberCard = memo(function MemberCard({ member }: MemberCardProps) {
   const { user } = useUserStore();
   const isCurrentUser = user?._id === member.userId;
 
@@ -20,7 +21,6 @@ const MemberCard = ({ member }: MemberCardProps) => {
         (member.role === "captain" ? "border-accent" : "border-border")
       }
     >
-      {/* Avatar */}
       <div
         className={
           "bg-primary/30 border border-primary/50 w-14 h-14 rounded-full " +
@@ -30,7 +30,7 @@ const MemberCard = ({ member }: MemberCardProps) => {
         {member.avatar ? (
           <Image
             unoptimized
-            src={`http://localhost:5000/avatars/${member?.avatar}`}
+            src={`http://localhost:5000/avatars/${member.avatar}`}
             alt={`${member.name} avatar`}
             fill
             className="rounded-full object-cover"
@@ -42,32 +42,24 @@ const MemberCard = ({ member }: MemberCardProps) => {
         )}
       </div>
 
-      {/* Online Status Indicator */}
       <div
         className={`absolute top-2 right-2 w-3 h-3 rounded-full border-2 border-background ${
           member.isOnline ? "bg-green-500" : "bg-gray-400"
         }`}
       />
 
-      {/* Name */}
       <p className="text-sm font-medium capitalize">
         {member.name?.charAt(0)?.toUpperCase() + member.name?.slice(1)}{" "}
         {isCurrentUser ? "(أنت)" : ""}
       </p>
 
-      {/* Captain Badge */}
       {member.role === "captain" && (
-        <span
-          className={
-            "bg-accent/30 border border-accent text-amber-500 " +
-            "dark:text-amber-300 text-xs px-2 rounded-full"
-          }
-        >
+        <span className="bg-accent/30 border border-accent text-amber-500 dark:text-amber-300 text-xs px-2 rounded-full">
           كابتن
         </span>
       )}
     </div>
   );
-};
+});
 
 export default MemberCard;

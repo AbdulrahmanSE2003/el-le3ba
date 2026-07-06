@@ -11,9 +11,14 @@ import { toast } from "sonner";
 interface UseLobbySocketProps {
   teamId: string;
   userId: string;
+  isCaptain: boolean;
 }
 
-export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
+export const useLobbySocket = ({
+  teamId,
+  userId,
+  isCaptain,
+}: UseLobbySocketProps) => {
   const router = useRouter();
   const { setMembers, setConnected, setError, setGameStarted, members } =
     useLobbyStore();
@@ -38,6 +43,15 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     };
 
     const handleTeamPresence = (presenceMembers: PresenceMember[]) => {
+      const prevMembers = useLobbyStore.getState().members;
+
+      for (const member of presenceMembers) {
+        const prev = prevMembers.find((m) => m.userId === member.userId);
+        if (prev && !prev.isOnline && member.isOnline && member.userId !== userId) {
+          toast.success(`${member.name} متصل الآن 🟢`);
+        }
+      }
+
       setMembers(presenceMembers);
     };
 
@@ -55,6 +69,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
         teamId,
         eventId: "",
         sessionExpiresAt: payload.expiresAt,
+        isCaptain,
         questions: payload.questions.map((q) => ({
           _id: q._id,
           question: q.question,
@@ -79,12 +94,12 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     socket.on("game-error", handleGameError);
 
     return () => {
+      socket.emit("leave-lobby", { teamId, userId });
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("team-presence", handleTeamPresence);
       socket.off("game-started", handleGameStarted);
       socket.off("game-error", handleGameError);
-      // Removed disconnectSocket() to keep the engine instance alive through page navigation
     };
   }, [
     teamId,
@@ -95,6 +110,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     setError,
     setGameStarted,
     setGame,
+    isCaptain,
   ]);
 
   const startGame = useCallback(() => {

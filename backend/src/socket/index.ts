@@ -6,89 +6,117 @@ import Session from "../models/sessionModel";
 import Question from "../models/questionModel";
 import { QUESTIONS_PER_SESSION, SESSION_DURATION_MS } from "../constants";
 
-// Track online members: { teamId: Set<userId> }
 const teamOnlineMembers = new Map<string, Set<string>>();
+
+const getPresence = async (teamId: string) => {
+  const members = await TeamMembership.find({ teamId }).populate(
+    "userId",
+    "name avatar",
+  );
+  const onlineIds = teamOnlineMembers.get(teamId) ?? new Set<string>();
+  return members.map((m: any) => ({
+    userId: String(m.userId._id),
+    name: m.userId.name,
+    avatar: m.userId.avatar,
+    role: m.role,
+    isOnline: onlineIds.has(String(m.userId._id)),
+  }));
+};
+
+// ضيف في الأول
+export const broadcastQuestionResult = (
+  io: Server,
+  teamId: string,
+  payload: {
+    questionId: string;
+    correctAnswer: string;
+    isCorrect: boolean;
+    score: number;
+    totalScore: number;
+    currentStreak: number;
+    sessionComplete: boolean;
+    finalScore?: number;
+    correctAnswers?: number;
+    bestStreak?: number;
+    answeredBy?: string;
+    answeredByName?: string;
+  },
+) => {
+  io.to(teamId).emit("question-result", payload);
+
+  if (!payload.sessionComplete) {
+    setTimeout(() => {
+      io.to(teamId).emit("next-question");
+    }, 2000);
+  } else {
+    setTimeout(() => {
+      io.to(teamId).emit("game-ended", {
+        finalScore: payload.finalScore,
+        correctAnswers: payload.correctAnswers,
+        bestStreak: payload.bestStreak,
+      });
+    }, 2000);
+  }
+};
 
 export const initSocket = (io: Server) => {
   io.on("connection", (socket: Socket) => {
-    console.log(`🔌 Socket connected: ${socket.id}`);
-
-    // ── JOIN LOBBY ─────────────────────────────────────────
     socket.on("join-lobby", async ({ teamId, userId }) => {
       try {
-        const stringTeamId = String(teamId);
-        const stringUserId = String(userId);
+        const tid = String(teamId);
+        const uid = String(userId);
 
-        console.log("join-lobby start:", { stringTeamId, stringUserId });
+        socket.join(tid);
+        socket.data.teamId = tid;
+        socket.data.userId = uid;
 
-        socket.join(stringTeamId);
-        socket.data.teamId = stringTeamId;
-        socket.data.userId = stringUserId;
-
-        if (!teamOnlineMembers.has(stringTeamId)) {
-          teamOnlineMembers.set(stringTeamId, new Set());
+        if (!teamOnlineMembers.has(tid)) {
+          teamOnlineMembers.set(tid, new Set());
         }
-        teamOnlineMembers.get(stringTeamId)!.add(stringUserId);
+        teamOnlineMembers.get(tid)!.add(uid);
 
-        console.log("before DB query");
-
-        const members = await TeamMembership.find({
-          teamId: stringTeamId,
-        }).populate("userId", "name avatar");
-
-        console.log("after DB query, members count:", members.length);
-
-        const onlineIds = teamOnlineMembers.get(stringTeamId) || new Set();
-        const presence = members.map((m: any) => ({
-          userId: m.userId._id,
-          name: m.userId.name,
-          avatar: m.userId.avatar,
-          role: m.role,
-          isOnline: onlineIds.has(String(m.userId._id)),
-        }));
-
-        io.to(stringTeamId).emit("team-presence", presence);
-        console.log("team-presence emitted");
+        const presence = await getPresence(tid);
+        io.to(tid).emit("team-presence", presence);
       } catch (err) {
         console.error("join-lobby error:", err);
-        socket.emit("game-error", { message: "Failed to join lobby." });
       }
     });
 
-    // ── START GAME (captain only) ──────────────────────────
+    socket.on("leave-lobby", async ({ teamId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+        teamOnlineMembers.get(tid)?.delete(uid);
+        const presence = await getPresence(tid);
+        io.to(tid).emit("team-presence", presence);
+      } catch (err) {
+        console.error("leave-lobby error:", err);
+      }
+    });
+
     socket.on("start-game", async ({ teamId, userId }) => {
       try {
-        const stringTeamId = String(teamId);
-        const stringUserId = String(userId);
+        const tid = String(teamId);
+        const uid = String(userId);
 
-        const team = await Team.findOne({ teamLeader: stringUserId });
-        if (!team || team._id.toString() !== stringTeamId) {
-          socket.emit("game-error", {
-            message: "Only the captain can start the game.",
-          });
-          return;
-        }
-
-        const memberCount = await TeamMembership.countDocuments({
-          teamId: stringTeamId,
-        });
-        if (memberCount < 2) {
-          socket.emit("game-error", { message: "Minimum 2 members required." });
+        const team = await Team.findOne({ teamLeader: uid });
+        if (!team || team._id.toString() !== tid) {
+          socket.emit("game-error", { message: "أنت مش الكابتن." });
           return;
         }
 
         const event = await Event.findOne({ status: "running" });
         if (!event) {
-          socket.emit("game-error", { message: "No running event right now." });
+          socket.emit("game-error", { message: "مفيش ايفنت شغال دلوقتي." });
           return;
         }
 
         const attemptCount = await Session.countDocuments({
-          teamId: stringTeamId,
+          teamId: tid,
           eventId: event._id,
         });
         if (attemptCount >= event.maxAttempts) {
-          socket.emit("game-error", { message: "No attempts remaining." });
+          socket.emit("game-error", { message: "خلصت المحاولات." });
           return;
         }
 
@@ -101,27 +129,26 @@ export const initSocket = (io: Server) => {
         );
 
         const session = await Session.create({
-          teamId: stringTeamId,
+          teamId: tid,
           eventId: event._id,
           questions: questions.map((q) => q._id),
           startedAt: new Date(),
           expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
         });
 
-        io.to(stringTeamId).emit("game-started", {
-          sessionId: session._id,
-          teamId: stringTeamId,
-          eventId: event._id,
+        io.to(tid).emit("game-started", {
+          sessionId: String(session._id),
+          teamId: tid,
+          eventId: String(event._id),
           questions: questionsForClient,
           expiresAt: session.expiresAt,
         });
       } catch (err) {
-        console.error(err);
-        socket.emit("game-error", { message: "Failed to start game." });
+        console.error("start-game error:", err);
+        socket.emit("game-error", { message: "حصل خطأ، حاول تاني." });
       }
     });
 
-    // ── ANSWER BROADCAST ───────────────────────────────────
     socket.on(
       "answer-submitted",
       ({
@@ -144,43 +171,58 @@ export const initSocket = (io: Server) => {
       },
     );
 
-    // ── DISCONNECT ─────────────────────────────────────────
     socket.on("disconnect", () => {
-      const { teamId, userId } = socket.data;
-      if (!teamId || !userId) return;
+      const tid = socket.data.teamId as string | undefined;
+      const uid = socket.data.userId as string | undefined;
+      if (!tid || !uid) return;
 
-      const stringTeamId = String(teamId);
-      const stringUserId = String(userId);
-
-      // Delay execution to account for page changes and rapid reconnection
       setTimeout(async () => {
-        // Check if the user successfully reconnected or joined from another tab/page
-        const currentSockets = await io.in(stringTeamId).fetchSockets();
-        const isUserStillInRoom = currentSockets.some(
-          (s) => String(s.data.userId) === stringUserId,
-        );
+        try {
+          const sockets = await io.in(tid).fetchSockets();
+          const stillConnected = sockets.some(
+            (s) => String(s.data.userId) === uid,
+          );
+          if (stillConnected) return;
 
-        if (isUserStillInRoom) {
-          return; // Skip cleanup and event emit because user is still connected
+          teamOnlineMembers.get(tid)?.delete(uid);
+          const presence = await getPresence(tid);
+          io.to(tid).emit("team-presence", presence);
+        } catch (err) {
+          console.error("disconnect cleanup error:", err);
+        }
+      }, 2000);
+    });
+
+    socket.on("abandon-game", async ({ teamId, sessionId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+
+        const team = await Team.findOne({ teamLeader: uid });
+        if (!team || team._id.toString() !== tid) {
+          socket.emit("game-error", {
+            message: "فقط الكابتن يمكنه إنهاء الجلسة.",
+          });
+          return;
         }
 
-        teamOnlineMembers.get(stringTeamId)?.delete(stringUserId);
-
-        const members = await TeamMembership.find({
-          teamId: stringTeamId,
-        }).populate("userId", "name avatar");
-
-        const onlineIds = teamOnlineMembers.get(stringTeamId) || new Set();
-        const presence = members.map((m: any) => ({
-          userId: m.userId._id,
-          name: m.userId.name,
-          avatar: m.userId.avatar,
-          role: m.role,
-          isOnline: onlineIds.has(String(m.userId._id)),
-        }));
-
-        io.to(stringTeamId).emit("team-presence", presence);
-      }, 1000);
+        const session = await Session.findById(sessionId);
+        if (session && session.status === "running") {
+          session.status = "completed";
+          session.endReason = "abandoned";
+          session.completedAt = new Date();
+          session.finalScore = 0;
+          await session.save();
+        }
+        io.to(tid).emit("game-ended", {
+          abandoned: true,
+          finalScore: 0,
+          correctAnswers: 0,
+          bestStreak: 0,
+        });
+      } catch (err) {
+        console.error("abandon-game error:", err);
+      }
     });
   });
 };

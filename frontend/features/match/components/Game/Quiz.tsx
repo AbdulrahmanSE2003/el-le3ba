@@ -11,16 +11,16 @@ import { useRouter } from "next/navigation";
 
 export default function Quiz() {
   const { phase, setPhase } = useGameFlow();
-  const { resetGame, sessionExpiresAt, sessionId } = useGameStore();
+  const { resetGame, sessionExpiresAt } = useGameStore();
   const router = useRouter();
 
   useEffect(() => {
     if (phase !== "question") return;
     if (sessionExpiresAt && Date.now() > new Date(sessionExpiresAt).getTime()) {
       resetGame();
-      router.replace(`/match/result/${sessionId}`);
+      router.replace(`/team`);
     }
-  }, [phase, sessionExpiresAt, sessionId, resetGame, router]);
+  }, [phase, sessionExpiresAt, resetGame, router]);
 
   return (
     <>

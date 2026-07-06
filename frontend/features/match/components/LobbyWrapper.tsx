@@ -1,14 +1,13 @@
-import Lobby from "@/features/match/components/Lobby";
+import Lobby from "@/features/match/components/lobby/Lobby";
+import EventInfo from "@/features/match/components/lobby/EventInfo";
+import TeamStatsPreview from "@/features/match/components/lobby/TeamStatsPreview";
 import { apiServer } from "@/lib/apiServer";
-import { Event, Team, Member } from "@/features/match/types";
-
-import TeamStatsPreview from "./TeamStatsPreview";
+import type { Event, Team, Member } from "@/features/match/types";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AxiosError } from "axios";
 import NoTeam from "@/components/shared/NoTeam";
 
-// ─── Types for API responses ───────────────────────────────────────
 interface TeamApiResponse {
   status: boolean;
   team: {
@@ -21,6 +20,7 @@ interface EventApiResponse {
   status: boolean;
   event: Event;
 }
+
 interface AttemptsApiResponse {
   status: boolean;
   attempts: {
@@ -44,7 +44,6 @@ const LobbyWrapper = async () => {
   } catch (error) {
     if (error instanceof AxiosError) {
       const message = error.response?.data?.message;
-
       if (
         error.response?.status === 400 &&
         message === "You are not in a team."
@@ -52,7 +51,6 @@ const LobbyWrapper = async () => {
         return <NoTeam />;
       }
     }
-
     throw error;
   }
 
@@ -63,19 +61,11 @@ const LobbyWrapper = async () => {
 
   const { attempts } = teamAttempts?.data?.attempts;
   const attemptsLeft = event.maxAttempts - attempts;
+
   return (
     <>
-      {/* Event Info */}
-      <div className="w-full flex items-center justify-end gap-3">
-        <div className="bg-accent/30 border border-accent rounded-full px-3 py-1 text-xs text-amber-500 dark:text-amber-300">
-          {attemptsLeft} محاولات متبقية
-        </div>
-        <div className="text-foreground text-sm">{event.title}</div>
-      </div>
-
-      <Lobby team={{ team: teamData.team }} />
-
-      {/* Team Stats */}
+      <EventInfo attemptsLeft={attemptsLeft} eventTitle={event.title} />
+      <Lobby team={teamData.team} />
       <Suspense
         fallback={
           <Skeleton className="h-32 rounded-lg bg-transparent w-full grid md:grid-cols-2 gap-3">

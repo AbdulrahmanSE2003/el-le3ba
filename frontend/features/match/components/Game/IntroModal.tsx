@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -7,12 +8,17 @@ interface Props {
 }
 
 export default function IntroModal({ onStart }: Props) {
+  useEffect(() => {
+    const timer = setTimeout(onStart, 3000);
+    return () => clearTimeout(timer);
+  }, [onStart]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md"
+      className="fixed inset-0 z-99 flex items-center justify-center bg-black/80 backdrop-blur-md"
     >
       <motion.div
         initial={{ scale: 0.7, opacity: 0, y: 30 }}
@@ -43,20 +49,6 @@ export default function IntroModal({ onStart }: Props) {
           <br />
           السرعة بتفرق في النتيجة النهائية.
         </p>
-
-        <motion.button
-          whileHover={{
-            scale: 1.05,
-          }}
-          whileTap={{
-            scale: 0.96,
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          onClick={onStart}
-          className="w-full cursor-pointer rounded-xl bg-primary py-4 text-lg font-semibold text-white"
-        >
-          ابدأ التحدي
-        </motion.button>
       </motion.div>
     </motion.div>
   );

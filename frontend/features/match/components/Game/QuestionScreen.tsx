@@ -1,9 +1,9 @@
+/* eslint-disable react-hooks/purity */
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import axios from "axios";
 
 import { useGameStore } from "@/store/gameStore";
 import { submitAnswer } from "../../api";
@@ -17,9 +17,9 @@ import OptionButton from "./OptionButton";
 import ProgressBar from "./ProgressBar";
 import ResultOverlay from "./ResultOverlay";
 import SessionExpiredOverlay from "./SessionExpiredOverlay";
-import { Button } from "@/components/ui/button";
-import api from "@/lib/axios";
-import { AlertModal } from "@/components/shared/AlertModal";
+import { useGameSocket } from "@/hooks/useGameSocket";
+import { useUserStore } from "@/store/userStore";
+import AbandonButton from "../game/AbandonButton";
 
 export default function QuestionScreen() {
   const {
@@ -30,12 +30,16 @@ export default function QuestionScreen() {
     totalScore,
     currentStreak,
     lastAnswer,
-    nextQuestion,
-    setLastAnswer,
+    lockedQuestionId,
+    setLockedQuestionId,
     restoreGame,
     resetGame,
+    teamId,
+    isCaptain,
   } = useGameStore();
+  useGameSocket({ teamId: teamId ?? "", sessionId: sessionId ?? "" });
 
+  const user = useUserStore((s) => s.user);
   const router = useRouter();
   const restoredRef = useRef(false);
   const lockRef = useRef(false);
@@ -46,7 +50,7 @@ export default function QuestionScreen() {
       restoredRef.current = true;
       const ok = restoreGame();
       if (!ok) {
-        router.replace("/profile");
+        router.replace("/dashboard");
       }
     }
   }, [sessionId, restoreGame, router]);
@@ -54,29 +58,36 @@ export default function QuestionScreen() {
   // ── Per-question state ──────────────────────────────
   const question = questions[currentIndex];
   const [answered, setAnswered] = useState(false);
-  const [overlay, setOverlay] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
   const startTimeRef = useRef(0);
-  const [showModal, setShowModal] = useState(false);
 
   // Reset per-question state when question changes
   useEffect(() => {
+    setLockedQuestionId(null);
     lockRef.current = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAnswered(false);
     setError(null);
     setInputValue("");
     startTimeRef.current = Date.now();
-  }, [question?._id]);
+  }, [question?._id, setLockedQuestionId]);
+
+  // Lock question when a teammate answers (answer-locked socket event)
+  useEffect(() => {
+    if (lockedQuestionId && lockedQuestionId === question?._id) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setAnswered(true);
+      lockRef.current = true;
+    }
+  }, [lockedQuestionId, question?._id]);
 
   // ── Session timer (5 min total) ─────────────────────
   const { sessionTimeLeft, sessionExpired } = useSessionTimer({
     sessionExpiresAt,
     onExpire: () => {
-      const id = sessionId;
       resetGame();
-      router.replace(`/match/result/${id}`);
+      router.replace(`/team`);
     },
   });
 
@@ -87,7 +98,6 @@ export default function QuestionScreen() {
     setAnswered(true);
     setError(null);
 
-    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const timeTaken = Math.max(
       0,
@@ -98,32 +108,13 @@ export default function QuestionScreen() {
     );
 
     try {
-      const res = await submitAnswer(
-        sessionId ?? "",
-        question._id,
-        answer || " ",
-        timeTaken,
-      );
-      setLastAnswer(res);
-      setOverlay(true);
-
-      setTimeout(() => {
-        setOverlay(false);
-        if (res.sessionComplete) {
-          const id = sessionId;
-          router.replace(`/match/result/${id}`);
-          return;
-        }
-        nextQuestion();
-      }, 2000);
+      // بعت الإجابة HTTP — النتيجة هتيجي عبر socket للكل
+      await submitAnswer(sessionId!, question._id, answer || " ", timeTaken);
+      // ← مش بنعمل nextQuestion هنا — الـ socket هيعمله
     } catch (err: unknown) {
-      let msg = "حدث خطأ في الإرسال";
-      if (axios.isAxiosError(err)) {
-        msg =
-          err.response?.data?.message ??
-          (err.response?.data as Record<string, string>)?.message ??
-          msg;
-      }
+      const msg =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ?? "حدث خطأ في الإرسال";
 
       const isTerminal =
         msg.includes("expired") ||
@@ -131,25 +122,21 @@ export default function QuestionScreen() {
         msg.includes("already answered");
 
       if (isTerminal) {
-        const id = sessionId;
         resetGame();
-        router.replace(`/match/result/${id}`);
+        router.replace(`/team`);
+        return;
+      }
+
+      // لو already answered يعني حد تاني في الفريق جاوب قبله
+      // مش error — الـ socket هيجيب النتيجة
+      if (msg.includes("already answered")) {
+        lockRef.current = false;
         return;
       }
 
       setError(msg);
       lockRef.current = false;
       setAnswered(false);
-    }
-  };
-
-  const handleAbandon = async () => {
-    try {
-      const res = await api.post(`/sessions/${sessionId}/abandon`);
-      console.log(res);
-      redirect("/match");
-    } catch (error) {
-      throw error;
     }
   };
 
@@ -180,7 +167,7 @@ export default function QuestionScreen() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className={`relative`}
+          // className={`relative`}
         >
           <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 ">
             <Header
@@ -245,34 +232,26 @@ export default function QuestionScreen() {
               </div>
             )}
             <ProgressBar current={currentIndex} total={questions.length} />
-            <Button
-              variant="destructive"
-              onClick={() => setShowModal(true)}
-              className="absolute bottom-4 left-4 cursor-pointer px-5 py-5 text-md"
-            >
-              انسحب من الماتش
-            </Button>
-            <AlertModal
-              open={showModal}
-              onOpenChange={setShowModal}
-              title="الانسحاب من الماتش"
-              description="سيتم إنهاء الجلسة ولن تتمكن من استكمال اللعبة. هل أنت متأكد؟"
-              confirmText="انسحاب"
-              cancelText="إلغاء"
-              onConfirm={handleAbandon}
-            />
+            {isCaptain && user && (
+              <AbandonButton
+                teamId={teamId}
+                sessionId={sessionId}
+                userId={user._id}
+              />
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
 
       <ResultOverlay
-        open={overlay}
+        open={!!lastAnswer}
         isCorrect={lastAnswer?.isCorrect ?? false}
         timeout={!lastAnswer?.isCorrect && time <= 0}
         score={lastAnswer?.score ?? 0}
         totalScore={totalScore}
         streak={currentStreak}
         correctAnswer={lastAnswer?.correctAnswer}
+        answeredByName={lastAnswer?.answeredByName ?? ""}
       />
 
       <SessionExpiredOverlay open={sessionExpired} />

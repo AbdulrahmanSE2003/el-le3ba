@@ -19,6 +19,7 @@ import {
   STREAK_BONUS,
   STREAK_MILESTONE,
 } from "../constants";
+import { broadcastQuestionResult } from "../socket";
 
 // ============================================================
 // POST /sessions/start
@@ -121,6 +122,12 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
   if (alreadyAnswered)
     return next(new AppError("Question already answered.", 400));
 
+  // ── Lock other team members immediately ─────────────────
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("answer-locked", { questionId });
+  }
+
   // ── 4. Fetch question to check answer ─────────────────────
   const question = await Question.findById(questionId).select(
     "correctAnswer duration",
@@ -170,29 +177,57 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
   const isLastQuestion = session.answerLogs.length === session.questions.length;
 
   if (!isLastQuestion) {
-    // Not last — just save and return result
     await session.save();
-    return resHandler(res, 200, "answerDetails", {
+
+    const result = {
+      questionId,
+      correctAnswer: question.correctAnswer,
       isCorrect,
       score,
       totalScore: session.answerLogs.reduce((sum, log) => sum + log.score, 0),
       currentStreak: session.currentStreak,
-      correctAnswer: question.correctAnswer,
       sessionComplete: false,
+      answeredBy: String(userId),
+      answeredByName: req.user.name,
+    };
+
+    // broadcast for the whole team
+    // const io = req.app.get("io");
+    if (io) {
+      broadcastQuestionResult(io, String(session.teamId), result);
+    }
+
+    return resHandler(res, 200, "answerDetails", {
+      ...result,
+      alreadyAnswered: false,
     });
   }
 
-  // ── 8. Last question — finalize session ────────────────────
+  // ── Last question ──
   await finalizeSession(session, "completed");
 
-  resHandler(res, 200, "answerDetails", {
+  const result = {
+    questionId,
+    correctAnswer: question.correctAnswer,
     isCorrect,
     score,
+    totalScore: session.finalScore,
     currentStreak: session.currentStreak,
     sessionComplete: true,
     finalScore: session.finalScore,
     correctAnswers: session.correctAnswers,
     bestStreak: session.bestStreak,
+    answeredBy: String(userId),
+    answeredByName: req.user.name,
+  };
+
+  if (io) {
+    broadcastQuestionResult(io, String(session.teamId), result);
+  }
+
+  resHandler(res, 200, "answerDetails", {
+    ...result,
+    alreadyAnswered: false,
   });
 });
 
@@ -274,7 +309,16 @@ export const abandonSession = catchAsync(async (req, res, next) => {
 
   await session.save();
 
-  // resHandler(res, 200, "session", session);
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("game-ended", {
+      abandoned: true,
+      finalScore: 0,
+      correctAnswers: 0,
+      bestStreak: 0,
+    });
+  }
+
   res.status(200).json({ status: true });
 });
 

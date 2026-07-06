@@ -18,6 +18,7 @@ export interface LastAnswer {
   currentStreak: number;
   correctAnswer?: string;
   sessionComplete: boolean;
+  answeredByName?: string;
 }
 
 const STORAGE_KEY = "el-le3ba-game";
@@ -43,6 +44,8 @@ interface GameState {
   totalScore: number;
   currentStreak: number;
   lastAnswer: LastAnswer | null;
+  lockedQuestionId: string | null;
+  isCaptain: boolean;
 
   setGame: (payload: {
     sessionId: string;
@@ -50,9 +53,11 @@ interface GameState {
     eventId: string;
     sessionExpiresAt: string;
     questions: GameQuestion[];
+    isCaptain?: boolean;
   }) => void;
   nextQuestion: () => void;
   setLastAnswer: (answer: LastAnswer) => void;
+  setLockedQuestionId: (id: string | null) => void;
   restoreGame: () => boolean;
   resetGame: () => void;
   getTeamId: () => string | null;
@@ -120,8 +125,17 @@ export const useGameStore = create<GameState>((set, get) => ({
   totalScore: 0,
   currentStreak: 0,
   lastAnswer: null,
+  lockedQuestionId: null,
+  isCaptain: false,
 
-  setGame: ({ sessionId, teamId, eventId, sessionExpiresAt, questions }) => {
+  setGame: ({
+    sessionId,
+    teamId,
+    eventId,
+    sessionExpiresAt,
+    questions,
+    isCaptain = false,
+  }) => {
     const state = {
       sessionId,
       teamId,
@@ -132,6 +146,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       totalScore: 0,
       currentStreak: 0,
       lastAnswer: null,
+      lockedQuestionId: null,
+      isCaptain,
     };
     set(state);
     persist({ ...get(), ...state });
@@ -153,6 +169,10 @@ export const useGameStore = create<GameState>((set, get) => ({
     });
   },
 
+  setLockedQuestionId: (id) => {
+    set({ lockedQuestionId: id });
+  },
+
   restoreGame: () => {
     const saved = loadPersisted();
     if (!saved) return false;
@@ -172,6 +192,8 @@ export const useGameStore = create<GameState>((set, get) => ({
       totalScore: 0,
       currentStreak: 0,
       lastAnswer: null,
+      lockedQuestionId: null,
+      isCaptain: false,
     });
   },
 

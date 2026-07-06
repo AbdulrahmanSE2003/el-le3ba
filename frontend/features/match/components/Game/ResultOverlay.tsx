@@ -11,6 +11,7 @@ interface ResultOverlayProps {
   totalScore: number;
   streak: number;
   correctAnswer?: string;
+  answeredByName?: string;
 }
 
 export default function ResultOverlay({
@@ -21,6 +22,7 @@ export default function ResultOverlay({
   totalScore,
   streak,
   correctAnswer,
+  answeredByName,
 }: ResultOverlayProps) {
   const success = isCorrect && !timeout;
 
@@ -81,6 +83,12 @@ export default function ResultOverlay({
                   ? "حاول تجاوب أسرع في السؤال الجاي."
                   : "مش مشكلة ، هنعوض في الفاينال 😶"}
             </p>
+
+            {answeredByName && !timeout && (
+              <p className="mt-1 text-md text-muted-foreground" dir="rtl">
+                أجاب: <span className="text-accent">{answeredByName}</span>
+              </p>
+            )}
 
             {success ? (
               <motion.div

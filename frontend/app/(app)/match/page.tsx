@@ -1,4 +1,4 @@
-import LobbySkeleton from "@/features/match/components/LobbySkeleton";
+import LobbySkeleton from "@/features/match/components/lobby/LobbySkeleton";
 import LobbyWrapper from "@/features/match/components/LobbyWrapper";
 import { Suspense } from "react";
 

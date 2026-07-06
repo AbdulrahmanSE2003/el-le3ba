@@ -23,7 +23,18 @@ export const getMe = catchAsync(async (req, res, next) => {
   const membership = await TeamMembership.findOne({ userId: req.user._id });
   if (membership) {
     // TODO: Getting last 5 matches
-    const last5Sessions = await Session.find({ teamId: membership.teamId });
+    const last5Sessions = await Session.find({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("eventId finalScore correctAnswers bestStreak endReason")
+      .populate("eventId", "title")
+      .sort({ completedAt: -1 })
+      .limit(5);
+
+    resHandler(res, 200, "userData", { user, last5Sessions });
+  } else {
+    resHandler(res, 200, "userData", user);
   }
 });
 
