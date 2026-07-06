@@ -1,22 +1,16 @@
-interface MainTitleProps {
-  size?: "sm" | "md" | "lg" | "xs";
-}
+import Image from "next/image";
 
-export default function Logo({ size = "md" }: MainTitleProps) {
-  const sizeClasses = {
-    xs: "text-sm",
-    sm: "text-3xl",
-    md: "text-4xl",
-    lg: "text-5xl",
-  };
-
+export default function Logo({ isCollapsed }: { isCollapsed?: boolean }) {
   return (
-    <div>
-      <h1
-        className={`text-primary font-black ${sizeClasses[size]} duration-300`}
-      >
-        اللعبـ<span className="text-accent font-black">ة.</span>
-      </h1>
+    <div className="flex items-center select-none">
+      <div className="relative h-11 w-11">
+        <Image src="/logo_sympol.png" alt="اللعبة" fill priority />
+      </div>
+      {!isCollapsed && (
+        <span className="text-xl font-black tracking-tight text-primary">
+          اللعبة <span className={`text-accent text-2xl`}>.</span>
+        </span>
+      )}
     </div>
   );
 }

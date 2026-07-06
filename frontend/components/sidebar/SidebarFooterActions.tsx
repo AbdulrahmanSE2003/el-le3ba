@@ -50,7 +50,13 @@ export function SidebarFooterActions({ className }: Props) {
           title={theme === "dark" ? "الوضع الفاتح" : "الوضع الداكن"}
           onclick={toggleTheme}
           icon={theme === "dark" ? <Sun className="text-accent" /> : <Moon />}
-          className={`${theme === "dark" ? "bg-black text-white hover:bg-black hover:text-accent" : "bg-black text-white hover:bg-black/90"}`}
+          className="
+            dark:bg-sidebar-accent
+            bg-foreground/90
+            hover:bg-foreground
+            text-sidebar-foreground
+            dark:hover:bg-sidebar-accent/80
+          "
         />
 
         <SidebarFooterBtn
@@ -58,7 +64,7 @@ export function SidebarFooterActions({ className }: Props) {
           tooltip="تسجيل الخروج"
           icon={<LogOut className="text-red-800" />}
           onclick={logout}
-          className="bg-red-500 hover:bg-red-500/90 mt-2"
+          className="text-red-500 bg-red-500/15 hover:bg-red-500/20 mt-2"
         />
       </SidebarMenu>
     </SidebarFooter>

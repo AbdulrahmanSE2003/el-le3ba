@@ -21,10 +21,10 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isCollapsed = state === "collapsed";
 
   return (
-    <SidebarHeader className="pb-3 overflow-hidden border-b">
+    <SidebarHeader className=" overflow-hidden border-b">
       <Link
         href={href}
-        className="flex justify-center items-center duration-300 p-3"
+        className="flex justify-center items-center duration-300"
       >
         <Motion
           as="div"
@@ -32,7 +32,7 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
           initial="hidden"
           animate="visible"
         >
-          <Logo size={isCollapsed ? "xs" : "sm"} />
+          <Logo isCollapsed={isCollapsed} />
         </Motion>
       </Link>
     </SidebarHeader>
