@@ -13,7 +13,7 @@ export const getMyId = catchAsync(async (req, res, next) => {
 });
 
 export const getMe = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).select("-role");
   if (!user)
     return next(
       new AppError("Invalid operation, there is no such a user.", 400),
@@ -22,8 +22,8 @@ export const getMe = catchAsync(async (req, res, next) => {
   // Getting user team
   const membership = await TeamMembership.findOne({ userId: req.user._id });
   if (membership) {
-    // TODO: Getting last 5 matches
-    const last5Sessions = await Session.find({
+    // NOTE Getting last 5 sessions
+    const lastSessions = await Session.find({
       teamId: membership.teamId,
       status: "completed",
     })
@@ -32,7 +32,19 @@ export const getMe = catchAsync(async (req, res, next) => {
       .sort({ completedAt: -1 })
       .limit(5);
 
-    resHandler(res, 200, "userData", { user, last5Sessions });
+    const highestScore = await Session.findOne({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("finalScore")
+      .sort({ finalScore: -1 })
+      .limit(1);
+
+    resHandler(res, 200, "userData", {
+      user,
+      lastSessions,
+      highestScore: highestScore?.finalScore ?? 0,
+    });
   } else {
     resHandler(res, 200, "userData", user);
   }

@@ -16,9 +16,6 @@ export interface IUser extends Document {
   passwordChangedAt?: Date;
   totalScore: number;
   gamesPlayed: number;
-  gamesWon: number;
-  currentStreak: number;
-  bestStreak: number;
   correctPassword(candidatePassword: string): Promise<boolean>;
   createPasswordResetToken(): string;
 }
@@ -76,9 +73,6 @@ const userSchema = new mongoose.Schema<IUser>(
 
     totalScore: { type: Number, default: 0 },
     gamesPlayed: { type: Number, default: 0 },
-    gamesWon: { type: Number, default: 0 },
-    currentStreak: { type: Number, default: 0 },
-    bestStreak: { type: Number, default: 0 },
 
     passwordResetToken: { type: String, select: false },
     passwordResetExpires: { type: Date },
