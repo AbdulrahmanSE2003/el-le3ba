@@ -15,66 +15,76 @@ export const initSocket = (io: Server) => {
 
     // ── JOIN LOBBY ─────────────────────────────────────────
     socket.on("join-lobby", async ({ teamId, userId }) => {
-      // Add to room
-      socket.join(teamId);
-      socket.data.teamId = teamId;
-      socket.data.userId = userId;
+      try {
+        const stringTeamId = String(teamId);
+        const stringUserId = String(userId);
 
-      // Track online
-      if (!teamOnlineMembers.has(teamId)) {
-        teamOnlineMembers.set(teamId, new Set());
+        console.log("join-lobby start:", { stringTeamId, stringUserId });
+
+        socket.join(stringTeamId);
+        socket.data.teamId = stringTeamId;
+        socket.data.userId = stringUserId;
+
+        if (!teamOnlineMembers.has(stringTeamId)) {
+          teamOnlineMembers.set(stringTeamId, new Set());
+        }
+        teamOnlineMembers.get(stringTeamId)!.add(stringUserId);
+
+        console.log("before DB query");
+
+        const members = await TeamMembership.find({
+          teamId: stringTeamId,
+        }).populate("userId", "name avatar");
+
+        console.log("after DB query, members count:", members.length);
+
+        const onlineIds = teamOnlineMembers.get(stringTeamId) || new Set();
+        const presence = members.map((m: any) => ({
+          userId: m.userId._id,
+          name: m.userId.name,
+          avatar: m.userId.avatar,
+          role: m.role,
+          isOnline: onlineIds.has(String(m.userId._id)),
+        }));
+
+        io.to(stringTeamId).emit("team-presence", presence);
+        console.log("team-presence emitted");
+      } catch (err) {
+        console.error("join-lobby error:", err);
+        socket.emit("game-error", { message: "Failed to join lobby." });
       }
-      teamOnlineMembers.get(teamId)!.add(String(userId));
-
-      // Get all team members
-      const members = await TeamMembership.find({ teamId }).populate(
-        "userId",
-        "name avatar",
-      );
-
-      // Build presence list
-      const onlineIds = teamOnlineMembers.get(teamId) || new Set();
-      const presence = members.map((m: any) => ({
-        userId: m.userId._id,
-        name: m.userId.name,
-        avatar: m.userId.avatar,
-        role: m.role,
-        isOnline: onlineIds.has(String(m.userId._id)),
-      }));
-
-      // Broadcast to whole room
-      io.to(teamId).emit("team-presence", presence);
     });
 
     // ── START GAME (captain only) ──────────────────────────
     socket.on("start-game", async ({ teamId, userId }) => {
       try {
-        // Verify captain
-        const team = await Team.findOne({ teamLeader: userId });
-        if (!team || team._id.toString() !== teamId) {
+        const stringTeamId = String(teamId);
+        const stringUserId = String(userId);
+
+        const team = await Team.findOne({ teamLeader: stringUserId });
+        if (!team || team._id.toString() !== stringTeamId) {
           socket.emit("game-error", {
             message: "Only the captain can start the game.",
           });
           return;
         }
 
-        // Verify member count
-        const memberCount = await TeamMembership.countDocuments({ teamId });
+        const memberCount = await TeamMembership.countDocuments({
+          teamId: stringTeamId,
+        });
         if (memberCount < 2) {
           socket.emit("game-error", { message: "Minimum 2 members required." });
           return;
         }
 
-        // Verify running event
         const event = await Event.findOne({ status: "running" });
         if (!event) {
           socket.emit("game-error", { message: "No running event right now." });
           return;
         }
 
-        // Verify attempts remaining
         const attemptCount = await Session.countDocuments({
-          teamId,
+          teamId: stringTeamId,
           eventId: event._id,
         });
         if (attemptCount >= event.maxAttempts) {
@@ -82,7 +92,6 @@ export const initSocket = (io: Server) => {
           return;
         }
 
-        // Pick random questions
         const questions = await Question.aggregate([
           { $sample: { size: QUESTIONS_PER_SESSION } },
         ]);
@@ -91,19 +100,17 @@ export const initSocket = (io: Server) => {
           ({ correctAnswer, ...rest }) => rest,
         );
 
-        // Create session
         const session = await Session.create({
-          teamId,
+          teamId: stringTeamId,
           eventId: event._id,
           questions: questions.map((q) => q._id),
           startedAt: new Date(),
           expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
         });
 
-        // Emit to ALL team members
-        io.to(teamId).emit("game-started", {
+        io.to(stringTeamId).emit("game-started", {
           sessionId: session._id,
-          teamId,
+          teamId: stringTeamId,
           eventId: event._id,
           questions: questionsForClient,
           expiresAt: session.expiresAt,
@@ -115,8 +122,6 @@ export const initSocket = (io: Server) => {
     });
 
     // ── ANSWER BROADCAST ───────────────────────────────────
-    // After any member submits an answer via REST API,
-    // frontend emits this to sync all team members
     socket.on(
       "answer-submitted",
       ({
@@ -128,7 +133,7 @@ export const initSocket = (io: Server) => {
         score,
         currentStreak,
       }) => {
-        io.to(teamId).emit("answer-update", {
+        io.to(String(teamId)).emit("answer-update", {
           userId,
           userName,
           questionId,
@@ -140,29 +145,42 @@ export const initSocket = (io: Server) => {
     );
 
     // ── DISCONNECT ─────────────────────────────────────────
-    socket.on("disconnect", async () => {
+    socket.on("disconnect", () => {
       const { teamId, userId } = socket.data;
       if (!teamId || !userId) return;
 
-      // Remove from online tracking
-      teamOnlineMembers.get(teamId)?.delete(userId);
+      const stringTeamId = String(teamId);
+      const stringUserId = String(userId);
 
-      // Re-broadcast presence
-      const members = await TeamMembership.find({ teamId }).populate(
-        "userId",
-        "name avatar",
-      );
+      // Delay execution to account for page changes and rapid reconnection
+      setTimeout(async () => {
+        // Check if the user successfully reconnected or joined from another tab/page
+        const currentSockets = await io.in(stringTeamId).fetchSockets();
+        const isUserStillInRoom = currentSockets.some(
+          (s) => String(s.data.userId) === stringUserId,
+        );
 
-      const onlineIds = teamOnlineMembers.get(teamId) || new Set();
-      const presence = members.map((m: any) => ({
-        userId: m.userId._id,
-        name: m.userId.name,
-        avatar: m.userId.avatar,
-        role: m.role,
-        isOnline: onlineIds.has(m.userId._id.toString()),
-      }));
+        if (isUserStillInRoom) {
+          return; // Skip cleanup and event emit because user is still connected
+        }
 
-      io.to(teamId).emit("team-presence", presence);
+        teamOnlineMembers.get(stringTeamId)?.delete(stringUserId);
+
+        const members = await TeamMembership.find({
+          teamId: stringTeamId,
+        }).populate("userId", "name avatar");
+
+        const onlineIds = teamOnlineMembers.get(stringTeamId) || new Set();
+        const presence = members.map((m: any) => ({
+          userId: m.userId._id,
+          name: m.userId.name,
+          avatar: m.userId.avatar,
+          role: m.role,
+          isOnline: onlineIds.has(String(m.userId._id)),
+        }));
+
+        io.to(stringTeamId).emit("team-presence", presence);
+      }, 1000);
     });
   });
 };

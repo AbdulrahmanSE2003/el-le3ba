@@ -1,7 +1,8 @@
 "use client";
+
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { connectSocket, disconnectSocket, getSocket } from "@/lib/socket";
+import { connectSocket, getSocket } from "@/lib/socket";
 import { useLobbyStore } from "@/store/lobbyStore";
 import { useGameStore } from "@/store/gameStore";
 import type { GameStartedPayload, PresenceMember } from "@/lib/socket";
@@ -21,13 +22,12 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
   useEffect(() => {
     if (!teamId || !userId || userId.trim() === "") return;
 
+    const socket = connectSocket();
+
     const handleConnect = () => {
       setConnected(true);
       socket.emit("join-lobby", { teamId, userId });
     };
-    const socket = connectSocket();
-
-    // test for push
 
     if (socket.connected) {
       handleConnect();
@@ -37,11 +37,18 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
       setConnected(false);
     };
 
-    const handleTeamPresence = (members: PresenceMember[]) => {
-      setMembers(members);
+    const handleTeamPresence = (presenceMembers: PresenceMember[]) => {
+      setMembers(presenceMembers);
     };
 
     const handleGameStarted = (payload: GameStartedPayload) => {
+      // Turn off listeners immediately so updates don't cycle back during transition
+      socket.off("connect", handleConnect);
+      socket.off("disconnect", handleDisconnect);
+      socket.off("team-presence", handleTeamPresence);
+      socket.off("game-started", handleGameStarted);
+      socket.off("game-error", handleGameError);
+
       setGameStarted(payload);
       setGame({
         sessionId: payload.sessionId,
@@ -57,7 +64,8 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
           options: q.options ?? undefined,
         })),
       });
-      router.push(`/match/${payload.sessionId}`);
+
+      router.replace(`/match/${payload.sessionId}`);
     };
 
     const handleGameError = ({ message }: { message: string }) => {
@@ -76,7 +84,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
       socket.off("team-presence", handleTeamPresence);
       socket.off("game-started", handleGameStarted);
       socket.off("game-error", handleGameError);
-      disconnectSocket();
+      // Removed disconnectSocket() to keep the engine instance alive through page navigation
     };
   }, [
     teamId,
@@ -94,7 +102,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
 
     if (connectedMembers.length < 2) {
       toast.warning(
-        ".يعني انت شايف ان دا يصح تلعب لوحدك ، كمل التيم بتاعك وتعالى",
+        "You cannot play alone. Complete your team before starting the game.",
       );
       return;
     }
