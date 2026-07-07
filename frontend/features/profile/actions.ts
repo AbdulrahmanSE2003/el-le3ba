@@ -4,6 +4,7 @@ import { tryCatch } from "@/components/shared/try-catch";
 import { revalidatePath } from "next/cache";
 
 import { ActionResponse } from "./types";
+import { logout } from "../auth/actions";
 
 export async function updateName(name: string): Promise<ActionResponse> {
   if (name.trim().length <= 2) {
@@ -24,7 +25,7 @@ export async function changePassword(
   oldPassword: string,
   newPassword: string,
   newPasswordConfirm: string,
-): Promise<ActionResponse> {
+): Promise<ActionResponse | undefined> {
   if (!oldPassword || !newPassword || !newPasswordConfirm) {
     return { success: false, error: "من فضلك املأ كل الحقول" };
   }
@@ -53,6 +54,5 @@ export async function changePassword(
     };
   }
 
-  revalidatePath("/profile");
-  return { success: true, message: "تم تغيير كلمة السر بنجاح" };
+  await logout();
 }

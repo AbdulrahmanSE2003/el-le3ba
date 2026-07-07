@@ -1,18 +1,18 @@
 import Motion from "@/components/shared/Motion";
 
-import { Loader2 } from "lucide-react";
-
 import { useState } from "react";
 
 import PasswordInput from "./PasswordInput";
+import PasswordActions from "./PasswordActions";
 
-import { showSuccess, showError } from "@/components/shared/notifications";
+import { showError } from "@/components/shared/notifications";
 
 import { changePassword } from "../../actions";
 
 import { passwordFields } from "../../password-inputs";
+
 import { PasswordInputs, ShowPass } from "../../types";
-import PasswordActions from "./PasswordActions";
+
 
 const INIT_PASSWORDS = {
   oldPassword: "",
@@ -51,7 +51,6 @@ export default function PasswordForm({ setIsOpen }: Props) {
 
     // handle result
     if (result.success) {
-      showSuccess(result.message || "تم تغيير كلمة السر بنجاح");
       setPasswords(INIT_PASSWORDS);
       setIsOpen(false);
     } else {
