@@ -1,24 +1,25 @@
-import { Trophy, Flame, Gamepad2, Percent } from "lucide-react";
+import { Trophy, Flame, Gamepad2, Star } from "lucide-react";
+import { Stat } from "./types";
 
-export const stats = [
+export const stats: Stat[] = [
   {
     title: "إجمالي النقاط",
-    number: "12450",
+    label: "totalScore",
     icon: Trophy,
   },
   {
     title: "أعلى ستريك",
-    number: "8",
+    label: "bestStreak",
     icon: Flame,
   },
   {
     title: "الجيمز المكتملة",
-    number: "47",
+    label: "gamesPlayed",
     icon: Gamepad2,
   },
   {
-    title: "نسبة الفوز",
-    number: "68",
-    icon: Percent,
+    title: "أعلى سكور",
+    label: "highestScore",
+    icon: Star,
   },
 ];

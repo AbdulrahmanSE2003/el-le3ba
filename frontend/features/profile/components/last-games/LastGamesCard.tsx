@@ -1,36 +1,25 @@
 import { fadeInDown } from "@/components/shared/animations";
 import Motion from "@/components/shared/Motion";
+import { LastSession } from "@/features/profile/types";
 
 interface LastGamesCardProps {
-  title: string;
-  date: string;
-  competitorsCount: number;
-  rank: string;
+  session: LastSession;
 }
-export default function LastGamesCard({
-  title,
-  date,
-  competitorsCount,
-  rank,
-}: LastGamesCardProps) {
+
+export default function LastGamesCard({ session }: LastGamesCardProps) {
   return (
     <Motion
       as="div"
       variants={fadeInDown}
-      className="flex items-center justify-between py-2.5 border-b border-border last:border-0 hover:-translate-x-1 duration-300 hover:cursor-pointer"
+      className="flex items-center justify-between py-2.5 border-b border-border last:border-0 hover:-translate-x-1 duration-300"
     >
       <div>
-        <p className="text-sm font-semibold">{title}</p>
-        <p className="text-xs text-muted-foreground">{date}</p>
+        <p className="text-sm font-semibold">{session.eventId.title}</p>
+        <p className="text-xs text-muted-foreground">{session.endReason}</p>
       </div>
 
       <div className="flex flex-col items-center">
-        <p className="font-black">{competitorsCount}</p>
-        <p
-          className={`text-xs px-2 py-0.5 rounded-full font-bold bg-secondary ${rank !== "1" ? "bg-muted-foreground" : "bg-yellow-300 dark:text-black"}`}
-        >
-          #{rank}
-        </p>
+        <p className="font-black">{session.finalScore}</p>
       </div>
     </Motion>
   );

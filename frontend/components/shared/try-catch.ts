@@ -1,3 +1,7 @@
+"use server";
+
+import { cookies } from "next/headers";
+
 const API_URL = "http://127.0.0.1:5000/api/v1";
 
 type tryCatchResponse = {
@@ -14,9 +18,20 @@ export async function tryCatch(
   body?: object,
 ): Promise<tryCatchResponse> {
   try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("jwt")?.value;
+
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const res = await fetch(`${API_URL}/${url}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: body ? JSON.stringify(body) : undefined,
     });
 
