@@ -62,7 +62,7 @@ export function SidebarFooterActions({ className }: Props) {
         <SidebarFooterBtn
           title="تسجيل الخروج"
           tooltip="تسجيل الخروج"
-          icon={<LogOut className="text-red-800" />}
+          icon={<LogOut className="text-red-500" />}
           onclick={logout}
           className="text-red-500 bg-red-500/15 hover:bg-red-500/20 mt-2"
         />

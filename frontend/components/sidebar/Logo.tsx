@@ -1,16 +1,11 @@
 import Image from "next/image";
 
-export default function Logo({ isCollapsed }: { isCollapsed?: boolean }) {
+export default function Logo() {
   return (
     <div className="flex items-center select-none">
-      <div className="relative h-11 w-11">
+      <div className="relative h-10 w-10 hover:bg-muted transition-colors duration-500 rounded-lg">
         <Image src="/logo_sympol.png" alt="اللعبة" fill priority />
       </div>
-      {!isCollapsed && (
-        <span className="text-xl font-black tracking-tight text-primary">
-          اللعبة <span className={`text-accent text-2xl`}>.</span>
-        </span>
-      )}
     </div>
   );
 }
