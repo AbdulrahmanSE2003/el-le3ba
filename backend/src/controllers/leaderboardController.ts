@@ -48,7 +48,10 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     resHandler(res, 200, "Leaderboard", {
       results: top50.length,
       ranking: top50,
-      rank,
+      myTeamRanking: {
+        team: myEntry,
+        rank,
+      },
     });
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
