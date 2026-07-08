@@ -59,6 +59,9 @@ app.get("/", (req, res) => {
   res.json({ message: "اللعبة API is running! 🎮" });
 });
 
+// ── Static files ───────────────────────────────────────────
+app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
+
 // ── Routes ─────────────────────────────────────────────────
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/teams", teamRoutes);
@@ -67,8 +70,6 @@ app.use("/api/v1/leaderboard", leaderboardRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/questions", questionRoutes);
 
-// app.use("/avatars", express.static(path.join(__dirname, "../public/avatars")));
-app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
 // ── Global error handler ───────────────────────────────────
 app.use(globalErrorHandler);
 

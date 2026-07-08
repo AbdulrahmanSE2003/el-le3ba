@@ -9,8 +9,8 @@ export function formatNumber(
 ): string {
   const num = typeof value === "string" ? Number(value) : value;
 
-  if (Number.isNaN(num)) {
-    return "0"; // or "-" / "" depending on what fallback makes sense for your UI
+  if (Number.isNaN(num) || !num) {
+    return "0";
   }
 
   return new Intl.NumberFormat("en-US", {

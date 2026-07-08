@@ -6,21 +6,25 @@ import { formatNumber } from "@/components/shared/numbers-format";
 
 import StyleContainer from "../StyleContainer";
 
+import { User } from "../../types";
+
 interface Props {
   title: string;
-  number: string;
   icon: LucideIcon;
+  label: keyof User["userData"];
+  user: User["userData"];
 }
 
-export default function StatsCard({ title, number, icon: Icon }: Props) {
-  const formattedNum = formatNumber(number);
+export default function StatsCard({ title, label, icon: Icon, user }: Props) {
+  const stat = user[label] as number;  
+  const formattedNum = formatNumber(stat);
 
   return (
     <StyleContainer
       variants={fadeInUp}
       whileHover={{ scale: 1.03, rotate: -1 }}
       transition={{ type: "spring" }}
-      className="flex justify-between items-center cursor-pointer"
+      className="flex justify-between items-center"
     >
       <div className="flex flex-col gap-1.5">
         <span className="text-sm font-medium text-muted-foreground">

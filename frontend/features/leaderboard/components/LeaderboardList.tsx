@@ -66,27 +66,6 @@ export function LeaderboardList({ remainingUsers }: LeaderboardListProps) {
 
               {/* Left Side Info: Trend Indicator & Total Score */}
               <div className="flex items-center gap-6">
-                {/* Trend Status Tag */}
-                <div className="flex items-center text-xs font-bold">
-                  {user.change === "up" && (
-                    <span className="flex items-center gap-0.5 text-brand-success bg-brand-success/10 px-2 py-0.5 rounded-full">
-                      {user.changeValue || 1}{" "}
-                      <ArrowUpRight className="h-3 w-3" />
-                    </span>
-                  )}
-                  {user.change === "down" && (
-                    <span className="flex items-center gap-0.5 text-rose-500 bg-rose-500/10 px-2 py-0.5 rounded-full">
-                      {user.changeValue || 1}{" "}
-                      <ArrowDownRight className="h-3 w-3" />
-                    </span>
-                  )}
-                  {user.change === "none" && (
-                    <span className="text-muted-foreground/60 px-2">
-                      <Minus className="h-3 w-3" />
-                    </span>
-                  )}
-                </div>
-
                 {/* Points */}
                 <span className="font-black text-sm md:text-base tabular-nums">
                   {user.points.toLocaleString()}
