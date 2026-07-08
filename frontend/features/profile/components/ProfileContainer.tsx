@@ -10,8 +10,6 @@ import { fetchUserData } from "../api";
 
 export default async function ProfileContainer() {
   const { userData } = await fetchUserData();
-  console.log(userData);
-  
 
   return (
     <section className="flex flex-col gap-5">
