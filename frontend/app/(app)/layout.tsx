@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { redirect } from "next/navigation";
 
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import {
@@ -45,6 +46,11 @@ async function getProfile() {
 }
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();
+
+  if (user && !user.avatar) {
+    redirect("/select-avatar");
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />

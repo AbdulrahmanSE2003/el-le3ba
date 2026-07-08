@@ -22,8 +22,8 @@ interface AlertModalProps {
   title?: string;
   description?: ReactNode;
 
-  confirmText?: string;
-  cancelText?: string;
+  confirmText?: string | ReactNode;
+  cancelText?: string | ReactNode;
 
   onConfirm: () => Promise<void> | void;
 }

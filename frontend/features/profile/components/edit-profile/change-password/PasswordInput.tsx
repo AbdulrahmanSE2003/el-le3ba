@@ -1,8 +1,8 @@
 import { Input } from "@/components/ui/input";
 
-import { PasswordInputs, ShowPass } from "../../types";
+import { PasswordInputs, ShowPass } from "../../../types";
 
-import ToggleBtn from "./ToggleBtn";
+import ToggleBtn from "../ToggleBtn";
 
 interface Props {
   label: string;

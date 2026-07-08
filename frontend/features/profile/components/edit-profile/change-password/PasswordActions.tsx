@@ -1,5 +1,5 @@
-import SavePasswordBtn from "./SavePasswordBtn";
 import CancelPasswordEditBtn from "./CancelPasswordEditBtn";
+import SavePasswordBtn from "./SavePasswordBtn";
 
 interface Props {
   handleCancel: () => void;

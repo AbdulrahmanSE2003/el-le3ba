@@ -65,3 +65,17 @@ export async function deleteAccount(): Promise<void> {
 
   await logout();
 }
+
+export async function updateAvatar(avatar: string): Promise<ActionResponse> {
+  const result = await tryCatch("users/me", "PATCH", { avatar });
+
+  if (!result.success) {
+    return {
+      success: false,
+      error: result.error || "فشل تحديث الصورة الشخصية",
+    };
+  }
+
+  revalidatePath("/profile");
+  return { success: true, message: "تم تحديث الصورة الشخصية بنجاح" };
+}

@@ -1,6 +1,8 @@
+import Image from "next/image";
 import { fadeInDown } from "@/components/shared/animations";
 import StyleContainer from "./StyleContainer";
 import { UserProfileProps } from "../types";
+import UserAvatar from "../../../components/shared/UserAvatar";
 
 export default function ProfileInfo({ user }: UserProfileProps) {
   const { name, email, avatar } = user;
@@ -25,14 +27,11 @@ export default function ProfileInfo({ user }: UserProfileProps) {
         </span>
       </div>
 
-      {/* Status Badge */}
-      <div className="w-20 h-20 rounded-2xl bg-primary/15 border-2 border-primary/30 flex items-center justify-center relative">
-        <span className="text-2xl font-black text-primary">
-          {avatar || name[0].toUpperCase()}
-        </span>
-
-        <span className="absolute -bottom-1 -left-1 w-5 h-5 rounded-full bg-brand-success border-2 border-card"></span>
-      </div>
+      {/* Avatar */}
+      <UserAvatar
+        src={`http://localhost:5000/avatars/${avatar}`}
+        fallback={`${name[0]}`}
+      />
     </StyleContainer>
   );
 }

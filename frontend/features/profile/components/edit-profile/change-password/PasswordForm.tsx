@@ -7,12 +7,11 @@ import PasswordActions from "./PasswordActions";
 
 import { showError } from "@/components/shared/notifications";
 
-import { changePassword } from "../../actions";
+import { changePassword } from "../../../actions";
 
-import { passwordFields } from "../../password-inputs";
+import { passwordFields } from "../../../password-inputs";
 
-import { PasswordInputs, ShowPass } from "../../types";
-
+import { PasswordInputs, ShowPass } from "../../../types";
 
 const INIT_PASSWORDS = {
   oldPassword: "",
@@ -50,11 +49,11 @@ export default function PasswordForm({ setIsOpen }: Props) {
     );
 
     // handle result
-    if (result.success) {
+    if (result?.success) {
       setPasswords(INIT_PASSWORDS);
       setIsOpen(false);
     } else {
-      showError(result.error || "حصل مشكلة");
+      showError(result?.error || "حصل مشكلة");
     }
 
     setIsPending(false);
