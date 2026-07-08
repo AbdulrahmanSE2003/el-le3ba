@@ -11,6 +11,8 @@ import { UserProfileProps } from "../../types";
 export default function LastGames({ user }: UserProfileProps) {
   const { lastSessions } = user;
 
+  const hasLastGames = lastSessions?.length > 0;
+
   return (
     <StyleContainer
       header="آخر الألعاب"
@@ -31,6 +33,12 @@ export default function LastGames({ user }: UserProfileProps) {
         transition={{ delay: 0.4 }}
         className="flex flex-col gap-5"
       >
+        {!hasLastGames && (
+          <div className="flex items-center justify-center h-20">
+            <span className="text-muted-foreground">لا توجد ألعاب</span>
+          </div>
+        )}
+
         {lastSessions?.map((session) => (
           <LastGamesCard key={session._id} session={session} />
         ))}

@@ -1,10 +1,13 @@
 "use server";
 
 import { tryCatch } from "@/components/shared/try-catch";
+
 import { revalidatePath } from "next/cache";
 
 import { ActionResponse } from "./types";
+
 import { logout } from "../auth/actions";
+import { redirect } from "next/navigation";
 
 export async function updateName(name: string): Promise<ActionResponse> {
   if (name.trim().length <= 2) {
@@ -53,6 +56,12 @@ export async function changePassword(
       error: result.error || "فشل تغيير كلمة السر",
     };
   }
+
+  await logout();
+}
+
+export async function deleteAccount(): Promise<void> {
+  await tryCatch("users/me", "DELETE");
 
   await logout();
 }

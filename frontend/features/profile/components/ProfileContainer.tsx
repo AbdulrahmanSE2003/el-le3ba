@@ -3,12 +3,15 @@ import ProfileStats from "./profile-stats/ProfileStats";
 import ProfileInfo from "./ProfileInfo";
 import EditProfile from "./edit-profile/EditProfile";
 import Settings from "./settings/Settings";
-import Logout from "./Logout";
 import LastGames from "./last-games/LastGames";
+import AccountActions from "./account-actions/AccountActions";
+
 import { fetchUserData } from "../api";
 
 export default async function ProfileContainer() {
   const { userData } = await fetchUserData();
+  console.log(userData);
+  
 
   return (
     <section className="flex flex-col gap-5">
@@ -24,7 +27,7 @@ export default async function ProfileContainer() {
 
       <Settings />
 
-      <Logout />
+      <AccountActions />
     </section>
   );
 }

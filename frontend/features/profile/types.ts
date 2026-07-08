@@ -23,7 +23,7 @@ export type User = {
     gamesPlayed: number;
     highestScore: number;
     bestStreak: number;
-    lastSessions?: LastSession[];
+    lastSessions: LastSession[];
   };
 };
 

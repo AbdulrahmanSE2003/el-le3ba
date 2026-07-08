@@ -8,7 +8,7 @@ import { containerVariants } from "@/components/shared/animations";
 
 import { UserProfileProps } from "@/features/profile/types";
 
-export default function ProfileStats({ user }: UserProfileProps) {
+export default function ProfileStats({ user }: UserProfileProps) {  
   return (
     <Motion
       as="div"

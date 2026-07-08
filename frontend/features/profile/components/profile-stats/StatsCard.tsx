@@ -16,7 +16,8 @@ interface Props {
 }
 
 export default function StatsCard({ title, label, icon: Icon, user }: Props) {
-  const formattedNum = formatNumber(user[label] as number);
+  const stat = user[label] as number;  
+  const formattedNum = formatNumber(stat);
 
   return (
     <StyleContainer
