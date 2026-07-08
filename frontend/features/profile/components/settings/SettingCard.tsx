@@ -1,5 +1,6 @@
 import { Moon, Sun } from "lucide-react";
 import ModeBtn from "./ModeBtn";
+import { useEffect, useState } from "react";
 
 interface Props {
   theme: string | undefined;
@@ -9,12 +10,26 @@ interface Props {
 export default function SettingCard({ theme, setTheme }: Props) {
   const isDark = theme === "dark";
 
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   return (
     <div className="flex flex-col gap-3">
       {/* Label */}
       <div className="flex items-center justify-between text-xs text-muted-foreground px-1">
         <span>مظهر التطبيق</span>
-        <span>{isDark ? "الوضع الحالي: الليلي" : "الوضع الحالي: النهاري"}</span>
+        <span>
+          {mounted
+            ? isDark
+              ? "الوضع الحالي: الليلي"
+              : "الوضع الحالي: النهاري"
+            : "جاري التحميل..."}{" "}
+          {/* أو اتركه فارغًا "" */}
+        </span>
       </div>
 
       {/* Switcher */}

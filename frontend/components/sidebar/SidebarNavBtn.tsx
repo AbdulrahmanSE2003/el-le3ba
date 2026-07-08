@@ -46,7 +46,7 @@ export default function SidebarNavBtn({
         }}
         asChild
         isActive={isActive}
-        className={`mb-5 z-10 self-stretch relative cursor-pointer text-muted-foreground duration-300 transition-all p-6 ${isActive && "text-white"}`}
+        className={`mb-2.5 z-10 self-stretch relative cursor-pointer text-muted-foreground duration-300 transition-all p-5 ${isActive && "text-white"}`}
       >
         <Link href={href} className="">
           <Icon icon={icon} />

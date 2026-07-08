@@ -38,7 +38,7 @@ export default function SidebarFooterBtn({
               "[&_svg]:hidden! bg-primary text-primary-foreground border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
           }}
           onClick={onclick}
-          className={`transition-all hover:-translate-x-1 cursor-pointer py-6 duration-300 ${className}`}
+          className={`transition-all hover:-translate-x-1 cursor-pointer py-5 duration-300 ${className}`}
         >
           <Icon icon={icon} />
 
