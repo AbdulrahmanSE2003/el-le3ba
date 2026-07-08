@@ -1,6 +1,7 @@
 import Motion from "@/components/shared/Motion";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface ModeBtnProps {
   title: string;
@@ -11,6 +12,12 @@ interface ModeBtnProps {
 }
 
 export default function ModeBtn(mode: ModeBtnProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
   return (
     <Motion
       as="button"
@@ -29,11 +36,11 @@ export default function ModeBtn(mode: ModeBtnProps) {
       </div>
 
       {/* Switcher Background */}
-      {mode.isActive && (
+      {mounted && mode.isActive && (
         <motion.div
           layoutId={mode.layoutId}
           className="absolute inset-0 bg-white dark:bg-card border border-border/40 rounded-xl shadow-sm -z-10"
-          transition={{ type: "spring", stiffness: 700, damping: 25}}
+          transition={{ type: "spring", stiffness: 700, damping: 25 }}
         />
       )}
     </Motion>

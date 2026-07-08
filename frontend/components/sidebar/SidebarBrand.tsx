@@ -10,6 +10,7 @@ import Motion from "../shared/Motion";
 import { fadeInDown } from "../shared/animations";
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 interface SidebarBrandProps {
   variant?: "user" | "admin";
@@ -18,6 +19,12 @@ interface SidebarBrandProps {
 export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isAdmin = variant === "admin";
   const href = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const { theme } = useTheme();
 
