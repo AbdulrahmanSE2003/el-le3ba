@@ -2,7 +2,6 @@
 import { Team } from "@/features/match/types";
 import { Flame, Gamepad2, Star } from "lucide-react";
 import StatCard from "./StatCard";
-import { useUserStore } from "@/store/userStore";
 
 // Reusable sub-component to eliminate duplicate markup
 

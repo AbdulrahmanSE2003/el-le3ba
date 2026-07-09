@@ -31,6 +31,14 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const { state } = useSidebar(); // "expanded" | "collapsed"
   const isCollapsed = state === "collapsed";
 
+  if (!mounted) {
+    return (
+      <div className="text-xl font-black tracking-tight text-primary">
+        <span className="text-accent text-2xl">.</span>
+      </div>
+    );
+  }
+
   return (
     <SidebarHeader className=" overflow-hidden border-b">
       <Link
