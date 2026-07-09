@@ -7,6 +7,7 @@ import {
   TeamApiResponse,
 } from "@/features/match/components/LobbyWrapper";
 import { apiServer } from "@/lib/apiServer";
+import TeamSnapshot from "./TeamSnapshot";
 
 interface UserRes {
   status: true;
@@ -47,10 +48,10 @@ const Homepage = async () => {
     `${process.env.NEXT_PUBLIC_API_URL}/teams/my-team`,
   );
 
-  const team = teamRes?.data.team.team;
+  const team = teamRes?.data.team;
   const attemptsRes = await apiServer<AttemptsApiResponse>(
     "get",
-    `${process.env.NEXT_PUBLIC_API_URL}/teams/${team._id}/attempts?eventId=${event._id}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/teams/${team.team._id}/attempts?eventId=${event._id}`,
   );
   const attempts = attemptsRes?.data?.attempts.attempts;
 
@@ -66,7 +67,7 @@ const Homepage = async () => {
       <CurrentEvent event={event} attempts={attempts} />
 
       {/* Team Snapshot */}
-      <div className={``}>ss</div>
+      <TeamSnapshot team={team.team} members={team.members} />
     </div>
   );
 };
