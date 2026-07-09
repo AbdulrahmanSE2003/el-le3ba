@@ -24,9 +24,11 @@ export interface EventApiResponse {
 const CurrentEvent = async ({
   event,
   attempts = 0,
+  totalTeams,
 }: {
   event: Event;
   attempts: number;
+  totalTeams: number;
 }) => {
   if (!event) {
     return (
@@ -67,7 +69,9 @@ const CurrentEvent = async ({
             <span className="text-muted-foreground text-xs font-medium">
               عدد الفرق
             </span>
-            <span className="text-2xl font-black tracking-tight">235</span>
+            <span className="text-2xl font-black tracking-tight">
+              {totalTeams}
+            </span>
           </div>
           <div className="flex flex-col gap-y-0.5">
             <span className="text-muted-foreground text-xs font-medium">

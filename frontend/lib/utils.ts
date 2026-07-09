@@ -20,3 +20,14 @@ export const getInitials = (name: string) => {
   }
   return cleanName.slice(0, 2);
 };
+
+export const formatPoints = (
+  points: number | string,
+  locale: "en-US" | "ar-EG" | "ar-SA" = "en-US",
+): string => {
+  const numericValue = typeof points === "string" ? parseFloat(points) : points;
+
+  if (isNaN(numericValue)) return "0";
+
+  return new Intl.NumberFormat(locale).format(numericValue);
+};

@@ -8,6 +8,7 @@ import {
 } from "@/features/match/components/LobbyWrapper";
 import { apiServer } from "@/lib/apiServer";
 import TeamSnapshot from "./TeamSnapshot";
+import StatsCards from "./StatsCards";
 
 interface UserRes {
   status: true;
@@ -18,23 +19,29 @@ interface UserRes {
     createdAt: string;
     updatedAt: string;
     __v: number;
+    currentStreak: number;
+    bestStreak: number;
     gamesPlayed: number;
     totalScore: number;
     passwordResetExpires: string;
     avatar: string;
     passwordChangedAt: string;
     highestScore: number;
-    bestStreak: number;
   };
 }
 
-const Homepage = async () => {
-  // const userRes = await apiServer<UserRes>(
-  //   "get",
-  //   `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
-  // );
+export interface EventStatsRes {
+  status: boolean;
+  stats: { totalTeams: number };
+}
 
-  // const user = userRes?.data?.userData;
+const Homepage = async () => {
+  const userRes = await apiServer<UserRes>(
+    "get",
+    `${process.env.NEXT_PUBLIC_API_URL}/users/me`,
+  );
+
+  const user = userRes?.data?.userData;
 
   const eventRes = await apiServer<EventApiResponse>(
     "get",
@@ -48,6 +55,13 @@ const Homepage = async () => {
     `${process.env.NEXT_PUBLIC_API_URL}/teams/my-team`,
   );
 
+  const eventStatsRes = await apiServer<EventStatsRes>(
+    "get",
+    `${process.env.NEXT_PUBLIC_API_URL}/events/stats`,
+  );
+
+  const totalTeams = eventStatsRes?.data?.stats?.totalTeams;
+
   const team = teamRes?.data.team;
   const attemptsRes = await apiServer<AttemptsApiResponse>(
     "get",
@@ -56,7 +70,7 @@ const Homepage = async () => {
   const attempts = attemptsRes?.data?.attempts.attempts;
 
   return (
-    <div className={`container mx-auto w-full space-y-6`}>
+    <div className={`container mx-auto w-full space-y-6 max-md:px-6 py-3`}>
       {/* Notification & Welcome message */}
       <div className={`flex justify-between items-center`}>
         <Notification />
@@ -64,10 +78,13 @@ const Homepage = async () => {
       </div>
 
       {/* Current Event */}
-      <CurrentEvent event={event} attempts={attempts} />
+      <CurrentEvent event={event} attempts={attempts} totalTeams={totalTeams} />
 
       {/* Team Snapshot */}
       <TeamSnapshot team={team.team} members={team.members} />
+
+      {/* Stats cards */}
+      <StatsCards team={team.team} bestStreak={user.bestStreak} />
     </div>
   );
 };

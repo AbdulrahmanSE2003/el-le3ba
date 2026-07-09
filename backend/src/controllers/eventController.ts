@@ -1,4 +1,5 @@
 import Event from "../models/eventModel";
+import Leaderboard from "../models/leaderboardModel";
 import { AppError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 import {
@@ -14,6 +15,15 @@ export const getCurrentEvent = catchAsync(async (req, res, next) => {
   const event = await Event.findOne({ status: "running" });
   if (!event) return next(new AppError("No active event right now.", 404));
   resHandler(res, 200, "event", event);
+});
+
+export const getEventStats = catchAsync(async (req, res, next) => {
+  const event = await Event.findOne({ status: "running" });
+  if (!event) return next(new AppError("No running event.", 404));
+
+  const totalTeams = await Leaderboard.countDocuments({ eventId: event._id });
+
+  resHandler(res, 200, "stats", { totalTeams });
 });
 
 export const getAllEvents = getAll(Event, {

@@ -61,11 +61,11 @@ const TeamSnapshot = ({ team, members }: { team: Team; members: Member[] }) => {
                 aria-label="Copy team code"
               >
                 {isCopied ? (
-                  <CopyCheck
+                  <CopyCheck className={`size-4 text-foreground `} />
+                ) : (
+                  <Copy
                     className={`size-4 text-foreground/75 hover:text-foreground transition-colors duration-300`}
                   />
-                ) : (
-                  <Copy className={`size-4 text-foreground`} />
                 )}
               </button>
             </TooltipTrigger>
