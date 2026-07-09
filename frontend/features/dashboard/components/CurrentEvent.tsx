@@ -1,11 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { apiServer } from "@/lib/apiServer";
-import { User } from "@/store/userStore";
+import { Event } from "@/features/match/types";
+import { getRemainingDays } from "@/lib/utils";
 import { Play, Trophy } from "lucide-react";
 import Link from "next/link";
 
-interface EventApiResponse {
+export interface EventApiResponse {
   status: string;
   event?: {
     _id: string;
@@ -21,20 +21,13 @@ interface EventApiResponse {
   };
 }
 
-const getRemainingDays = (endTimeStr: string): number => {
-  const diffTime = new Date(endTimeStr).getTime() - Date.now();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  return diffDays > 0 ? diffDays : 0;
-};
-
-const CurrentEvent = async () => {
-  const eventRes = await apiServer<EventApiResponse>(
-    "get",
-    `${process.env.NEXT_PUBLIC_API_URL}/events/current`,
-  );
-
-  const event = eventRes?.data?.event;
-
+const CurrentEvent = async ({
+  event,
+  attempts = 0,
+}: {
+  event: Event;
+  attempts: number;
+}) => {
   if (!event) {
     return (
       <div className="border border-dashed border-border rounded-xl p-8 flex flex-col items-center justify-center text-center gap-3 bg-muted/30">
@@ -64,7 +57,7 @@ const CurrentEvent = async () => {
             variant="secondary"
             className="py-1 px-2.5 bg-accent/15 text-amber-400 dark:text-accent font-bold border-none"
           >
-            2 / {event.maxAttempts} محاولات متبقية
+            {attempts} / {event.maxAttempts} محاولات متبقية
           </Badge>
         </div>
 
