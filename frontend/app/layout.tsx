@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { Playpen_Sans_Arabic, Zain } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/ui/provideres";
-import { Toaster } from "@/components/ui/sonner" // or wherever shadcn puts it
-
+import { Toaster } from "@/components/ui/sonner"; // or wherever shadcn puts it
 
 const playpen = Playpen_Sans_Arabic({
   subsets: ["arabic"],
@@ -52,7 +51,7 @@ export default function RootLayout({
         className={`${playpen.variable} ${zain.variable} font-body antialiased`}
       >
         <Providers>
-          <Toaster position="bottom-right" dir="ltr" />
+          <Toaster position="bottom-left" richColors dir="rtl" />
           <main>{children}</main>
         </Providers>
       </body>

@@ -65,6 +65,29 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
   }
 });
 
+export const getTopThree = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  // Getting top 3 teams points
+  const top3 = await Leaderboard.find({ eventId })
+    .populate("teamId", "teamName teamCode")
+    .sort({ totalPoints: -1 })
+    .limit(3);
+
+  resHandler(res, 200, "topThree", top3);
+});
+
 export const getMyRank = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 

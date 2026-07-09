@@ -5,7 +5,7 @@ export default function AuthLoading() {
     <div className="flex flex-col h-screen items-center justify-center gap-6 py-12">
       {/* Pulsing logo */}
       <div className="animate-pulse">
-        <Logo />
+        <Logo size={40} />
       </div>
 
       {/* Spinner */}
