@@ -47,7 +47,12 @@ export const useLobbySocket = ({
 
       for (const member of presenceMembers) {
         const prev = prevMembers.find((m) => m.userId === member.userId);
-        if (prev && !prev.isOnline && member.isOnline && member.userId !== userId) {
+        if (
+          prev &&
+          !prev.isOnline &&
+          member.isOnline &&
+          member.userId !== userId
+        ) {
           toast.success(`${member.name} متصل الآن 🟢`);
         }
       }
@@ -117,9 +122,7 @@ export const useLobbySocket = ({
     const connectedMembers = members.filter((member) => member.isOnline);
 
     if (connectedMembers.length < 2) {
-      toast.warning(
-        "You cannot play alone. Complete your team before starting the game.",
-      );
+      toast.warning("متقدرش تلعب لوحدك كمل التيم بتاعك أو عالأقل 2.");
       return;
     }
 
