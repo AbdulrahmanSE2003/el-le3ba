@@ -2,6 +2,7 @@ import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
 import {
   getNotifications,
+  markAllAsRead,
   markAsRead,
   sendNotifications,
 } from "../controllers/notificationController";
@@ -14,6 +15,7 @@ notificationRoutes
   .route("/")
   .get(getNotifications)
   .post(restrictTo("admin", "superAdmin"), sendNotifications);
+notificationRoutes.route("/all").patch(markAllAsRead);
 notificationRoutes.route("/:id").patch(markAsRead);
 
 export default notificationRoutes;

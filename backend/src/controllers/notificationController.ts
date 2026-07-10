@@ -47,19 +47,36 @@ export const sendNotifications = catchAsync(async (req, res, next) => {
 });
 
 export const markAsRead = catchAsync(async (req, res, next) => {
-  if (!req.query.id)
+  if (!req.params.id)
     return next(
       new AppError(
         "Invalid operation, please provide the notification id.",
         400,
       ),
     );
-  await Notification.findByIdAndUpdate({ _id: req.query.id }, { isRead: true });
+  await Notification.findByIdAndUpdate(
+    { _id: req.params.id },
+    { isRead: true },
+  );
 
-  res
-    .status(200)
-    .json({
-      status: true,
-      message: "Notification marked as read successfully.",
-    });
+  res.status(200).json({
+    status: true,
+    message: "Notification marked as read successfully.",
+  });
+});
+export const markAllAsRead = catchAsync(async (req, res, next) => {
+  await Notification.updateMany(
+    {
+      userId: req.user._id,
+      isRead: false,
+    },
+    {
+      $set: { isRead: true },
+    },
+  );
+
+  res.status(200).json({
+    status: true,
+    message: "All notifications marked as read successfully.",
+  });
 });
