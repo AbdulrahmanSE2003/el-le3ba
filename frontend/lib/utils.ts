@@ -31,3 +31,51 @@ export const formatPoints = (
 
   return new Intl.NumberFormat(locale).format(numericValue);
 };
+
+/**
+ * Formats a timestamp (Date string, object, or number) into a friendly localized Arabic format.
+ * Returns relative time (e.g., "منذ دقيقتين") for recent dates,
+ * or absolute dates (e.g., "٢٨ أكتوبر ٢٠٢٦") for older instances.
+ */
+export const formatCreatedAt = (
+  dateInput: string | Date | number,
+  locale: "ar-EG" | "en-US" = "ar-EG",
+): string => {
+  if (!dateInput) return "";
+
+  const date = new Date(dateInput);
+  // Check for invalid dates
+  if (isNaN(date.getTime())) return "";
+
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  // If the date is in the future or less than 5 seconds ago, treat as "Just now"
+  if (diffInSeconds < 5) {
+    return locale.startsWith("ar") ? "الآن" : "Just now";
+  }
+
+  const diffInMinutes = Math.floor(diffInSeconds / 60);
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  // Use relative time formatting for anything newer than 7 days
+  if (diffInDays < 7) {
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+
+    if (diffInMinutes < 60) {
+      return rtf.format(-diffInMinutes, "minute");
+    }
+    if (diffInHours < 24) {
+      return rtf.format(-diffInHours, "hour");
+    }
+    return rtf.format(-diffInDays, "day");
+  }
+
+  // Fallback to absolute calendar date formatting for older items
+  return new Intl.DateTimeFormat(locale, {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(date);
+};

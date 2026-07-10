@@ -8,6 +8,7 @@ const playpen = Playpen_Sans_Arabic({
   subsets: ["arabic"],
   weight: ["400", "600", "700", "800"],
   variable: "--font-display",
+  fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
 const zain = Zain({
