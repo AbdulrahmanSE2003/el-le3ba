@@ -5,7 +5,6 @@ import { Bell } from "lucide-react";
 import api from "@/lib/axios";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 
 import NotificationsList from "./NotificationsList";
