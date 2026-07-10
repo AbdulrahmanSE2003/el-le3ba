@@ -28,7 +28,7 @@ const Notification = () => {
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle
-            className={`text-right text-xl font-semibold text-primary`}
+            className={`text-right  text-xl font-semibold text-primary`}
           >
             قائمة الإشعارات
           </DrawerTitle>
