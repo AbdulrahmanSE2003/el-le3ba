@@ -43,7 +43,7 @@ const NotificationsList = ({
         </DrawerDescription>
       </DrawerHeader>
 
-      <div className="min-h-75 max-h-[50vh] space-y-2.5 overflow-y-auto p-4">
+      <div className="min-h-75 space-y-2.5 overflow-y-auto p-4">
         {loading ? (
           Array.from({ length: 5 }).map((_, index) => (
             <NotificationItemSkeleton key={index} />
