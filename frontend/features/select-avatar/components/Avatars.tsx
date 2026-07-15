@@ -19,7 +19,7 @@ export default function Avatars({ selectedAvatar, handleSelectAvatar }: Props) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 md:gap-6 relative z-10"
+      className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 md:gap-6"
     >
       {AVATARS_LIST.map((avatarName) => {
         const isSelected = selectedAvatar === avatarName;
@@ -27,9 +27,10 @@ export default function Avatars({ selectedAvatar, handleSelectAvatar }: Props) {
           <Motion
             key={avatarName}
             as="button"
+            type="button"
             variants={fadeInUp}
             onClick={() => handleSelectAvatar(avatarName)}
-            className={`cursor-pointer`}
+            className={`cursor-pointer duration-300 ${!isSelected && "hover:scale-105"}`}
           >
             <UserAvatar
               src={`/avatars/${avatarName}`}

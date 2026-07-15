@@ -3,10 +3,7 @@
 import Avatars from "@/features/select-avatar/components/Avatars";
 import Label from "./Label";
 
-import { AlertModal } from "@/components/shared/AlertModal";
-
 import { UserIcon } from "lucide-react";
-import { useState } from "react";
 
 import { updateAvatar } from "@/features/profile/actions";
 
@@ -16,38 +13,41 @@ import {
   showSuccess,
 } from "@/components/shared/notifications";
 
-export default function UpdateAvatar() {
-  const [selectedAvatar, setSelectedAvatar] = useState<string>("");
+import { useAvatar } from "@/hooks/useAvatar";
+import { MyAlertModal } from "@/components/shared/MyAlertModal";
 
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  avatar: string | null;
+}
 
-  // select avatar when click and unselect when click again
-  function handleSelectAvatar(avatarName: string) {
-    if (selectedAvatar === avatarName) {
-      setSelectedAvatar("");
-    } else {
-      setSelectedAvatar(avatarName);
-    }
-  }
+export default function UpdateAvatar({ avatar }: Props) {
+  const {
+    selectedAvatar,
+    handleSelectAvatar,
+    isOpen,
+    setIsOpen,
+    setSelectedAvatar,
+  } = useAvatar(avatar || "");
 
   // Update the avatar
   async function handleUpdateAvatar() {
     if (!selectedAvatar) {
+      // If no selection back to the user avatar
+      setSelectedAvatar(avatar || "");
+
       showInfo("من فضلك اختر صورة شخصية");
       return;
     }
 
     const result = await updateAvatar(selectedAvatar);
-
     if (result.success) {
       showSuccess(result.message || "تم تحديث الصورة الشخصية بنجاح");
-      setIsOpen(false);
+      return true;
     } else {
-      showError(result.error || "فشل تحديث الصورة الشخصية. حاول مرة اخرى لاحقا");
-      setIsOpen(false);
+      showError(
+        result.error || "فشل تحديث الصورة الشخصية. حاول مرة اخرى لاحقا",
+      );
     }
-
-    setSelectedAvatar("");
   }
 
   return (
@@ -67,11 +67,11 @@ export default function UpdateAvatar() {
       </div>
 
       {/* Select Avatar Modal */}
-      <AlertModal
+      <MyAlertModal
         open={isOpen}
         trigger={<Label onClick={() => setIsOpen(true)} />}
         title="تغيير الصورة الشخصية"
-        description={
+        content={
           <Avatars
             selectedAvatar={selectedAvatar}
             handleSelectAvatar={handleSelectAvatar}
@@ -80,6 +80,7 @@ export default function UpdateAvatar() {
         confirmText="حفظ التغييرات"
         cancelText="إلغاء"
         onConfirm={handleUpdateAvatar}
+        onOpenChange={setIsOpen}
       />
     </div>
   );

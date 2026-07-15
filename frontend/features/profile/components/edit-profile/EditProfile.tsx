@@ -13,7 +13,7 @@ import { updateName } from "../../actions";
 import UpdateAvatar from "./avatar/UpdateAvatar";
 
 export default function EditProfile({ user }: UserProfileProps) {
-  const { name } = user;
+  const { name, avatar } = user;
 
   return (
     <StyleContainer
@@ -28,7 +28,7 @@ export default function EditProfile({ user }: UserProfileProps) {
     >
       <div className="flex flex-col gap-6">
         {/* Edit Avatar */}
-        <UpdateAvatar />
+        <UpdateAvatar avatar={avatar} />
 
         {/* Edit Name */}
         <EditableField

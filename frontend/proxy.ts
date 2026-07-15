@@ -11,7 +11,6 @@ export function proxy(request: NextRequest) {
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/reset-password");
-
   // logged in → keep away from auth pages, send to dashboard
   if (token && isAuthPage) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
