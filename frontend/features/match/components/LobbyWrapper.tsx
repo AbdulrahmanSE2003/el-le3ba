@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AxiosError } from "axios";
 import NoTeam from "@/components/shared/NoTeam";
 
-interface TeamApiResponse {
+export interface TeamApiResponse {
   status: boolean;
   team: {
     team: Team;
@@ -16,12 +16,12 @@ interface TeamApiResponse {
   };
 }
 
-interface EventApiResponse {
+export interface EventApiResponse {
   status: boolean;
   event: Event;
 }
 
-interface AttemptsApiResponse {
+export interface AttemptsApiResponse {
   status: boolean;
   attempts: {
     attempts: number;

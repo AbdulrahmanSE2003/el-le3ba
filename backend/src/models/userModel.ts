@@ -14,6 +14,8 @@ export interface IUser extends Document {
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   passwordChangedAt?: Date;
+  currentStreak: number;
+  bestStreak: number;
   totalScore: number;
   gamesPlayed: number;
   correctPassword(candidatePassword: string): Promise<boolean>;
@@ -71,6 +73,8 @@ const userSchema = new mongoose.Schema<IUser>(
       enum: ["student", "admin", "superAdmin"],
     },
 
+    currentStreak: { type: Number, default: 0 },
+    bestStreak: { type: Number, default: 0 },
     totalScore: { type: Number, default: 0 },
     gamesPlayed: { type: Number, default: 0 },
 

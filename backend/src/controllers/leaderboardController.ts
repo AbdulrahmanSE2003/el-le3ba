@@ -48,7 +48,10 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     resHandler(res, 200, "Leaderboard", {
       results: top50.length,
       ranking: top50,
-      rank,
+      myTeamRanking: {
+        team: myEntry,
+        rank,
+      },
     });
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
@@ -60,6 +63,29 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
     const leaderboard = await features.query;
     resHandler(res, 200, "leaderboard", leaderboard);
   }
+});
+
+export const getTopThree = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  // Getting top 3 teams points
+  const top3 = await Leaderboard.find({ eventId })
+    .populate("teamId", "teamName teamCode")
+    .sort({ totalPoints: -1 })
+    .limit(3);
+
+  resHandler(res, 200, "topThree", top3);
 });
 
 export const getMyRank = catchAsync(async (req, res, next) => {
