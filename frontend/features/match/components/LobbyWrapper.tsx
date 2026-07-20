@@ -1,15 +1,14 @@
 import Lobby from "@/features/match/components/lobby/Lobby";
 import EventInfo from "@/features/match/components/lobby/EventInfo";
 import TeamStatsPreview from "@/features/match/components/lobby/TeamStatsPreview";
-import { apiServer } from "@/lib/apiServer";
-import type { Event, Team, Member } from "@/features/match/types";
+import { serverFetch } from "@/shared/api/server";
+import type { Event } from "@/shared/types/event";
+import type { Team, Member } from "@/shared/types/team";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AxiosError } from "axios";
 import NoTeam from "@/components/shared/NoTeam";
 
 export interface TeamApiResponse {
-  status: boolean;
   team: {
     team: Team;
     members: Member[];
@@ -17,12 +16,10 @@ export interface TeamApiResponse {
 }
 
 export interface EventApiResponse {
-  status: boolean;
   event: Event;
 }
 
 export interface AttemptsApiResponse {
-  status: boolean;
   attempts: {
     attempts: number;
     teamId: string;
@@ -30,36 +27,33 @@ export interface AttemptsApiResponse {
 }
 
 const LobbyWrapper = async () => {
-  let teamData: TeamApiResponse["team"] | null = null;
-  let event: Event | null = null;
+  const [teamRes, eventRes] = await Promise.all([
+    serverFetch<TeamApiResponse>("teams/my-team"),
+    serverFetch<EventApiResponse>("events/current"),
+  ]);
 
-  try {
-    const [teamRes, eventRes] = await Promise.all([
-      apiServer<TeamApiResponse>("get", "/teams/my-team"),
-      apiServer<EventApiResponse>("get", "/events/current"),
-    ]);
-
-    teamData = teamRes.data.team;
-    event = eventRes.data.event;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      const message = error.response?.data?.message;
-      if (
-        error.response?.status === 400 &&
-        message === "You are not in a team."
-      ) {
-        return <NoTeam />;
-      }
+  if (!teamRes.success) {
+    if (teamRes.error?.includes("You are not in a team.")) {
+      return <NoTeam />;
     }
-    throw error;
+    console.log(teamRes);
+
+    throw new Error(teamRes.error || "Failed...");
+  }
+  if (!eventRes.success) {
+    throw new Error(eventRes.error || "Failed to load event data");
   }
 
-  const teamAttempts = await apiServer<AttemptsApiResponse>(
-    "get",
-    `/teams/${teamData.team._id}/attempts?eventId=${event._id}`,
+  const teamData = teamRes.data.team;
+  const event = eventRes.data.event;
+
+  const teamAttempts = await serverFetch<AttemptsApiResponse>(
+    `teams/${teamData.team._id}/attempts?eventId=${event._id}`,
   );
 
-  const { attempts } = teamAttempts?.data?.attempts;
+  const attempts = teamAttempts.success
+    ? teamAttempts.data.attempts.attempts
+    : 0;
   const attemptsLeft = event.maxAttempts - attempts;
 
   return (

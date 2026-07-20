@@ -2,7 +2,6 @@
 
 import Motion from "@/components/shared/Motion";
 import { fadeInUp } from "@/components/shared/animations";
-import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { LeaderboardUser } from "../types";
 
 interface LeaderboardListProps {

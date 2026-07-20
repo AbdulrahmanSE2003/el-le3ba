@@ -6,7 +6,7 @@ import Settings from "./settings/Settings";
 import LastGames from "./last-games/LastGames";
 import AccountActions from "./account-actions/AccountActions";
 
-import { fetchUserData } from "../api";
+import { fetchUserData } from "../api/index";
 
 export default async function ProfileContainer() {
   const { userData } = await fetchUserData();

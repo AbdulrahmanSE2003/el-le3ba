@@ -1,20 +1,32 @@
 import CurrentEvent from "@/features/dashboard/components/CurrentEvent";
 import Notification from "@/features/dashboard/components/Notification";
 import WelcomeMessage from "@/features/dashboard/components/WelcomeMessage";
-import {
-  AttemptsApiResponse,
-  EventApiResponse,
-  TeamApiResponse,
-} from "@/features/match/components/LobbyWrapper";
-import { apiServer } from "@/lib/apiServer";
+import { serverFetch } from "@/shared/api/server";
+import type { Event } from "@/shared/types/event";
+import type { Team, Member } from "@/shared/types/team";
+
+interface TeamApiResponse {
+  team: {
+    team: Team;
+    members: Member[];
+  };
+}
+
+interface EventApiResponse {
+  event: Event;
+}
+
+interface AttemptsApiResponse {
+  attempts: {
+    attempts: number;
+    teamId: string;
+  };
+}
 import TeamSnapshot from "./TeamSnapshot";
 import StatsCards from "./StatsCards";
-import Link from "next/link";
-import { Trophy } from "lucide-react";
 import LeaderboardSnapshot from "./LeaderboardSnapshot";
 
 interface UserRes {
-  status: true;
   userData: {
     _id: string;
     name: string;
@@ -34,8 +46,6 @@ interface UserRes {
 }
 
 export interface LeaderboardTopThreeRes {
-  status: boolean;
-  results: number;
   topThree: {
     _id: string;
     teamId: {
@@ -50,38 +60,41 @@ export interface LeaderboardTopThreeRes {
 }
 
 export interface EventStatsRes {
-  status: boolean;
   stats: { totalTeams: number };
 }
 
-const API = process.env.NEXT_PUBLIC_API_URL!;
-
 const Homepage = async () => {
   const [userRes, eventRes, teamRes, eventStatsRes] = await Promise.all([
-    apiServer<UserRes>("get", `${API}/users/me`),
-    apiServer<EventApiResponse>("get", `${API}/events/current`),
-    apiServer<TeamApiResponse>("get", `${API}/teams/my-team`),
-    apiServer<EventStatsRes>("get", `${API}/events/stats`),
+    serverFetch<UserRes>("users/me"),
+    serverFetch<EventApiResponse>("events/current"),
+    serverFetch<TeamApiResponse>("teams/my-team"),
+    serverFetch<EventStatsRes>("events/stats"),
   ]);
 
-  const user = userRes?.data.userData;
-  const event = eventRes?.data.event;
-  const team = teamRes?.data.team;
-  const totalTeams = eventStatsRes?.data.stats.totalTeams;
+  const user = userRes.success ? userRes.data.userData : null;
+  const event = eventRes.success ? eventRes.data.event : null;
+  const team = teamRes.success ? teamRes.data.team : null;
+  const totalTeams = eventStatsRes.success
+    ? eventStatsRes.data.stats.totalTeams
+    : 0;
+
+  if (!team || !event) {
+    console.log("error");
+    return null;
+  }
 
   const [attemptsRes, topThreeRes] = await Promise.all([
-    apiServer<AttemptsApiResponse>(
-      "get",
-      `${API}/teams/${team.team._id}/attempts?eventId=${event._id}`,
+    serverFetch<AttemptsApiResponse>(
+      `teams/${team.team._id}/attempts?eventId=${event._id}`,
     ),
-    apiServer<LeaderboardTopThreeRes>(
-      "get",
-      `${API}/leaderboard/top-three?eventId=${event._id}`,
+    serverFetch<LeaderboardTopThreeRes>(
+      `leaderboard/top-three?eventId=${event._id}`,
     ),
   ]);
 
-  const attempts = attemptsRes?.data.attempts.attempts;
-  const topThree = topThreeRes?.data.topThree;
+  const attempts = attemptsRes.success ? attemptsRes.data.attempts.attempts : 0;
+  const topThree = topThreeRes.success ? topThreeRes.data.topThree : [];
+
   return (
     <div className={`container mx-auto w-full space-y-6 max-md:px-6 py-3`}>
       {/* Notification & Welcome message */}
@@ -97,7 +110,7 @@ const Homepage = async () => {
       <TeamSnapshot team={team.team} members={team.members} />
 
       {/* Stats cards */}
-      <StatsCards team={team.team} bestStreak={user.bestStreak} />
+      <StatsCards team={team.team} bestStreak={user?.bestStreak ?? 0} />
 
       {/* Leaderboard Snapshot */}
       <LeaderboardSnapshot rows={topThree} />

@@ -9,7 +9,7 @@ import { showError } from "@/components/shared/notifications";
 
 import { changePassword } from "../../actions";
 
-import { passwordFields } from "../../password-inputs";
+import { passwordFields } from "../../lib/password-inputs";
 
 import { PasswordInputs, ShowPass } from "../../types";
 
@@ -48,6 +48,8 @@ export default function PasswordForm({ setIsOpen }: Props) {
       passwords.newPassword,
       passwords.confirmPassword,
     );
+
+    if (!result) return;
 
     // handle result
     if (result.success) {

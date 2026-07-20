@@ -2,10 +2,10 @@
 
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { connectSocket, getSocket } from "@/lib/socket";
-import { useLobbyStore } from "@/store/lobbyStore";
-import { useGameStore } from "@/store/gameStore";
-import type { GameStartedPayload, PresenceMember } from "@/lib/socket";
+import { connectSocket, getSocket } from "@/features/match/lib/socket";
+import { useLobbyStore } from "@/features/match/store/lobbyStore";
+import { useGameStore } from "@/features/match/store/gameStore";
+import type { GameStartedPayload, PresenceMember } from "@/features/match/lib/socket";
 import { toast } from "sonner";
 
 interface UseLobbySocketProps {
@@ -61,7 +61,6 @@ export const useLobbySocket = ({
     };
 
     const handleGameStarted = (payload: GameStartedPayload) => {
-      // Turn off listeners immediately so updates don't cycle back during transition
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("team-presence", handleTeamPresence);

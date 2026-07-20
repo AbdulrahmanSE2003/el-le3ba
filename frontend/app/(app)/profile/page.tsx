@@ -1,5 +1,7 @@
 import ProfileContainer from "@/features/profile/components/ProfileContainer";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "الملف الشخصي",
   description:

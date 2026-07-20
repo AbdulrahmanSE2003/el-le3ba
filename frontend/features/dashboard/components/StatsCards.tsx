@@ -1,5 +1,5 @@
 "use client";
-import { Team } from "@/features/match/types";
+import type { Team } from "@/shared/types/team";
 import { Flame, Gamepad2, Star } from "lucide-react";
 import StatCard from "./StatCard";
 

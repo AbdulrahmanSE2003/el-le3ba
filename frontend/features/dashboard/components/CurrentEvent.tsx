@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Event } from "@/features/match/types";
+import type { Event } from "@/shared/types/event";
 import { getRemainingDays } from "@/lib/utils";
 import { Play, Trophy } from "lucide-react";
 import Link from "next/link";

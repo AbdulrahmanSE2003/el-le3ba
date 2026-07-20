@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Member, Team } from "@/features/match/types";
+import type { Member, Team } from "@/shared/types/team";
 import { getInitials } from "@/lib/utils";
 import { Copy, CopyCheck } from "lucide-react";
 import Link from "next/link";

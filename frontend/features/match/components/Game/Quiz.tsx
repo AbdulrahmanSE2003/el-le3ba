@@ -6,7 +6,7 @@ import IntroModal from "./IntroModal";
 import useGameFlow from "../../hooks/useGameFlow";
 import QuestionScreen from "./QuestionScreen";
 import { useEffect } from "react";
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore } from "@/features/match/store/gameStore";
 import { useRouter } from "next/navigation";
 
 export default function Quiz() {

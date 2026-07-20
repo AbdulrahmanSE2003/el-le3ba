@@ -8,10 +8,9 @@ import {
 } from "@/components/ui/sidebar";
 import StoreInitializer from "@/store/storeInitializer";
 import { cookies } from "next/headers";
-import { apiServer } from "@/lib/apiServer";
+import { serverFetch } from "@/shared/api/server";
 
 interface UserAPIResponse {
-  status: boolean;
   user: {
     _id: string;
     name: string;
@@ -34,14 +33,9 @@ async function getProfile() {
 
   if (!token) return null;
 
-  try {
-    const res = await apiServer<UserAPIResponse>("get", "/users/me");
-    if (!res.status) return null;
-    const { user } = res.data;
-    return user;
-  } catch {
-    return null;
-  }
+  const result = await serverFetch<UserAPIResponse>("users/me");
+  if (!result.success) return null;
+  return result.data.user;
 }
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();

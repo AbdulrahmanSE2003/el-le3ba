@@ -1,4 +1,4 @@
-import { achievements } from "../../achievements";
+import { achievements } from "../../lib/achievements";
 import StyleContainer from "../StyleContainer";
 import AchievementCard from "./AchievementCard";
 

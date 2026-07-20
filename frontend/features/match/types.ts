@@ -29,41 +29,6 @@ export interface AnswerResponse {
   correctAnswer?: string;
 }
 
-export interface Member {
-  _id: string;
-  userId: {
-    _id: string;
-    name: string;
-    email: string;
-    avatar: string | null;
-  };
-  teamId: string;
-  role: "captain" | "member";
-}
-
-export interface Event {
-  _id: string;
-  title: string;
-  createdBy: string;
-  startTime: string;
-  endTime: string;
-  status: "scheduled" | "running" | "finished";
-  maxAttempts: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Team {
-  _id: string;
-  teamName: string;
-  teamCode: string;
-  teamLeader: string;
-  totalGames: number;
-  points: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
 export type GamePhase =
   | "intro"
   | "countdown"

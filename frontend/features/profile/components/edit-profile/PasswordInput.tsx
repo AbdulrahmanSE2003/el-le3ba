@@ -1,5 +1,3 @@
-import { Input } from "@/components/ui/input";
-
 import { PasswordInputs, ShowPass } from "../../types";
 
 import ToggleBtn from "./ToggleBtn";

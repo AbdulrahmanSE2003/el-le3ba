@@ -8,7 +8,7 @@ import Header from "./Header";
 import FormWrapper from "./FormWrapper";
 import FooterWrapper from "./FooterWrapper";
 import RedirectLink from "./RedirectLink";
-import { registerBtns } from "../auth-btns";
+import { registerBtns } from "../lib/auth-btns";
 
 import Motion from "@/components/shared/Motion";
 import { fadeInRight } from "../../../components/shared/animations";

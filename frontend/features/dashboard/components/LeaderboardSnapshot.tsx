@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Trophy, Medal, Crown } from "lucide-react";
+import { Trophy, Crown } from "lucide-react";
 import { LeaderboardTopThreeRes } from "./Homepage";
 import { cn } from "@/lib/utils";
 import { formatPoints } from "@/lib/utils"; // Import your points formatting function

@@ -1,7 +1,6 @@
-import { apiServer } from "@/lib/apiServer";
+import { serverFetch } from "@/shared/api/server";
 
 interface TeamStatsAPIPreviewResponse {
-  status: boolean;
   MyRank: {
     rank: number;
     totalPoints: number;
@@ -9,15 +8,13 @@ interface TeamStatsAPIPreviewResponse {
 }
 
 const TeamStatsPreview = async ({ eventId }: { eventId: string }) => {
-  const rankRes = await apiServer<TeamStatsAPIPreviewResponse>(
-    "get",
-    `/leaderboard/my-rank?eventId=${eventId}`,
+  const result = await serverFetch<TeamStatsAPIPreviewResponse>(
+    `leaderboard/my-rank?eventId=${eventId}`,
   );
 
-  const { rank, totalPoints } = rankRes.data?.MyRank || {
-    rank: 0,
-    totalPoints: 0,
-  };
+  const { rank, totalPoints } = result.success
+    ? result.data.MyRank
+    : { rank: 0, totalPoints: 0 };
 
   return (
     <div className="w-full grid md:grid-cols-2 gap-3">

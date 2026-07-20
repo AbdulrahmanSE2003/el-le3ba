@@ -20,6 +20,8 @@ const WelcomeMessage = () => {
     year: "numeric",
   });
 
+  console.log(user);
+
   if (!mounted) return null;
   return (
     <motion.div
