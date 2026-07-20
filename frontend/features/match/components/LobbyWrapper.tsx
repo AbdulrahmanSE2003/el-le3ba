@@ -1,42 +1,25 @@
 import Lobby from "@/features/match/components/lobby/Lobby";
 import EventInfo from "@/features/match/components/lobby/EventInfo";
 import TeamStatsPreview from "@/features/match/components/lobby/TeamStatsPreview";
-import { serverFetch } from "@/shared/api/server";
-import type { Event } from "@/shared/types/event";
-import type { Team, Member } from "@/shared/types/team";
+import {
+  getCurrentTeam,
+  getCurrentEvent,
+  getTeamAttempts,
+} from "@/shared/api/helpers";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import NoTeam from "@/components/shared/NoTeam";
 
-export interface TeamApiResponse {
-  team: {
-    team: Team;
-    members: Member[];
-  };
-}
-
-export interface EventApiResponse {
-  event: Event;
-}
-
-export interface AttemptsApiResponse {
-  attempts: {
-    attempts: number;
-    teamId: string;
-  };
-}
-
 const LobbyWrapper = async () => {
   const [teamRes, eventRes] = await Promise.all([
-    serverFetch<TeamApiResponse>("teams/my-team"),
-    serverFetch<EventApiResponse>("events/current"),
+    getCurrentTeam(),
+    getCurrentEvent(),
   ]);
 
   if (!teamRes.success) {
     if (teamRes.error?.includes("You are not in a team.")) {
       return <NoTeam />;
     }
-    console.log(teamRes);
 
     throw new Error(teamRes.error || "Failed...");
   }
@@ -47,9 +30,7 @@ const LobbyWrapper = async () => {
   const teamData = teamRes.data.team;
   const event = eventRes.data.event;
 
-  const teamAttempts = await serverFetch<AttemptsApiResponse>(
-    `teams/${teamData.team._id}/attempts?eventId=${event._id}`,
-  );
+  const teamAttempts = await getTeamAttempts(teamData.team._id, event._id);
 
   const attempts = teamAttempts.success
     ? teamAttempts.data.attempts.attempts

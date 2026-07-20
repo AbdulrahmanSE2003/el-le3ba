@@ -59,7 +59,7 @@ export function Navbar() {
               المتصدرين
             </Link>
             <Link
-              href="#about"
+              href="/about"
               className="hover:text-primary transition-colors"
             >
               عن المنصة
@@ -107,7 +107,7 @@ export function Navbar() {
               المتصدرين
             </Link>
             <Link
-              href="#about"
+              href="/about"
               onClick={() => setIsOpen(false)}
               className="pb-2 border-b border-border hover:text-primary"
             >

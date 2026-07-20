@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { Trophy, Crown } from "lucide-react";
-import { LeaderboardTopThreeRes } from "./Homepage";
+import type { LeaderboardEntry } from "@/shared/api/helpers";
 import { cn } from "@/lib/utils";
-import { formatPoints } from "@/lib/utils"; // Import your points formatting function
+import { formatPoints } from "@/lib/utils";
 
-type LeaderboardRow = LeaderboardTopThreeRes["topThree"][number];
+type LeaderboardRow = LeaderboardEntry;
 
 interface LeaderboardSnapshotProps {
   rows: LeaderboardRow[];

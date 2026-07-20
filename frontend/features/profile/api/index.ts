@@ -1,16 +1,12 @@
-import { serverFetch } from "@/shared/api/server";
+import { getCurrentUser } from "@/shared/api/helpers";
 import { User } from "../types";
 
-interface UserResponse {
-  userData: User["userData"];
-}
-
 export async function fetchUserData(): Promise<User> {
-  const result = await serverFetch<UserResponse>("users/me");
+  const result = await getCurrentUser();
 
   if (!result.success) {
     throw new Error(result.error || "Failed to fetch user data");
   }
 
-  return { userData: result.data.userData };
+  return { userData: result.data.userData as User["userData"] };
 }

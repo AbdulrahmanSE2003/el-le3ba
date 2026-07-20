@@ -5,7 +5,10 @@ import { useRouter } from "next/navigation";
 import { connectSocket, getSocket } from "@/features/match/lib/socket";
 import { useLobbyStore } from "@/features/match/store/lobbyStore";
 import { useGameStore } from "@/features/match/store/gameStore";
-import type { GameStartedPayload, PresenceMember } from "@/features/match/lib/socket";
+import type {
+  GameStartedPayload,
+  PresenceMember,
+} from "@/features/match/lib/socket";
 import { toast } from "sonner";
 
 interface UseLobbySocketProps {
@@ -121,7 +124,9 @@ export const useLobbySocket = ({
     const connectedMembers = members.filter((member) => member.isOnline);
 
     if (connectedMembers.length < 2) {
-      toast.warning("متقدرش تلعب لوحدك كمل التيم بتاعك أو عالأقل 2.");
+      toast.warning(
+        "متقدرش تلعب لوحدك كمل التيم بتاعك أو عالأقل 2 يكونوا أونلاين.",
+      );
       return;
     }
 

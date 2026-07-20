@@ -1,16 +1,7 @@
-import { serverFetch } from "@/shared/api/server";
-
-interface TeamStatsAPIPreviewResponse {
-  MyRank: {
-    rank: number;
-    totalPoints: number;
-  };
-}
+import { getMyRank } from "@/shared/api/helpers";
 
 const TeamStatsPreview = async ({ eventId }: { eventId: string }) => {
-  const result = await serverFetch<TeamStatsAPIPreviewResponse>(
-    `leaderboard/my-rank?eventId=${eventId}`,
-  );
+  const result = await getMyRank(eventId);
 
   const { rank, totalPoints } = result.success
     ? result.data.MyRank

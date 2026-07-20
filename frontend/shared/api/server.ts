@@ -1,10 +1,16 @@
-"use server";
-
 import { cookies } from "next/headers";
 import { extractErrorMessage } from "./errors";
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1";
+
+export interface ServerFetchOptions {
+  url: string;
+  method?: string;
+  body?: object;
+  cache?: RequestCache;
+  revalidate?: number;
+}
 
 function resolveUrl(path: string): string {
   const base = API_URL.replace(/\/+$/, "");
@@ -12,16 +18,41 @@ function resolveUrl(path: string): string {
   return `${base}/${cleaned}`;
 }
 
+function normalizeArgs(
+  urlOrOptions: string | ServerFetchOptions,
+  method?: string,
+  body?: object,
+): {
+  url: string;
+  method: string;
+  body: object | undefined;
+  cache: RequestCache | undefined;
+  revalidate: number | undefined;
+} {
+  if (typeof urlOrOptions === "string") {
+    return { url: urlOrOptions, method: method ?? "GET", body, cache: undefined, revalidate: undefined };
+  }
+  return {
+    url: urlOrOptions.url,
+    method: urlOrOptions.method ?? "GET",
+    body: urlOrOptions.body,
+    cache: urlOrOptions.cache,
+    revalidate: urlOrOptions.revalidate,
+  };
+}
+
 export type ServerActionResponse<T = unknown> =
   | { success: true; data: T; message?: string }
   | { success: false; error?: string; status?: number; userData?: object };
 
 export async function serverFetch<T = unknown>(
-  url: string,
-  method: string = "GET",
+  urlOrOptions: string | ServerFetchOptions,
+  method?: string,
   body?: object,
 ): Promise<ServerActionResponse<T>> {
   try {
+    const { url, method: resolvedMethod, body: resolvedBody, cache, revalidate } = normalizeArgs(urlOrOptions, method, body);
+
     const cookieStore = await cookies();
     const token = cookieStore.get("jwt")?.value;
 
@@ -35,26 +66,33 @@ export async function serverFetch<T = unknown>(
 
     const resolvedUrl = resolveUrl(url);
 
-    const res = await fetch(resolvedUrl, {
-      method,
+    const fetchInit: RequestInit & { next?: { revalidate?: number } } = {
+      method: resolvedMethod,
       headers,
-      body: body ? JSON.stringify(body) : undefined,
-    });
+      body: resolvedBody ? JSON.stringify(resolvedBody) : undefined,
+    };
+
+    if (cache) {
+      fetchInit.cache = cache;
+    }
+
+    if (revalidate !== undefined) {
+      fetchInit.next = { revalidate };
+    }
+
+    const res = await fetch(resolvedUrl, fetchInit);
 
     const contentType = res.headers.get("content-type") || "";
 
     if (!res.ok) {
       if (!contentType.includes("application/json")) {
         const text = await res.text();
-        console.error(
-          `[serverFetch] Non-JSON error response from ${resolvedUrl}:`,
-          text.substring(0, 500),
-        );
+        console.error(`[serverFetch] Non-JSON error response from ${resolvedUrl}:`, text.substring(0, 500));
         return {
           success: false,
           error: `الخادم أعاد استجابة غير متوقعة (${res.status})`,
           status: res.status,
-          userData: body,
+          userData: resolvedBody,
         };
       }
 
@@ -63,16 +101,13 @@ export async function serverFetch<T = unknown>(
         success: false,
         error: data.message || "بيانات غير صحيحة",
         status: res.status,
-        userData: body,
+        userData: resolvedBody,
       };
     }
 
     if (!contentType.includes("application/json")) {
       const text = await res.text();
-      console.error(
-        `[serverFetch] Unexpected non-JSON response from ${resolvedUrl}:`,
-        text.substring(0, 500),
-      );
+      console.error(`[serverFetch] Unexpected non-JSON response from ${resolvedUrl}:`, text.substring(0, 500));
       return {
         success: false,
         error: "الخادم أعاد استجابة غير متوقعة",

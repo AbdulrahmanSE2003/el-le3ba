@@ -1,16 +1,8 @@
 import Quiz from "@/features/match/components/Game/Quiz";
-import { serverFetch } from "@/shared/api/server";
 import { redirect } from "next/navigation";
+import { getSessionDetails } from "@/shared/api/helpers";
 
 export const dynamic = "force-dynamic";
-
-interface SessionDetailsResponse {
-  sessionDetails: {
-    score: number;
-    correctAnswers: number;
-    bestStreak: number;
-  };
-}
 
 interface Props {
   params: Promise<{ sessionId: string }>;
@@ -19,9 +11,7 @@ interface Props {
 const page = async ({ params }: Props) => {
   const { sessionId } = await params;
 
-  const result = await serverFetch<SessionDetailsResponse>(
-    `sessions/${sessionId}`,
-  );
+  const result = await getSessionDetails(sessionId);
 
   if (!result.success) {
     if (result.status === 404) {
