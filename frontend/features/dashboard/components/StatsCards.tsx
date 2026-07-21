@@ -38,6 +38,7 @@ const StatsCards = ({
           label={stat.label}
           value={stat.value}
           Icon={stat.Icon}
+          className={idx === stats.length - 1 ? "max-sm:col-span-2" : ""}
         />
       ))}
     </div>

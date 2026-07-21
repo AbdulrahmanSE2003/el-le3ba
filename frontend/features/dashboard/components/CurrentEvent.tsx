@@ -47,9 +47,9 @@ const CurrentEvent = async ({
   const remainingDays = getRemainingDays(event.endTime);
 
   return (
-    <div className="border border-primary/40 rounded-xl p-6 bg-linear-to-r from-primary/20 to-accent/20 dark:from-primary/10 dark:to-accent/10 flex justify-between items-start gap-4 shadow-xs">
+    <div className="border border-primary/40 rounded-xl p-6 bg-linear-to-r from-primary/20 to-accent/20 dark:from-primary/10 dark:to-accent/10 flex flex-col-reverse sm:flex-row justify-between items-start gap-10 sm:gap-4 shadow-xs">
       {/* Right Col */}
-      <div className="flex flex-col items-start gap-y-4">
+      <div className="flex flex-col items-center sm:items-start gap-y-4 max-sm:w-full">
         {/* Badges */}
         <div className="flex items-center gap-1.5">
           <Badge className="py-1 px-2.5 bg-primary/20 text-primary font-bold border-none">
@@ -84,7 +84,10 @@ const CurrentEvent = async ({
         </div>
 
         {/* Start button */}
-        <Button asChild className="cursor-pointer font-bold gap-2 shadow-md">
+        <Button
+          asChild
+          className="cursor-pointer font-bold gap-2 shadow-md max-sm:w-full"
+        >
           <Link href="/match">
             <Play size={16} fill="currentColor" />
             <span>ادخل اللوبي</span>
@@ -93,7 +96,7 @@ const CurrentEvent = async ({
       </div>
 
       {/* Left col */}
-      <div className="flex flex-col items-start gap-y-1">
+      <div className="flex flex-col items-center sm:items-start max-sm:w-full gap-y-1">
         <span className="text-muted-foreground text-xs font-medium">
           الحدث الحالي
         </span>

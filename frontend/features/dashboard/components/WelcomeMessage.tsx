@@ -28,7 +28,7 @@ const WelcomeMessage = () => {
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }} // Spring-like ease out
       className="flex flex-col gap-1 transform-gpu"
     >
-      <h2 className="text-2xl capitalize font-black text-foreground tracking-tight">
+      <h2 className=" text-xl sm:text-2xl capitalize font-black text-foreground tracking-tight">
         أهلاً، {user?.name ?? ""} 👋🏻
       </h2>
 
