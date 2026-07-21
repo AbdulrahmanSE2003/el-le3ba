@@ -20,6 +20,7 @@ export type TeamProfileData = {
 
 export type TeamMember = {
   _id: string;
+  name: string;
   role: "captain" | "member";
   joinedAt: string;
 };

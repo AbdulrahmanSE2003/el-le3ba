@@ -6,7 +6,7 @@ import type { Event, Team, Member } from "@/features/match/types";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AxiosError } from "axios";
-import NoTeam from "@/components/shared/NoTeam";
+import NoTeam from "@/components/shared/no-team/NoTeam";
 
 export interface TeamApiResponse {
   status: boolean;

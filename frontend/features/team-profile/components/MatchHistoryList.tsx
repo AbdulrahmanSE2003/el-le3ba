@@ -7,7 +7,7 @@ import {
   Flame,
   AlertTriangle,
 } from "lucide-react";
-import StyleContainer from "@/features/profile/components/StyleContainer";
+import StyleContainer from "@/components/shared/StyleContainer";
 import Motion from "@/components/shared/Motion";
 import { fadeInUp, containerVariants } from "@/components/shared/animations";
 

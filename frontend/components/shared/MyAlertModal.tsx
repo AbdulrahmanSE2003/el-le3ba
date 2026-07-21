@@ -26,7 +26,7 @@ interface AlertModalProps {
   confirmText?: string | ReactNode;
   cancelText?: string | ReactNode;
 
-  onConfirm: () => Promise<boolean | void> | boolean | void;
+  onConfirm?: () => Promise<boolean | void> | boolean | void;
 }
 
 export function MyAlertModal({
@@ -51,7 +51,7 @@ export function MyAlertModal({
     try {
       setLoading(true);
 
-      const result = await onConfirm();
+      const result = await onConfirm?.();
       if (result === true) {
         onOpenChange?.(false);
       }
