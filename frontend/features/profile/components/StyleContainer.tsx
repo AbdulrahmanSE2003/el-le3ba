@@ -1,4 +1,5 @@
 import Motion, { MotionProps } from "@/components/shared/Motion";
+import { Variants } from "framer-motion";
 
 import { ReactNode } from "react";
 
@@ -8,6 +9,17 @@ interface Props extends MotionProps {
   className?: string;
   icon?: any;
   iconColor?: string;
+  variants?: Variants;
+  initial?: string;
+  whileInView?: string;
+  viewport?: {
+    once: boolean;
+    amount: number;
+  };
+  transition?: {
+    duration?: number;
+    type?: string;
+  };
 }
 
 export default function StyleContainer({

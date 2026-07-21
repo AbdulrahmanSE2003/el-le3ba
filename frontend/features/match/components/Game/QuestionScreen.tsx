@@ -19,7 +19,7 @@ import ResultOverlay from "./ResultOverlay";
 import SessionExpiredOverlay from "./SessionExpiredOverlay";
 import { useGameSocket } from "@/hooks/useGameSocket";
 import { useUserStore } from "@/store/userStore";
-import AbandonButton from "../game/AbandonButton";
+import AbandonButton from "./AbandonButton";
 
 export default function QuestionScreen() {
   const {

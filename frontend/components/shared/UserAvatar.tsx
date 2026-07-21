@@ -22,8 +22,10 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   return (
     <Avatar size={size} className={className}>
-      <AvatarImage src={src} alt={fallback} className={className}/>
-      <AvatarFallback className="text-3xl object-cover">{fallback}</AvatarFallback>
+      <AvatarImage src={src} alt={fallback} className={className} />
+      <AvatarFallback className="text-3xl object-cover">
+        {fallback}
+      </AvatarFallback>
       {showBadge && <AvatarBadge className="bg-green-600 dark:bg-green-800" />}
     </Avatar>
   );
