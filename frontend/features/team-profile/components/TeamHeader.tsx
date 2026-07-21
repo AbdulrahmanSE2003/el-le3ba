@@ -1,5 +1,4 @@
 import { Crown, Trophy, Edit2, Trash2, Calendar } from "lucide-react";
-import { TeamProfileData } from "../types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
