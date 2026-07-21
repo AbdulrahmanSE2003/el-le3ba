@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export type TeamStats = {
   totalGames: number;
   totalPoints: number;
@@ -8,7 +10,7 @@ export type TeamStats = {
 
 export type TeamProfileData = {
   _id: string;
-  teamName: string;
+  teamName?: string;
   teamCode: string;
   createdAt: string;
   isMyTeam: boolean;
@@ -18,8 +20,6 @@ export type TeamProfileData = {
 
 export type TeamMember = {
   _id: string;
-  name: string;
-  avatar: string | null;
   role: "captain" | "member";
   joinedAt: string;
 };
@@ -48,7 +48,19 @@ export type TeamAchievement = {
 
 export type TeamActivity = {
   _id: string;
-  type: "session_completed" | "member_joined" | "achievement_unlocked" | "rank_changed";
+  type:
+    | "session_completed"
+    | "member_joined"
+    | "achievement_unlocked"
+    | "rank_changed";
   description: string;
   timestamp: string;
+};
+
+export type StatItem = {
+  title: string;
+  value: string | number;
+  icon: LucideIcon;
+  iconBg: string;
+  iconColor: string;
 };

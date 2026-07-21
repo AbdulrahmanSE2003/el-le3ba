@@ -7,17 +7,9 @@ import {
   Flame,
   AlertTriangle,
 } from "lucide-react";
-import { SessionHistory } from "../types";
 import StyleContainer from "@/features/profile/components/StyleContainer";
 import Motion from "@/components/shared/Motion";
 import { fadeInUp, containerVariants } from "@/components/shared/animations";
-
-interface Props {
-  sessions: SessionHistory[];
-  hasMore: boolean;
-  onLoadMore?: () => void;
-  loading?: boolean;
-}
 
 const endReasonConfig = {
   completed: { label: "مكتملة", icon: CheckCircle, color: "text-green-500" },
@@ -34,11 +26,7 @@ const endReasonConfig = {
   },
 };
 
-export default function MatchHistoryList({
-  hasMore,
-  onLoadMore,
-  loading,
-}: Props) {
+export default function MatchHistoryList() {
   const sessions = [
     {
       _id: 1,
@@ -93,7 +81,7 @@ export default function MatchHistoryList({
       completedAt: new Date().toISOString(),
     },
   ];
-  
+
   if (sessions.length === 0) {
     return (
       <StyleContainer className="p-8 text-center">
@@ -123,7 +111,7 @@ export default function MatchHistoryList({
         className="space-y-3"
       >
         {sessions.map((session) => {
-          const config = endReasonConfig[session.endReason];
+          const config = endReasonConfig["completed"];
           const StatusIcon = config.icon;
           const accuracyPercent =
             session.totalQuestions > 0
@@ -192,14 +180,10 @@ export default function MatchHistoryList({
       </Motion>
 
       {/* Load More */}
-      {hasMore && (
+      {true && (
         <div className="mt-5 text-center">
-          <button
-            onClick={onLoadMore}
-            disabled={loading}
-            className="px-6 py-2.5 text-sm font-bold text-primary bg-primary/10 hover:bg-primary/20 rounded-xl transition disabled:opacity-50"
-          >
-            {loading ? "جاري التحميل..." : "عرض المزيد"}
+          <button className="px-6 py-2.5 text-sm font-bold text-primary bg-primary/10 hover:bg-primary/20 rounded-xl transition disabled:opacity-50">
+            عرض المزيد
           </button>
         </div>
       )}

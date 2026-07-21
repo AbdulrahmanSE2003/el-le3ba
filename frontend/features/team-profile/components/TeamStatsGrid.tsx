@@ -1,64 +1,12 @@
 "use client";
 
-import React from "react";
-import {
-  Trophy,
-  Flame,
-  Gamepad2,
-  Star,
-  Target,
-  LucideIcon,
-} from "lucide-react";
-import { TeamStats } from "../types";
-import { formatNumber } from "@/components/shared/numbers-format";
+import { Trophy, Flame, Gamepad2, Star, LucideIcon } from "lucide-react";
 import StyleContainer from "@/features/profile/components/StyleContainer";
 import Motion from "@/components/shared/Motion";
 import { fadeInUp, containerVariants } from "@/components/shared/animations";
+import { statItems } from "../contants";
 
-interface Props {
-  stats: TeamStats;
-}
-
-interface StatItem {
-  title: string;
-  value: string | number;
-  icon: LucideIcon;
-  iconBg: string;
-  iconColor: string;
-}
-
-export default function TeamStatsGrid({ stats }: Props) {
-  const statItems: StatItem[] = [
-    {
-      title: "إجمالي النقاط",
-      value: formatNumber(stats.totalPoints),
-      icon: Trophy,
-      iconBg: "bg-yellow-500/10 dark:bg-yellow-500/20",
-      iconColor: "text-yellow-500",
-    },
-    {
-      title: "المباريات المكتملة",
-      value: stats.totalGames,
-      icon: Gamepad2,
-      iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
-      iconColor: "text-blue-500",
-    },
-    {
-      title: "أعلى ستريك",
-      value: stats.bestStreak,
-      icon: Flame,
-      iconBg: "bg-orange-500/10 dark:bg-orange-500/20",
-      iconColor: "text-orange-500",
-    },
-    {
-      title: "متوسط السكور",
-      value: stats.averageScore,
-      icon: Star,
-      iconBg: "bg-purple-500/10 dark:bg-purple-500/20",
-      iconColor: "text-purple-500",
-    },
-  ];
-
+export default function TeamStatsGrid() {
   return (
     <Motion
       as="div"

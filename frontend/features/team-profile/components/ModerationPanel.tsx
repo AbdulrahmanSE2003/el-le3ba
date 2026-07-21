@@ -1,19 +1,12 @@
 "use client";
 
-import React from "react";
 import { ShieldAlert, RotateCcw, AlertOctagon, Edit3 } from "lucide-react";
-import { TeamProfileData } from "../types";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import StyleContainer from "@/features/profile/components/StyleContainer";
 
-interface Props {
-  team: TeamProfileData;
-}
 
-export default function ModerationPanel({ team }: Props) {
-  if (team.viewerRole !== "admin") return null;
-
+export default function ModerationPanel() {
   const handleResetName = () => {
     toast.success("إشراف: تم إعادة تعيين اسم الفريق للافتراضي");
   };

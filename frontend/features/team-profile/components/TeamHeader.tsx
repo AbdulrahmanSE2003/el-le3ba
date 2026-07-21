@@ -13,12 +13,7 @@ import { Input } from "@/components/ui/input";
 import StyleContainer from "@/features/profile/components/StyleContainer";
 import { formatDate } from "@/components/shared/formatted-date";
 
-interface Props {
-  team: TeamProfileData;
-  rank: number | null;
-}
-
-export default function TeamHeader({ team, rank }: Props) {
+export default function TeamHeader() {
   const formattedDate = formatDate();
 
   return (
@@ -27,16 +22,14 @@ export default function TeamHeader({ team, rank }: Props) {
       <div className="flex flex-col gap-3 w-full md:w-auto">
         <div className="flex items-center flex-wrap gap-3">
           <h1 className="font-extrabold text-3xl md:text-4xl text-foreground tracking-tight">
-            {team.teamName}
+            Beta Force
           </h1>
 
-          {team.isMyTeam && (
-            <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-black rounded-full border border-primary/25">
-              فريقي 🤝
-            </span>
-          )}
+          <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-black rounded-full border border-primary/25">
+            فريقي 🤝
+          </span>
 
-          {team.viewerRole === "captain" && (
+          {"captain" === "captain" && (
             <span className="flex items-center gap-1.5 px-3 py-1 bg-accent/20 text-accent-foreground text-xs font-black rounded-full border border-accent/25">
               <Crown className="w-3.5 h-3.5 text-yellow-500" />
               كابتن
@@ -64,7 +57,7 @@ export default function TeamHeader({ team, rank }: Props) {
             <p className="text-xs text-muted-foreground font-medium">
               الترتيب الحالي
             </p>
-            <p className="text-xl font-black text-foreground">المركز {rank}</p>
+            <p className="text-xl font-black text-foreground">المركز 15</p>
           </div>
         </div>
 
