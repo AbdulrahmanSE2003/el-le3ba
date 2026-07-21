@@ -3,7 +3,7 @@
 import { ShieldAlert, RotateCcw, AlertOctagon, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import StyleContainer from "@/features/profile/components/StyleContainer";
+import StyleContainer from "@/components/shared/StyleContainer";
 
 
 export default function ModerationPanel() {

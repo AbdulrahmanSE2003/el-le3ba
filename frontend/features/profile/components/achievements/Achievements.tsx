@@ -1,5 +1,5 @@
 import { achievements } from "../../achievements";
-import StyleContainer from "../StyleContainer";
+import StyleContainer from "../../../../components/shared/StyleContainer";
 import AchievementCard from "./AchievementCard";
 
 import { Zap } from "lucide-react";

@@ -3,7 +3,7 @@ import Motion from "@/components/shared/Motion";
 
 import { Dices } from "lucide-react";
 
-import StyleContainer from "../StyleContainer";
+import StyleContainer from "../../../../components/shared/StyleContainer";
 import LastGamesCard from "./LastGamesCard";
 
 import { UserProfileProps } from "../../types";

@@ -1,5 +1,5 @@
 import { Trophy, Flame, Gamepad2, Star } from "lucide-react";
-import { StatItem } from "./types";
+import { StatItem, TeamMember } from "./types";
 import { formatNumber } from "@/components/shared/numbers-format";
 
 export const ACHIEVEMENTS_POOL = [
@@ -72,7 +72,7 @@ export const statItems: StatItem[] = [
   },
 ];
 
-export const sortedMembers = [
+export const sortedMembers: TeamMember[] = [
   {
     _id: "1",
     name: "Ahmed",

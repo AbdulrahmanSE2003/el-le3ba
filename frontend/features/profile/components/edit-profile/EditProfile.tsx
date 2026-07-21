@@ -3,7 +3,7 @@ import { User as UserIcon } from "lucide-react";
 
 import { fadeInUp } from "@/components/shared/animations";
 
-import StyleContainer from "../StyleContainer";
+import StyleContainer from "../../../../components/shared/StyleContainer";
 import EditableField from "./EditableField";
 import ResetPassword from "./change-password/ResetPassword";
 
