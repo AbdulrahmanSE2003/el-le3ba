@@ -5,14 +5,14 @@ import MatchHistoryWrapper from "@/features/team-profile/components/MatchHistory
 import AchievementGrid from "@/features/team-profile/components/AchievementGrid";
 import ModerationPanel from "@/features/team-profile/components/ModerationPanel";
 
-
-export default async function TeamProfilePage() {
+export default async function TeamProfilePage({ params }: { params: Promise<any> }) {
+  const { id } = await params;
 
   return (
     <section className="h-full">
       <div className="container mx-auto w-full p-4 space-y-6">
         {/* Header: Team identity, rank, actions */}
-        <TeamHeader />
+        <TeamHeader teamId={id} />
 
         {/* Stats Grid */}
         <TeamStatsGrid />
