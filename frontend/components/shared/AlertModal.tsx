@@ -22,10 +22,10 @@ interface AlertModalProps {
   title?: string;
   description?: ReactNode;
 
-  confirmText?: string;
-  cancelText?: string;
+  confirmText?: string | ReactNode;
+  cancelText?: string | ReactNode;
 
-  onConfirm: () => Promise<void> | void;
+  onConfirm?: () => Promise<void> | void;
 }
 
 export function AlertModal({
@@ -46,7 +46,7 @@ export function AlertModal({
   const handleConfirm = async () => {
     try {
       setLoading(true);
-      await onConfirm();
+      await onConfirm?.();
       onOpenChange?.(false);
     } finally {
       setLoading(false);

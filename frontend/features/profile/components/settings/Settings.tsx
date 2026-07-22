@@ -2,7 +2,7 @@
 
 import { Settings } from "lucide-react";
 
-import StyleContainer from "../StyleContainer";
+import StyleContainer from "../../../../components/shared/StyleContainer";
 import SettingCard from "./SettingCard";
 
 import { useTheme } from "next-themes";

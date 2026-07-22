@@ -39,6 +39,28 @@ export interface CurrentUserResponse {
   userData: UserData;
 }
 
+export interface RecentSession {
+  _id: string;
+  eventId: {
+    _id: string;
+    title: string;
+  };
+  endReason: string;
+  finalScore: number;
+  correctAnswers: number;
+  bestStreak: number;
+  completedAt: string;
+}
+export interface MyTeamStats {
+  teamStats: {
+    totalGames: number;
+    totalPoints: number;
+    bestStreak: number;
+    avgScore: number;
+    recentSessions: RecentSession[];
+  };
+}
+
 export interface CurrentTeamResponse {
   team: {
     team: Team;
@@ -102,6 +124,10 @@ export const getCurrentTeam = cache(async () =>
   serverFetch<CurrentTeamResponse>({ url: "teams/my-team", ...CACHE.team }),
 );
 
+export const getMyTeamStats = cache(async () =>
+  serverFetch<MyTeamStats>({ url: "teams/my-team/stats", ...CACHE.team }),
+);
+
 export const getCurrentEvent = cache(async () =>
   serverFetch<CurrentEventResponse>({ url: "events/current", ...CACHE.event }),
 );
@@ -124,12 +150,11 @@ export const getMyRank = cache(async (eventId: string) =>
   }),
 );
 
-export const getTeamAttempts = cache(
-  async (teamId: string, eventId: string) =>
-    serverFetch<TeamAttemptsResponse>({
-      url: `teams/${teamId}/attempts?eventId=${eventId}`,
-      ...CACHE.attempts,
-    }),
+export const getTeamAttempts = cache(async (teamId: string, eventId: string) =>
+  serverFetch<TeamAttemptsResponse>({
+    url: `teams/${teamId}/attempts?eventId=${eventId}`,
+    ...CACHE.attempts,
+  }),
 );
 
 export const getSessionDetails = cache(async (sessionId: string) =>

@@ -18,7 +18,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             لوحة المشرف
           </span>
         </header>
-        <section className="flex-1 overflow-auto p-4 md:p-6">{children}</section>
+        <section className="flex-1 overflow-auto p-4 md:p-6">
+          {children}
+        </section>
       </SidebarInset>
     </SidebarProvider>
   );

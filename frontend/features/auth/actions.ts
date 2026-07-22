@@ -44,7 +44,7 @@ export async function signup(
     return { error: result.error, userData: result.userData };
   }
 
-  redirect(result.redirectPath as string);
+  redirect("/select-avatar");
 }
 
 export async function forgotPassword(

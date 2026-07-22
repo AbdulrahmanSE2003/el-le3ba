@@ -1,4 +1,5 @@
 import Motion, { MotionProps } from "@/components/shared/Motion";
+import { Variants } from "framer-motion";
 
 import type { LucideIcon } from "lucide-react";
 import { ReactNode } from "react";
@@ -9,6 +10,17 @@ interface Props extends MotionProps {
   className?: string;
   icon?: LucideIcon;
   iconColor?: string;
+  variants?: Variants;
+  initial?: string;
+  whileInView?: string;
+  viewport?: {
+    once: boolean;
+    amount: number;
+  };
+  transition?: {
+    duration?: number;
+    type?: string;
+  };
 }
 
 export default function StyleContainer({

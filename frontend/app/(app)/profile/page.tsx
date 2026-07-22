@@ -10,8 +10,8 @@ export const metadata = {
 
 export default function ProfilePage() {
   return (
-    <main>
+    <section className={`max-sm:px-4 max-sm:pt-6`}>
       <ProfileContainer />
-    </main>
+    </section>
   );
 }

@@ -9,6 +9,7 @@ import {
   getMyTeam,
   getTeam,
   getTeamAttempts,
+  getTeamStats,
   joinTeam,
   kickMember,
   leaveTeam,
@@ -24,6 +25,7 @@ teamRoutes
   .post(createTeam);
 
 teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
+teamRoutes.route("/my-team/stats").get(getTeamStats);
 
 teamRoutes.route("/join").post(joinTeam);
 teamRoutes.route("/leave").delete(leaveTeam);

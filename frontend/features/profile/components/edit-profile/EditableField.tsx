@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-import { LucideIcon } from "lucide-react";
-
 import { AnimatePresence } from "framer-motion";
 
 import { showSuccess, showError } from "@/components/shared/notifications";
@@ -11,13 +9,13 @@ import { showSuccess, showError } from "@/components/shared/notifications";
 import { ActionResponse } from "../../types";
 
 import IsEditing from "./IsEditing";
-import UserName from "./UserName";
-import NameActions from "./NameActions";
+import UserName from "./change-name/UserName";
+import NameActions from "./change-name/NameActions";
 import EditBtn from "./EditBtn";
 
 interface EditableFieldProps {
   label: string;
-  icon: LucideIcon;
+  icon: React.ReactNode;
   value: string;
   onSave: (value: string) => Promise<ActionResponse>;
   type?: string;
@@ -26,7 +24,7 @@ interface EditableFieldProps {
 
 export default function EditableField({
   label,
-  icon: Icon,
+  icon,
   value,
   onSave,
   type = "text",
@@ -65,7 +63,7 @@ export default function EditableField({
       {/* Label & Icon */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div className="w-9 h-9 rounded-xl bg-primary/10 dark:bg-primary/20 border border-primary/15 flex items-center justify-center shrink-0">
-          <Icon size={16} className="text-primary" />
+          {icon}
         </div>
 
         <div className="min-w-0 flex-1">

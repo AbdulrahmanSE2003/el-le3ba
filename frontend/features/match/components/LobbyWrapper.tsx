@@ -8,7 +8,7 @@ import {
 } from "@/shared/api/helpers";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import NoTeam from "@/components/shared/NoTeam";
+import NoTeam from "@/components/shared/no-team/NoTeam";
 
 const LobbyWrapper = async () => {
   const [teamRes, eventRes] = await Promise.all([

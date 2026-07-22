@@ -27,7 +27,7 @@ export default function LoginForm() {
   }, [state]);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 ">
       {/* Header section with logo */}
       <Header header="تسجيل الدخول" text="يلا نلعب اللعبة 🤙🏻" />
 

@@ -1,4 +1,3 @@
-import Achievements from "./achievements/Achievements";
 import ProfileStats from "./profile-stats/ProfileStats";
 import ProfileInfo from "./ProfileInfo";
 import EditProfile from "./edit-profile/EditProfile";
@@ -12,12 +11,12 @@ export default async function ProfileContainer() {
   const { userData } = await fetchUserData();
 
   return (
-    <section className="flex flex-col gap-5">
+    <div className="flex flex-col gap-5">
       <ProfileInfo user={userData} />
 
       <ProfileStats user={userData} />
 
-      <Achievements />
+      {/* <Achievements /> */}
 
       <LastGames user={userData} />
 
@@ -26,6 +25,6 @@ export default async function ProfileContainer() {
       <Settings />
 
       <AccountActions />
-    </section>
+    </div>
   );
 }

@@ -4,6 +4,7 @@ export interface Team {
   teamCode: string;
   teamLeader: string;
   totalGames: number;
+  bestStreak: number;
   points: number;
   createdAt: string;
   updatedAt: string;
