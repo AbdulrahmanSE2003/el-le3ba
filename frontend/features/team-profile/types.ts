@@ -65,3 +65,20 @@ export type StatItem = {
   iconBg: string;
   iconColor: string;
 };
+
+export type sessionsType = {
+  _id: number;
+  eventId: {
+    _id: number;
+    title: string;
+  };
+  finalScore: number;
+  correctAnswers: number;
+  totalQuestions: number;
+  bestStreak: number;
+  endReason: string;
+  completedAt: string;
+  label: string;
+  icon: LucideIcon;
+  color: string;
+};

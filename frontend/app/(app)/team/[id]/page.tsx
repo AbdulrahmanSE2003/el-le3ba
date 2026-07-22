@@ -1,9 +1,9 @@
 import TeamHeader from "@/features/team-profile/components/team-header/TeamHeader";
 import TeamStatsGrid from "@/features/team-profile/components/stats/TeamStatsGrid";
 import MemberList from "@/features/team-profile/components/members-list/MemberList";
-import MatchHistoryWrapper from "@/features/team-profile/components/MatchHistoryWrapper";
-import AchievementGrid from "@/features/team-profile/components/AchievementGrid";
-import ModerationPanel from "@/features/team-profile/components/ModerationPanel";
+import MatchHistoryWrapper from "@/features/team-profile/components/last-games/MatchHistoryWrapper";
+import AchievementGrid from "@/features/team-profile/components/not-currently-used/AchievementGrid";
+import ModerationPanel from "@/features/team-profile/components/not-currently-used/ModerationPanel";
 
 export default async function TeamProfilePage({
   params,
@@ -30,7 +30,7 @@ export default async function TeamProfilePage({
       <MatchHistoryWrapper />
 
       {/* Achievements */}
-      <AchievementGrid />
+      {/* <AchievementGrid /> */}
     </section>
   );
 }
