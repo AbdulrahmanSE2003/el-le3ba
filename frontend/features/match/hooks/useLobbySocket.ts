@@ -14,16 +14,14 @@ import { toast } from "sonner";
 interface UseLobbySocketProps {
   teamId: string;
   userId: string;
-  isCaptain: boolean;
 }
 
 export const useLobbySocket = ({
   teamId,
   userId,
-  isCaptain,
 }: UseLobbySocketProps) => {
   const router = useRouter();
-  const { setMembers, setConnected, setError, setGameStarted, members } =
+  const { setMembers, setConnected, setError, members } =
     useLobbyStore();
   const setGame = useGameStore((s) => s.setGame);
 
@@ -70,13 +68,11 @@ export const useLobbySocket = ({
       socket.off("game-started", handleGameStarted);
       socket.off("game-error", handleGameError);
 
-      setGameStarted(payload);
       setGame({
         sessionId: payload.sessionId,
         teamId,
         eventId: "",
         sessionExpiresAt: payload.expiresAt,
-        isCaptain,
         questions: payload.questions.map((q) => ({
           _id: q._id,
           question: q.question,
@@ -115,9 +111,7 @@ export const useLobbySocket = ({
     setMembers,
     setConnected,
     setError,
-    setGameStarted,
     setGame,
-    isCaptain,
   ]);
 
   const startGame = useCallback(() => {

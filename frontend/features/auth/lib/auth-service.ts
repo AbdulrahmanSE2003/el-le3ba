@@ -38,6 +38,11 @@ export async function authenticate(
     maxAge: 60 * 60 * 24 * 90,
     path: "/",
   });
+  cookieStore.set("x-jwt", token, {
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 90,
+    path: "/",
+  });
 
   return {
     success: true,

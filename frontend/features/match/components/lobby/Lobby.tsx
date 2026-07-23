@@ -44,7 +44,6 @@ const Lobby = ({ team }: LobbyProps) => {
   const { startGame } = useLobbySocket({
     teamId: team._id,
     userId: user?._id ?? "",
-    isCaptain,
   });
 
   const { members, error } = useLobbyStore();

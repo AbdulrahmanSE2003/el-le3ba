@@ -29,6 +29,16 @@ export interface AnswerResponse {
   correctAnswer?: string;
 }
 
+export interface LastAnswer {
+  isCorrect: boolean;
+  score: number;
+  totalScore: number;
+  currentStreak: number;
+  correctAnswer?: string;
+  sessionComplete: boolean;
+  answeredByName?: string;
+}
+
 export type GamePhase =
   | "intro"
   | "countdown"

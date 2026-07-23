@@ -17,7 +17,7 @@ export const submitAnswer = async (
     timeTaken,
   });
 
-  return res.data.answerDetails as import("@/features/match/store/gameStore").LastAnswer;
+  return res.data.answerDetails as import("@/features/match/types").LastAnswer;
 };
 
 export const abandonSession = async (sessionId: string): Promise<void> => {
