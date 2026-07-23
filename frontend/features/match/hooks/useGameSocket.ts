@@ -48,7 +48,6 @@ export const useGameSocket = ({
     const handleGameEnded = () => {
       console.log("GAME ENDED");
       const sid = useGameStore.getState().sessionId;
-      useGameStore.getState().resetGame();
       if (sid) {
         router.replace(`/match/result/${sid}`);
       } else {
