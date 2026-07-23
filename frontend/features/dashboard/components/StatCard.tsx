@@ -1,14 +1,20 @@
-import { formatPoints } from "@/lib/utils";
+import { cn, formatPoints } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
 interface StatCardProps {
   label: string;
   value: string | number;
   Icon: LucideIcon;
+  className?: string;
 }
 
-const StatCard = ({ label, value, Icon }: StatCardProps) => (
-  <div className="border border-primary/35 bg-background rounded-lg p-5 flex flex-col gap-y-3  shadow-sm group">
+const StatCard = ({ label, value, Icon, className }: StatCardProps) => (
+  <div
+    className={cn(
+      "border border-primary/35 bg-background rounded-lg p-5 flex flex-col gap-y-3  shadow-sm group",
+      className,
+    )}
+  >
     <div className="text-muted-foreground text-xs font-medium flex items-center gap-2  dark:group-hover:text-accent group-hover:text-primary transition-colors duration-300">
       <Icon className="size-4 " />
       <span>{label}</span>

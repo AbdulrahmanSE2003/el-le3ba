@@ -5,7 +5,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Member, Team } from "@/features/match/types";
+import type { Member, Team } from "@/shared/types/team";
 import { getInitials } from "@/lib/utils";
 import { Copy, CopyCheck } from "lucide-react";
 import Link from "next/link";
@@ -34,10 +34,10 @@ const TeamSnapshot = ({ team, members }: { team: Team; members: Member[] }) => {
 
   return (
     <div
-      className={`border border-primary/35 bg-background rounded-lg p-6 flex justify-between items-center`}
+      className={`border border-primary/35 bg-background rounded-lg p-6 flex max-sm:flex-col max-sm:gap-6 justify-between items-center`}
     >
       {/* Right col */}
-      <div className={`flex flex-col gap-y-4`}>
+      <div className={`flex flex-col gap-y-2 sm:gap-y-4 max-sm:w-full`}>
         <Link
           href={"/team"}
           className={`text-sm font-bold font-display text-primary hover:underline`}
@@ -75,7 +75,9 @@ const TeamSnapshot = ({ team, members }: { team: Team; members: Member[] }) => {
       </div>
 
       {/* Left col */}
-      <div className={`flex flex-col items-end gap-y-4`}>
+      <div
+        className={`flex flex-col items-end gap-y-2 sm:gap-y-4 max-sm:w-full`}
+      >
         <span className={`font-semibold font-display text-xl`}>فريقك</span>
         <div className={`flex items-center gap-3`}>
           <div className={`flex items-center gap-1`}>

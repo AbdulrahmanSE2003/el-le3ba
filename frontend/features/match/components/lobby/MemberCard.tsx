@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { memo } from "react";
 import { useUserStore } from "@/store/userStore";
-import type { PresenceMember } from "@/lib/socket";
+import type { PresenceMember } from "@/features/match/lib/socket";
 
 interface MemberCardProps {
   member: PresenceMember;

@@ -134,6 +134,9 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
   );
   if (!question) return next(new AppError("Question not found.", 404));
 
+  const team = await Team.findById(session.teamId);
+  if (!team) return next(new AppError("Team not found.", 404));
+
   // ── 5. Calculate score ────────────────────────────────────
   let isCorrect = false;
   let score = 0;
@@ -147,8 +150,13 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
 
     // Update streak
     session.currentStreak += 1;
-    if (session.currentStreak > session.bestStreak)
+    if (session.currentStreak > session.bestStreak) {
       session.bestStreak = session.currentStreak;
+    }
+    if (session.bestStreak > team.bestStreak) {
+      team.bestStreak = session.bestStreak;
+      await team.save();
+    }
 
     // Streak milestone bonus
     const streakBonus =

@@ -6,8 +6,8 @@ const HomepageSkeleton = () => {
       <div className={`flex justify-between items-center`}>
         <Skeleton className={`w-7 h-7 rounded-full`} />
         <div className={`flex flex-col gap-y-1.5`}>
-          <Skeleton className={`w-40 h-6 rounded-full`} />
-          <Skeleton className={`w-32 h-4`} />
+          <Skeleton className={`w-28 h-6 rounded-full`} />
+          <Skeleton className={`w-40 h-4`} />
         </div>
       </div>
 

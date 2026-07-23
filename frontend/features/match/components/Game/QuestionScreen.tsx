@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore } from "@/features/match/store/gameStore";
 import { submitAnswer } from "../../api";
 import useQuestionTimer from "../../hooks/useQuestionTimer";
 import useSessionTimer from "../../hooks/useSessionTimer";
@@ -17,9 +17,9 @@ import OptionButton from "./OptionButton";
 import ProgressBar from "./ProgressBar";
 import ResultOverlay from "./ResultOverlay";
 import SessionExpiredOverlay from "./SessionExpiredOverlay";
-import { useGameSocket } from "@/hooks/useGameSocket";
+import { useGameSocket } from "@/features/match/hooks/useGameSocket";
 import { useUserStore } from "@/store/userStore";
-import AbandonButton from "./AbandonButton";
+import AbandonButton from "../game/AbandonButton";
 
 export default function QuestionScreen() {
   const {

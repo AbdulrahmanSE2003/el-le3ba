@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 
 import { ActionState } from "./types";
 
-import { tryCatch } from "@/components/shared/try-catch";
-import { authenticate } from "./auth-service";
+import { serverFetch } from "@/shared/api/server";
+import { authenticate } from "./lib/auth-service";
 
 export async function signIn(
   prevState: ActionState | null,
@@ -53,7 +53,7 @@ export async function forgotPassword(
 ): Promise<ActionState> {
   const email = formData.get("email") as string;
 
-  const result = await tryCatch("users/forgot-password", "POST", { email });
+  const result = await serverFetch("users/forgot-password", "POST", { email });
 
   if (!result.success) {
     return { error: result.error, userData: result.userData };
@@ -70,7 +70,7 @@ export async function resetPassword(
   const password = formData.get("password") as string;
   const passwordConfirm = formData.get("passwordConfirm") as string;
 
-  const result = await tryCatch(`users/reset-password/${token}`, "PATCH", {
+  const result = await serverFetch(`users/reset-password/${token}`, "PATCH", {
     password,
     passwordConfirm,
   });

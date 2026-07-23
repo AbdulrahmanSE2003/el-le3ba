@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { getSessionStatus, type SessionResult } from "../../api";
 import { Trophy, Target, Zap, Loader2, Home } from "lucide-react";
 import Link from "next/link";
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore } from "@/features/match/store/gameStore";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Confetti from "./Confetti";
 

@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { connectSocket } from "@/lib/socket";
-import { useGameStore } from "@/store/gameStore";
-import type { QuestionResultPayload } from "@/lib/socket";
+import { connectSocket } from "@/features/match/lib/socket";
+import { useGameStore } from "@/features/match/store/gameStore";
+import type { QuestionResultPayload } from "@/features/match/lib/socket";
 
 interface Props {
   teamId: string;

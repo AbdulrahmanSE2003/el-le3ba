@@ -1,15 +1,8 @@
 import Quiz from "@/features/match/components/Game/Quiz";
-import { apiServer } from "@/lib/apiServer";
 import { redirect } from "next/navigation";
+import { getSessionDetails } from "@/shared/api/helpers";
 
-interface SessionDetailsResponse {
-  status: boolean;
-  sessionDetails: {
-    score: number;
-    correctAnswers: number;
-    bestStreak: number;
-  };
-}
+export const dynamic = "force-dynamic";
 
 interface Props {
   params: Promise<{ sessionId: string }>;
@@ -18,27 +11,14 @@ interface Props {
 const page = async ({ params }: Props) => {
   const { sessionId } = await params;
 
-  try {
-    const res = await apiServer<SessionDetailsResponse>(
-      "get",
-      `/sessions/${sessionId}`,
-    );
-    const details = res.data?.sessionDetails;
-    if (details) {
-      redirect(`/match/result/${sessionId}`);
-    }
-  } catch (err: unknown) {
-    const axiosErr = err as {
-      response?: { status?: number; data?: { message?: string } };
-    };
-    const status = axiosErr?.response?.status;
-    const message = axiosErr?.response?.data?.message ?? "";
+  const result = await getSessionDetails(sessionId);
 
-    if (status === 404) {
+  if (!result.success) {
+    if (result.status === 404) {
       redirect("/match");
     }
 
-    if (message?.includes("under processing")) {
+    if (result.error?.includes("under processing")) {
       return (
         <section className="flex h-screen items-center justify-center bg-background text-foreground">
           <div className="text-center space-y-4">
@@ -48,6 +28,10 @@ const page = async ({ params }: Props) => {
         </section>
       );
     }
+  }
+
+  if (result.success && result.data.sessionDetails) {
+    redirect(`/match/result/${sessionId}`);
   }
 
   return (

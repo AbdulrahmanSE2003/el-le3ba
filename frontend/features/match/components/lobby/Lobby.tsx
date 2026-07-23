@@ -5,10 +5,10 @@ import MemberCard from "./MemberCard";
 import StartMatch from "./StartMatch";
 import WaitingForCaptain from "./WaitingForCaptain";
 import RulesSection from "./RulesSection";
-import type { Team } from "../../types";
+import type { Team } from "@/shared/types/team";
 import { useUserStore } from "@/store/userStore";
-import { useLobbyStore } from "@/store/lobbyStore";
-import { useLobbySocket } from "@/hooks/useLobbySocket";
+import { useLobbyStore } from "@/features/match/store/lobbyStore";
+import { useLobbySocket } from "@/features/match/hooks/useLobbySocket";
 
 interface LobbyProps {
   team: Team;
@@ -26,7 +26,7 @@ const TeamName = memo(function TeamName({ name }: { name: string }) {
 const MembersGrid = memo(function MembersGrid({
   members,
 }: {
-  members: import("@/lib/socket").PresenceMember[];
+  members: import("@/features/match/lib/socket").PresenceMember[];
 }) {
   return (
     <div className="grid grid-cols-3 gap-3">

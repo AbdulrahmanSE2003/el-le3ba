@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { PresenceMember, GameStartedPayload } from "@/lib/socket";
+import type { PresenceMember, GameStartedPayload } from "@/features/match/lib/socket";
 
 interface LobbyStore {
   members: PresenceMember[];

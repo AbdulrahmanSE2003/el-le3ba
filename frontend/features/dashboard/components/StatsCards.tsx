@@ -1,5 +1,5 @@
 "use client";
-import { Team } from "@/features/match/types";
+import type { Team } from "@/shared/types/team";
 import { Flame, Gamepad2, Star } from "lucide-react";
 import StatCard from "./StatCard";
 
@@ -38,6 +38,7 @@ const StatsCards = ({
           label={stat.label}
           value={stat.value}
           Icon={stat.Icon}
+          className={idx === stats.length - 1 ? "max-sm:col-span-2" : ""}
         />
       ))}
     </div>

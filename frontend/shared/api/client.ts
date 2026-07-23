@@ -1,0 +1,42 @@
+import axios from "axios";
+import { toast } from "sonner";
+
+import { isAuthError, isForbiddenError, isServerError, extractErrorMessage } from "./errors";
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000/api/v1",
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (isAuthError(error)) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("user-store");
+        window.location.href = "/login";
+      }
+      return Promise.reject(error);
+    }
+
+    if (isForbiddenError(error)) {
+      if (typeof window !== "undefined") {
+        window.location.href = "/dashboard";
+      }
+      return Promise.reject(error);
+    }
+
+    if (isServerError(error)) {
+      console.error("Server error:", extractErrorMessage(error));
+      toast.error("حدث خطأ ما برجاء المحاولة لاحقا.");
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export default api;

@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bell } from "lucide-react";
-import api from "@/lib/axios";
 
 import { Button } from "@/components/ui/button";
 import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
@@ -10,14 +9,11 @@ import { Drawer, DrawerTrigger } from "@/components/ui/drawer";
 import NotificationsList from "./NotificationsList";
 import { INotificationItem } from "./NotificationItem";
 import { toast } from "sonner";
-
-interface NotificationRes {
-  status: boolean;
-  notifications: {
-    notifications: INotificationItem[];
-    unreadCount: number;
-  };
-}
+import {
+  fetchNotifications as apiFetchNotifications,
+  markNotificationAsRead,
+  markAllNotificationsAsRead as apiMarkAllAsRead,
+} from "../api/notifications";
 
 const Notification = () => {
   const [isMarkingAll, setIsMarkingAll] = useState(false);
@@ -27,10 +23,8 @@ const Notification = () => {
   const fetchNotifications = useCallback(async () => {
     try {
       setLoading(true);
-
-      const { data } = await api.get<NotificationRes>("/notifications");
-
-      setNotifications(data.notifications.notifications);
+      const data = await apiFetchNotifications();
+      setNotifications(data);
     } catch {
       toast.error("تعذر تحميل الإشعارات.");
     } finally {
@@ -56,7 +50,7 @@ const Notification = () => {
     );
 
     try {
-      await api.patch(`/notifications/${id}`);
+      await markNotificationAsRead(id);
     } catch {
       setNotifications(previous);
       toast.error("حدث خطأ برجاء المحاولة لاحقًا.");
@@ -77,7 +71,7 @@ const Notification = () => {
     );
 
     try {
-      await api.patch("/notifications/all");
+      await apiMarkAllAsRead();
       toast.success("تم تعليم جميع الإشعارات كمقروءة.");
     } catch {
       setNotifications(previous);

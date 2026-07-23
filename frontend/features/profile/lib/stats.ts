@@ -1,5 +1,5 @@
 import { Trophy, Flame, Gamepad2, Star } from "lucide-react";
-import { Stat } from "./types";
+import { Stat } from "../types";
 
 export const stats: Stat[] = [
   {

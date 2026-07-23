@@ -1,20 +1,19 @@
 "use server";
 
-import { tryCatch } from "@/components/shared/try-catch";
-
 import { revalidatePath } from "next/cache";
+
+import { serverFetch } from "@/shared/api/server";
 
 import { ActionResponse } from "./types";
 
 import { logout } from "../auth/actions";
-import { redirect } from "next/navigation";
 
 export async function updateName(name: string): Promise<ActionResponse> {
   if (name.trim().length <= 2) {
     return { success: false, error: "الاسم لازم يكون على الأقل 3 حروف" };
   }
 
-  const result = await tryCatch("users/me", "PATCH", { name: name.trim() });
+  const result = await serverFetch("users/me", "PATCH", { name: name.trim() });
 
   if (!result.success) {
     return { success: false, error: result.error || "فشل تحديث الاسم" };
@@ -44,7 +43,7 @@ export async function changePassword(
     return { success: false, error: "كلمات السر مش متطابقة" };
   }
 
-  const result = await tryCatch("users/me/change-password", "PATCH", {
+  const result = await serverFetch("users/me/change-password", "PATCH", {
     oldPassword,
     newPassword,
     newPasswordConfirm,
@@ -61,13 +60,13 @@ export async function changePassword(
 }
 
 export async function deleteAccount(): Promise<void> {
-  await tryCatch("users/me", "DELETE");
+  await serverFetch("users/me", "DELETE");
 
   await logout();
 }
 
 export async function updateAvatar(avatar: string): Promise<ActionResponse> {
-  const result = await tryCatch("users/me", "PATCH", { avatar });
+  const result = await serverFetch("users/me", "PATCH", { avatar });
 
   if (!result.success) {
     return {

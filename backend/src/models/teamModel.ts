@@ -5,6 +5,7 @@ export interface ITeam extends Document {
   teamCode: string;
   teamLeader: mongoose.Types.ObjectId;
   totalGames: number;
+  bestStreak: number;
   points: number;
   createdAt: Date;
   updatedAt: Date;
@@ -37,6 +38,8 @@ const teamSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+
+    bestStreak: { type: Number, default: 0 },
 
     points: { type: Number, default: 0 },
   },
