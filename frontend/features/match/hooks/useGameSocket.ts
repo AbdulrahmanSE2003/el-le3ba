@@ -45,9 +45,14 @@ export const useGameSocket = ({
       nextQuestion();
     };
 
-    const handleGameEnded = () => {
-      console.log("GAME ENDED");
+    const handleGameEnded = (payload: { abandoned?: boolean }) => {
       const sid = useGameStore.getState().sessionId;
+
+      if (payload.abandoned) {
+        useGameStore.getState().resetGame();
+        router.replace("/match");
+        return;
+      }
       if (sid) {
         router.replace(`/match/result/${sid}`);
       } else {

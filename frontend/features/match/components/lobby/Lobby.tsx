@@ -41,7 +41,7 @@ const Lobby = ({ team }: LobbyProps) => {
   const { user, isHydrated } = useUserStore();
   const isCaptain = user?._id === team.teamLeader;
 
-  const { startGame } = useLobbySocket({
+  const { startGame, isStarting } = useLobbySocket({
     teamId: team._id,
     userId: user?._id ?? "",
   });
@@ -57,7 +57,7 @@ const Lobby = ({ team }: LobbyProps) => {
       <MembersGrid members={members} />
 
       {isCaptain ? (
-        <StartMatch onClick={startGame} />
+        <StartMatch onClick={startGame} loading={isStarting} />
       ) : (
         <WaitingForCaptain />
       )}
