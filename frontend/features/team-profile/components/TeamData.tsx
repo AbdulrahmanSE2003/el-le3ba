@@ -1,6 +1,6 @@
 import { getMyTeamStats } from "@/shared/api/helpers";
-import MatchHistoryWrapper from "./MatchHistoryWrapper";
 import TeamStatsGrid from "./stats/TeamStatsGrid";
+import MatchHistoryList from "./MatchHistoryList";
 
 const TeamData = async () => {
   const statsRes = await getMyTeamStats();
@@ -15,7 +15,7 @@ const TeamData = async () => {
       <TeamStatsGrid stats={stats} />
 
       {/* Match History */}
-      <MatchHistoryWrapper recentSessions={stats.teamStats.recentSessions} />
+      <MatchHistoryList sessions={stats.teamStats.recentSessions} />
     </div>
   );
 };
