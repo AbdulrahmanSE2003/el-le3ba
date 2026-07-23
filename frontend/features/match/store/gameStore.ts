@@ -44,6 +44,7 @@ interface GameState {
   nextQuestion: () => void;
   restoreGame: () => boolean;
   resetGame: () => void;
+  updateScore: (payload: { totalScore: number; currentStreak: number }) => void;
 }
 
 function persist(state: GameState) {
@@ -61,9 +62,7 @@ function persist(state: GameState) {
       currentStreak: state.currentStreak,
     };
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-
-  }
+  } catch {}
 }
 
 function loadPersisted(): Partial<GameState> | null {
@@ -92,9 +91,7 @@ function clearPersisted() {
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(STORAGE_KEY);
-  } catch {
-
-  }
+  } catch {}
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -107,13 +104,7 @@ export const useGameStore = create<GameState>((set, get) => ({
   totalScore: 0,
   currentStreak: 0,
 
-  setGame: ({
-    sessionId,
-    teamId,
-    eventId,
-    sessionExpiresAt,
-    questions,
-  }) => {
+  setGame: ({ sessionId, teamId, eventId, sessionExpiresAt, questions }) => {
     const state = {
       sessionId,
       teamId,
@@ -154,6 +145,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentIndex: 0,
       totalScore: 0,
       currentStreak: 0,
+    });
+  },
+
+  updateScore: ({ totalScore, currentStreak }) => {
+    set((state) => {
+      const next = {
+        totalScore,
+        currentStreak,
+      };
+
+      persist({ ...state, ...next });
+
+      return next;
     });
   },
 }));

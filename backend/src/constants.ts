@@ -1,4 +1,4 @@
-export const QUESTIONS_PER_SESSION = 20;
+export const QUESTIONS_PER_SESSION = 3;
 export const BASE_SCORE = 15;
 export const STREAK_BONUS = 5;
 export const STREAK_MILESTONE = 5;

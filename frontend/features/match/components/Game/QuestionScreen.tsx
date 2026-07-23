@@ -31,6 +31,7 @@ export default function QuestionScreen() {
     totalScore,
     currentStreak,
     restoreGame,
+    updateScore,
     resetGame,
     teamId,
   } = useGameStore();
@@ -91,6 +92,10 @@ export default function QuestionScreen() {
     if (processedRef.current.has(payload.questionId)) return;
     processedRef.current.add(payload.questionId);
 
+    updateScore({
+      totalScore: payload.totalScore,
+      currentStreak: payload.currentStreak,
+    });
     setLastAnswer({
       isCorrect: payload.isCorrect,
       score: payload.score,
@@ -145,8 +150,7 @@ export default function QuestionScreen() {
           ?.message ?? "حدث خطأ في الإرسال";
 
       const isTerminal =
-        msg.includes("expired") ||
-        msg.includes("no longer active");
+        msg.includes("expired") || msg.includes("no longer active");
 
       if (isTerminal) {
         resetGame();

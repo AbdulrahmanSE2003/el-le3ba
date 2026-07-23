@@ -46,6 +46,7 @@ export const useGameSocket = ({
     };
 
     const handleGameEnded = () => {
+      console.log("GAME ENDED");
       const sid = useGameStore.getState().sessionId;
       useGameStore.getState().resetGame();
       if (sid) {
@@ -72,5 +73,13 @@ export const useGameSocket = ({
       socket.off("next-question", handleNextQuestion);
       socket.off("game-ended", handleGameEnded);
     };
-  }, [teamId, sessionId, userId, onAnswerLocked, onQuestionResult, nextQuestion, router]);
+  }, [
+    teamId,
+    sessionId,
+    userId,
+    onAnswerLocked,
+    onQuestionResult,
+    nextQuestion,
+    router,
+  ]);
 };
