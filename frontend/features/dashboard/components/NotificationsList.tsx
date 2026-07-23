@@ -21,6 +21,9 @@ interface Props {
 }
 
 const NotificationsList = ({ notifications, unreadCount }: Props) => {
+  const handleRead = () => {
+    markAllNotificationsAsRead();
+  };
   return (
     <DrawerContent>
       <DrawerHeader>
@@ -49,7 +52,7 @@ const NotificationsList = ({ notifications, unreadCount }: Props) => {
       <DrawerFooter>
         <Button
           className={`disabled:cursor-not-allowed `}
-          onClick={markAllNotificationsAsRead}
+          onClick={handleRead}
           disabled={unreadCount === 0}
         >
           {unreadCount > 0
