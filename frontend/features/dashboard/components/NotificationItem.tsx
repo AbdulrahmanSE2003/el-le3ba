@@ -1,34 +1,17 @@
 "use client";
 
 import { formatCreatedAt } from "@/lib/utils";
-
-export interface INotificationItem {
-  _id: string;
-  title: string;
-  message: string;
-  userId: string;
-  isRead: boolean;
-  isBroadcast: boolean;
-  __v: number;
-  createdAt: string;
-  updatedAt: string;
-}
+import { INotificationItem } from "@/shared/api/helpers";
+import { markNotificationAsRead } from "../api/notifications";
 
 interface Props {
   notification: INotificationItem;
-  onRead: (id: string) => void;
 }
 
-const NotificationItem = ({ notification, onRead }: Props) => {
-  const handleClick = () => {
-    if (notification.isRead) return;
-
-    onRead(notification._id);
-  };
-
+const NotificationItem = ({ notification }: Props) => {
   return (
     <div
-      onClick={handleClick}
+      onClick={() => markNotificationAsRead(notification._id)}
       className={`flex flex-row-reverse items-start gap-3 rounded-md border p-3.5 text-right transition-colors ${
         notification.isRead
           ? "border-border/60 bg-muted/10"

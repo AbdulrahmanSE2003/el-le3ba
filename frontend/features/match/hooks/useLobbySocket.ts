@@ -123,7 +123,7 @@ export const useLobbySocket = ({
   const startGame = useCallback(() => {
     const connectedMembers = members.filter((member) => member.isOnline);
 
-    if (connectedMembers.length < 2) {
+    if (connectedMembers.length < 1) {
       toast.warning(
         "متقدرش تلعب لوحدك كمل التيم بتاعك أو عالأقل 2 يكونوا أونلاين.",
       );

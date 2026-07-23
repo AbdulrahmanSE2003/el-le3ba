@@ -10,27 +10,17 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 
-import NotificationItem, { INotificationItem } from "./NotificationItem";
+import NotificationItem from "./NotificationItem";
 import EmptyNotifications from "./EmptyNotifications";
-import NotificationItemSkeleton from "./NotificationItemSkeleton";
+import { INotificationItem } from "@/shared/api/helpers";
+import { markAllNotificationsAsRead } from "../api/notifications";
 
 interface Props {
-  loading: boolean;
   notifications: INotificationItem[];
-  isMarkingAll: boolean;
-  onRead: (id: string) => void;
-  onReadAll: () => void;
+  unreadCount: number;
 }
 
-const NotificationsList = ({
-  loading,
-  notifications,
-  isMarkingAll,
-  onRead,
-  onReadAll,
-}: Props) => {
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
-
+const NotificationsList = ({ notifications, unreadCount }: Props) => {
   return (
     <DrawerContent>
       <DrawerHeader>
@@ -44,16 +34,11 @@ const NotificationsList = ({
       </DrawerHeader>
 
       <div className="min-h-75 space-y-2.5 overflow-y-auto p-4">
-        {loading ? (
-          Array.from({ length: 5 }).map((_, index) => (
-            <NotificationItemSkeleton key={index} />
-          ))
-        ) : notifications.length > 0 ? (
+        {notifications.length > 0 ? (
           notifications.map((notification) => (
             <NotificationItem
               key={notification._id}
               notification={notification}
-              onRead={onRead}
             />
           ))
         ) : (
@@ -64,8 +49,8 @@ const NotificationsList = ({
       <DrawerFooter>
         <Button
           className={`disabled:cursor-not-allowed `}
-          onClick={onReadAll}
-          disabled={unreadCount === 0 || isMarkingAll}
+          onClick={markAllNotificationsAsRead}
+          disabled={unreadCount === 0}
         >
           {unreadCount > 0
             ? `تعليم الكل كمقروء (${unreadCount})`

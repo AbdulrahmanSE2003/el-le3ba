@@ -65,6 +65,8 @@ export interface CurrentTeamResponse {
   team: {
     team: Team;
     members: Member[];
+    rank: number;
+    myRole: "captain" | "member";
   };
 }
 
@@ -111,6 +113,26 @@ export interface SessionDetailsResponse {
     score: number;
     correctAnswers: number;
     bestStreak: number;
+  };
+}
+
+export interface INotificationItem {
+  _id: string;
+  title: string;
+  message: string;
+  userId: string;
+  isRead: boolean;
+  isBroadcast: boolean;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationRes {
+  status: boolean;
+  notifications: {
+    notifications: INotificationItem[];
+    unreadCount: number;
   };
 }
 
@@ -162,4 +184,8 @@ export const getSessionDetails = cache(async (sessionId: string) =>
     url: `sessions/${sessionId}`,
     ...CACHE.session,
   }),
+);
+
+export const getNotifications = cache(async () =>
+  serverFetch<NotificationRes>({ url: "notifications" }),
 );
