@@ -11,7 +11,7 @@ import { UserProfileProps } from "../../types";
 export default function LastGames({ user }: UserProfileProps) {
   const { lastSessions } = user;
 
-  const hasLastGames = Boolean(lastSessions && lastSessions.length > 0);
+  const hasLastGames = lastSessions?.length > 0;
 
   return (
     <StyleContainer
