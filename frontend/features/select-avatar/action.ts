@@ -1,4 +1,6 @@
-import { tryCatch } from "@/components/shared/try-catch";
+"use server";
+
+import { serverFetch } from "@/shared/api/server";
 
 import { ActionResponse } from "../profile/types";
 
@@ -8,7 +10,7 @@ export async function selectAvatar(
   prevState: ActionResponse | null,
   avatar: string,
 ): Promise<ActionResponse> {
-  const result = await tryCatch("users/me", "PATCH", { avatar });
+  const result = await serverFetch("users/me", "PATCH", { avatar });
 
   if (!result.success) {
     return {

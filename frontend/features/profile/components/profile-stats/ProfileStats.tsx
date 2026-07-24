@@ -2,7 +2,7 @@ import Motion from "@/components/shared/Motion";
 
 import StatsCard from "./StatsCard";
 
-import { stats } from "@/features/profile/stats";
+import { stats } from "@/features/profile/lib/stats";
 
 import { containerVariants } from "@/components/shared/animations";
 

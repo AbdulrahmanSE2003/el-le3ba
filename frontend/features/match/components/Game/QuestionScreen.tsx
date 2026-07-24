@@ -1,11 +1,10 @@
-/* eslint-disable react-hooks/purity */
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore } from "@/features/match/store/gameStore";
 import { submitAnswer } from "../../api";
 import useQuestionTimer from "../../hooks/useQuestionTimer";
 import useSessionTimer from "../../hooks/useSessionTimer";
@@ -17,9 +16,12 @@ import OptionButton from "./OptionButton";
 import ProgressBar from "./ProgressBar";
 import ResultOverlay from "./ResultOverlay";
 import SessionExpiredOverlay from "./SessionExpiredOverlay";
-import { useGameSocket } from "@/hooks/useGameSocket";
+import { useGameSocket } from "@/features/match/hooks/useGameSocket";
 import { useUserStore } from "@/store/userStore";
-import AbandonButton from "./AbandonButton";
+import type { LastAnswer } from "@/features/match/types";
+import type { QuestionResultPayload } from "@/features/match/lib/socket";
+import AbandonButton from "../game/AbandonButton";
+import { audio } from "@/features/audio/audioManager";
 
 export default function QuestionScreen() {
   const {
@@ -29,20 +31,15 @@ export default function QuestionScreen() {
     currentIndex,
     totalScore,
     currentStreak,
-    lastAnswer,
-    lockedQuestionId,
-    setLockedQuestionId,
     restoreGame,
+    updateScore,
     resetGame,
     teamId,
-    isCaptain,
   } = useGameStore();
-  useGameSocket({ teamId: teamId ?? "", sessionId: sessionId ?? "" });
 
   const user = useUserStore((s) => s.user);
   const router = useRouter();
   const restoredRef = useRef(false);
-  const lockRef = useRef(false);
 
   // ── Restore game on refresh ─────────────────────────
   useEffect(() => {
@@ -55,23 +52,28 @@ export default function QuestionScreen() {
     }
   }, [sessionId, restoreGame, router]);
 
-  // ── Per-question state ──────────────────────────────
+  // ── Per-question local state ─────────────────────────
   const question = questions[currentIndex];
   const [answered, setAnswered] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [inputValue, setInputValue] = useState("");
+  const [lastAnswer, setLastAnswer] = useState<LastAnswer | null>(null);
+  const [lockedQuestionId, setLockedQuestionId] = useState<string | null>(null);
   const startTimeRef = useRef(0);
+  const lockRef = useRef(false);
+  const processedRef = useRef<Set<string>>(new Set());
 
   // Reset per-question state when question changes
   useEffect(() => {
-    setLockedQuestionId(null);
-    lockRef.current = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLockedQuestionId(null);
+    setLastAnswer(null);
+    lockRef.current = false;
     setAnswered(false);
     setError(null);
     setInputValue("");
     startTimeRef.current = Date.now();
-  }, [question?._id, setLockedQuestionId]);
+  }, [question?._id]);
 
   // Lock question when a teammate answers (answer-locked socket event)
   useEffect(() => {
@@ -82,22 +84,77 @@ export default function QuestionScreen() {
     }
   }, [lockedQuestionId, question?._id]);
 
-  // ── Session timer (5 min total) ─────────────────────
+  // ── Socket events ────────────────────────────────────
+  const handleAnswerLocked = useCallback((qId: string) => {
+    audio.stop("timer");
+    setLockedQuestionId(qId);
+  }, []);
+
+  const handleQuestionResult = useCallback((payload: QuestionResultPayload) => {
+    if (processedRef.current.has(payload.questionId)) return;
+    processedRef.current.add(payload.questionId);
+
+    if (payload.currentStreak > 0 && payload.currentStreak % 5 === 0) {
+      audio.play("streak");
+    } else if (payload.isCorrect) {
+      audio.play("correct");
+    } else {
+      audio.play("wrong");
+    }
+
+    updateScore({
+      totalScore: payload.totalScore,
+      currentStreak: payload.currentStreak,
+    });
+    setLastAnswer({
+      isCorrect: payload.isCorrect,
+      score: payload.score,
+      totalScore: payload.totalScore,
+      currentStreak: payload.currentStreak,
+      correctAnswer: payload.correctAnswer,
+      sessionComplete: payload.sessionComplete,
+      answeredByName: payload.answeredByName,
+    });
+  }, []);
+
+  useGameSocket({
+    teamId: teamId ?? "",
+    sessionId: sessionId ?? "",
+    userId: user?._id ?? "",
+    onAnswerLocked: handleAnswerLocked,
+    onQuestionResult: handleQuestionResult,
+  });
+
+  // ── Session timer ────────────────────────────────────
   const { sessionTimeLeft, sessionExpired } = useSessionTimer({
     sessionExpiresAt,
     onExpire: () => {
+      const sid = useGameStore.getState().sessionId;
       resetGame();
-      router.replace(`/team`);
+      router.replace(`/result/${sid}`);
     },
   });
+
+  useEffect(() => {
+    if (!question || answered || sessionExpired) return;
+
+    audio.play("timer");
+
+    return () => {
+      audio.stop("timer");
+    };
+  }, [question?._id, answered, sessionExpired, question]);
 
   // ── Answer submission ───────────────────────────────
   const handleSubmit = async (answer: string) => {
     if (lockRef.current) return;
+
+    audio.stop("timer");
     lockRef.current = true;
     setAnswered(true);
     setError(null);
 
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     const timeTaken = Math.max(
       0,
@@ -108,27 +165,21 @@ export default function QuestionScreen() {
     );
 
     try {
-      // بعت الإجابة HTTP — النتيجة هتيجي عبر socket للكل
       await submitAnswer(sessionId!, question._id, answer || " ", timeTaken);
-      // ← مش بنعمل nextQuestion هنا — الـ socket هيعمله
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { message?: string } } })?.response?.data
           ?.message ?? "حدث خطأ في الإرسال";
 
       const isTerminal =
-        msg.includes("expired") ||
-        msg.includes("no longer active") ||
-        msg.includes("already answered");
+        msg.includes("expired") || msg.includes("no longer active");
 
       if (isTerminal) {
         resetGame();
-        router.replace(`/team`);
+        router.replace(`/result/${sessionId}`);
         return;
       }
 
-      // لو already answered يعني حد تاني في الفريق جاوب قبله
-      // مش error — الـ socket هيجيب النتيجة
       if (msg.includes("already answered")) {
         lockRef.current = false;
         return;
@@ -150,12 +201,13 @@ export default function QuestionScreen() {
 
   // ── Guards ──────────────────────────────────────────
   if (!sessionId) return null;
-  if (!question)
+  if (!question) {
     return (
       <div className="flex h-screen items-center justify-center">
         <p className="text-muted-foreground">جاري تحميل اللعبة...</p>
       </div>
     );
+  }
 
   const hasOptions = !!question.options?.length;
 
@@ -167,9 +219,8 @@ export default function QuestionScreen() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          // className={`relative`}
         >
-          <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6 ">
+          <div className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 p-6">
             <Header
               current={currentIndex}
               total={questions.length}
@@ -232,7 +283,7 @@ export default function QuestionScreen() {
               </div>
             )}
             <ProgressBar current={currentIndex} total={questions.length} />
-            {isCaptain && user && (
+            {user && user._id && (
               <AbandonButton
                 teamId={teamId}
                 sessionId={sessionId}

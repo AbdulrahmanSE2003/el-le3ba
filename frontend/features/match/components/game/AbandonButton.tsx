@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertModal } from "@/components/shared/AlertModal";
-import { getSocket } from "@/lib/socket";
+import { getSocket } from "@/features/match/lib/socket";
 
 interface AbandonButtonProps {
   teamId: string | null;
@@ -15,6 +15,7 @@ const AbandonButton = ({ teamId, sessionId, userId }: AbandonButtonProps) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleAbandon = () => {
+    if (!teamId || !sessionId) return;
     getSocket().emit("abandon-game", { teamId, sessionId, userId });
     setShowModal(false);
   };

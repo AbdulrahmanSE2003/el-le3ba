@@ -1,8 +1,9 @@
 import Motion from "@/components/shared/Motion";
-import { LucideIcon } from "lucide-react";
+import type { Variants } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
 
 interface Props {
-  fade: any;
+  fade: Variants;
   handleAction?: () => void;
   text: string;
   icon: LucideIcon;

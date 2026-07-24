@@ -3,7 +3,7 @@
 import StyleContainer from "@/components/shared/StyleContainer";
 import Motion from "@/components/shared/Motion";
 import { fadeInUp, containerVariants } from "@/components/shared/animations";
-import { achievements } from "@/features/profile/achievements";
+// import { achievements } from "@/features/profile/components/achievements/Achievements";
 
 export default function AchievementGrid() {
   return (
@@ -15,7 +15,7 @@ export default function AchievementGrid() {
         </span>
       </h2>
 
-      <Motion
+      {/* <Motion
         as="div"
         variants={containerVariants}
         initial="hidden"
@@ -59,7 +59,7 @@ export default function AchievementGrid() {
             </Motion>
           );
         })}
-      </Motion>
+      </Motion> */}
     </StyleContainer>
   );
 }

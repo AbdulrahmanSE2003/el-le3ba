@@ -1,14 +1,15 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import MemberCard from "./MemberCard";
 import StartMatch from "./StartMatch";
 import WaitingForCaptain from "./WaitingForCaptain";
 import RulesSection from "./RulesSection";
-import type { Team } from "../../types";
+import type { Team } from "@/shared/types/team";
 import { useUserStore } from "@/store/userStore";
-import { useLobbyStore } from "@/store/lobbyStore";
-import { useLobbySocket } from "@/hooks/useLobbySocket";
+import { useLobbyStore } from "@/features/match/store/lobbyStore";
+import { useLobbySocket } from "@/features/match/hooks/useLobbySocket";
+import { audio } from "@/features/audio/audioManager";
 
 interface LobbyProps {
   team: Team;
@@ -26,7 +27,7 @@ const TeamName = memo(function TeamName({ name }: { name: string }) {
 const MembersGrid = memo(function MembersGrid({
   members,
 }: {
-  members: import("@/lib/socket").PresenceMember[];
+  members: import("@/features/match/lib/socket").PresenceMember[];
 }) {
   return (
     <div className="grid grid-cols-3 gap-3">
@@ -41,13 +42,16 @@ const Lobby = ({ team }: LobbyProps) => {
   const { user, isHydrated } = useUserStore();
   const isCaptain = user?._id === team.teamLeader;
 
-  const { startGame } = useLobbySocket({
+  const { startGame, isStarting } = useLobbySocket({
     teamId: team._id,
     userId: user?._id ?? "",
-    isCaptain,
   });
 
   const { members, error } = useLobbyStore();
+
+  useEffect(() => {
+    audio.preload();
+  }, []);
 
   if (!isHydrated || !user) return null;
   if (error) return <div className="text-destructive text-sm">{error}</div>;
@@ -58,7 +62,7 @@ const Lobby = ({ team }: LobbyProps) => {
       <MembersGrid members={members} />
 
       {isCaptain ? (
-        <StartMatch onClick={startGame} />
+        <StartMatch onClick={startGame} loading={isStarting} />
       ) : (
         <WaitingForCaptain />
       )}

@@ -2,6 +2,8 @@ import LobbySkeleton from "@/features/match/components/lobby/LobbySkeleton";
 import LobbyWrapper from "@/features/match/components/LobbyWrapper";
 import { Suspense } from "react";
 
+export const dynamic = "force-dynamic";
+
 const page = async () => {
   return (
     <section className="h-full">

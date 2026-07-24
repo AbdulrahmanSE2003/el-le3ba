@@ -2,7 +2,6 @@
 
 import Motion from "@/components/shared/Motion";
 import { fadeInUp } from "@/components/shared/animations";
-import { ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { LeaderboardUser } from "../types";
 
 interface LeaderboardListProps {
@@ -32,9 +31,9 @@ export function LeaderboardList({ remainingUsers }: LeaderboardListProps) {
               viewport={{ once: true }}
               variants={fadeInUp}
               delay={index * 0.05} // Clean stagger animation loop
-              className={`flex items-center justify-between px-6 py-[14px] transition-colors ${
+              className={`flex items-center justify-between px-6 py-3.5 transition-colors ${
                 isUser
-                  ? "bg-brand/10 dark:bg-brand/20 border-y border-brand/30 text-brand font-bold"
+                  ? "bg-brand/10 dark:bg-brand/20 border-x border-x-border border-y border-y-brand/30 text-brand font-bold"
                   : "hover:bg-muted/20 text-foreground"
               }`}
             >

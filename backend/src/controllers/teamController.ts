@@ -72,14 +72,44 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
   const userTeam = await TeamMembership.findOne({ userId });
-  if (!userTeam) return next(new AppError("You are not in a team.", 400));
-
+  if (!userTeam) {
+    return resHandler(res, 200, "team", { team: null, members: [] });
+  }
   const team = await Team.findById(userTeam.teamId);
   const teamMembers = await TeamMembership.find({
     teamId: userTeam.teamId,
   }).populate("userId", "name email avatar");
 
   resHandler(res, 200, "team", { team, members: teamMembers });
+});
+
+export const getTeamStats = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated.", 401));
+
+  const membership = await TeamMembership.findOne({ userId: req.user._id });
+  if (!membership) return next(new AppError("You are not in a team.", 400));
+
+  const team = await Team.findById(membership.teamId);
+  if (!team) return next(new AppError("Team not found.", 404));
+
+  const recentSessions = await Session.find({ teamId: team._id })
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .select(
+      "finalScore correctAnswers bestStreak eventId completedAt endReason",
+    )
+    .populate("eventId", "title");
+
+  const avgScore =
+    team.totalGames > 0 ? Math.round(team.points / team.totalGames) : 0;
+
+  resHandler(res, 200, "teamStats", {
+    totalGames: team.totalGames,
+    totalPoints: team.points,
+    bestStreak: team.bestStreak ?? 0,
+    avgScore,
+    recentSessions,
+  });
 });
 
 export const deleteMyTeam = catchAsync(async (req, res, next) => {

@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { getSessionStatus, type SessionResult } from "../../api";
 import { Trophy, Target, Zap, Loader2, Home } from "lucide-react";
 import Link from "next/link";
-import { useGameStore } from "@/store/gameStore";
+import { useGameStore } from "@/features/match/store/gameStore";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Confetti from "./Confetti";
+import { audio } from "@/features/audio/audioManager";
 
 interface Props {
   details?: SessionResult;
@@ -56,17 +57,18 @@ export default function ResultClient({
   const confettiCount = 180;
 
   useEffect(() => {
-    if (details) {
-      resetGame();
+    if (!details) return;
 
-      const startTimer = setTimeout(() => setShowConfetti(true), 400);
-      const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
+    resetGame();
+    audio.play("win");
 
-      return () => {
-        clearTimeout(startTimer);
-        clearTimeout(stopTimer);
-      };
-    }
+    const startTimer = setTimeout(() => setShowConfetti(true), 400);
+    const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(stopTimer);
+    };
   }, [details, resetGame]);
 
   useEffect(() => {

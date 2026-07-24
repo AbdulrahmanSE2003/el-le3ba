@@ -34,6 +34,7 @@ const createSendToken = (
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   res.cookie("jwt", token, cookieOptions);
@@ -63,13 +64,13 @@ export const login = catchAsync(
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError("Please provide email and password.", 400));
+      return next(new AppError("برجاء إدخال الإيميل والباسوورد", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Invalid Credentials.", 401));
+    if (!user || !(await user.correctPassword(password))) {
+      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
     }
 
     createSendToken(user, 200, res);
@@ -132,8 +133,6 @@ export const protect = catchAsync(
 
 export const restrictTo = (...roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    
-
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError("You do not have permission to perform this action", 403),

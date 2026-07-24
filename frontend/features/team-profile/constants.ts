@@ -50,37 +50,6 @@ export const ACHIEVEMENTS_POOL = [
   },
 ];
 
-export const statItems: StatItem[] = [
-  {
-    title: "إجمالي النقاط",
-    value: formatNumber(150),
-    icon: Trophy,
-    iconBg: "bg-yellow-500/10 dark:bg-yellow-500/20",
-    iconColor: "text-yellow-500",
-  },
-  {
-    title: "المباريات المكتملة",
-    value: 23,
-    icon: Gamepad2,
-    iconBg: "bg-blue-500/10 dark:bg-blue-500/20",
-    iconColor: "text-blue-500",
-  },
-  {
-    title: "أعلى ستريك",
-    value: 8,
-    icon: Flame,
-    iconBg: "bg-orange-500/10 dark:bg-orange-500/20",
-    iconColor: "text-orange-500",
-  },
-  {
-    title: "متوسط السكور",
-    value: 55.7,
-    icon: Star,
-    iconBg: "bg-purple-500/10 dark:bg-purple-500/20",
-    iconColor: "text-purple-500",
-  },
-];
-
 export const sortedMembers: TeamMember[] = [
   {
     _id: "1",
