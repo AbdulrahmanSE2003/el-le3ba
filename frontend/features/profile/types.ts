@@ -34,7 +34,7 @@ export interface UserProfileProps {
 
 export type Stat = {
   title: string;
-  label: keyof UserData;
+  label: keyof User["userData"];
   icon: LucideIcon;
 };
 

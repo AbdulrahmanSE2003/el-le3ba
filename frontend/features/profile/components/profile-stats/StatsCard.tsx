@@ -3,19 +3,20 @@ import { LucideIcon } from "lucide-react";
 import { fadeInUp } from "@/components/shared/animations";
 
 import { formatNumber } from "@/components/shared/numbers-format";
-import StyleContainer from "@/components/shared/StyleContainer";
 
-import { UserData } from "@/shared/api/helpers";
+import StyleContainer from "../../../../components/shared/StyleContainer";
+
+import { User } from "../../types";
 
 interface Props {
   title: string;
   icon: LucideIcon;
-  label: keyof UserData;
-  user: UserData;
+  label: keyof User["userData"];
+  user: User["userData"];
 }
 
 export default function StatsCard({ title, label, icon: Icon, user }: Props) {
-  const stat = (user[label] ?? 0) as number;
+  const stat = user[label] as number;
   const formattedNum = formatNumber(stat);
 
   return (
