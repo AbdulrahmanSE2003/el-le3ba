@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { connectSocket } from "@/features/match/lib/socket";
 import { useGameStore } from "@/features/match/store/gameStore";
 import type { QuestionResultPayload } from "@/features/match/lib/socket";
-import { audio } from "@/features/audio/audioManager";
 
 interface Props {
   teamId: string;
@@ -55,7 +54,7 @@ export const useGameSocket = ({
         return;
       }
       if (sid) {
-        router.replace(`/match/result/${sid}`);
+        router.replace(`/result/${sid}`);
       } else {
         router.replace(`/match`);
       }

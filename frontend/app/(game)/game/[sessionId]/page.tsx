@@ -31,7 +31,7 @@ const page = async ({ params }: Props) => {
   }
 
   if (result.success && result.data.sessionDetails) {
-    redirect(`/match/result/${sessionId}`);
+    redirect(`/result/${sessionId}`);
   }
 
   return (

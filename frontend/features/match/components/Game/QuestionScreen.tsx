@@ -131,7 +131,7 @@ export default function QuestionScreen() {
     onExpire: () => {
       const sid = useGameStore.getState().sessionId;
       resetGame();
-      router.replace(`/match/result/${sid}`);
+      router.replace(`/result/${sid}`);
     },
   });
 
@@ -176,7 +176,7 @@ export default function QuestionScreen() {
 
       if (isTerminal) {
         resetGame();
-        router.replace(`/match/result/${sessionId}`);
+        router.replace(`/result/${sessionId}`);
         return;
       }
 
