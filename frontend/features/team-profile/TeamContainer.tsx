@@ -14,7 +14,7 @@ const TeamContainer = async () => {
     return <Error />;
   }
 
-  if (!teamRes.data.team) return <NoTeam />;
+  if (!teamRes.data.team.team) return <NoTeam />;
 
   const team = teamRes.data.team.team;
 
