@@ -1,4 +1,3 @@
-// features/match/hooks/useSessionTimer.ts
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -9,10 +8,11 @@ interface Props {
 }
 
 export default function useSessionTimer({ sessionExpiresAt, onExpire }: Props) {
-  const [sessionTimeLeft, setSessionTimeLeft] = useState(0);
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(450);
   const [sessionExpired, setSessionExpired] = useState(false);
   const onExpireRef = useRef(onExpire);
   const firedRef = useRef(false);
+  const expireTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     onExpireRef.current = onExpire;
@@ -31,11 +31,17 @@ export default function useSessionTimer({ sessionExpiresAt, onExpire }: Props) {
       if (remaining <= 0 && !firedRef.current) {
         firedRef.current = true;
         setSessionExpired(true);
-        setTimeout(() => onExpireRef.current(), 1500);
+        expireTimerRef.current = setTimeout(() => onExpireRef.current(), 1500);
       }
     }, 1000);
 
-    return () => clearInterval(id);
+    return () => {
+      clearInterval(id);
+      if (expireTimerRef.current) {
+        clearTimeout(expireTimerRef.current);
+        expireTimerRef.current = null;
+      }
+    };
   }, [sessionExpiresAt]);
 
   return { sessionTimeLeft, sessionExpired };

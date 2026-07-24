@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { connectSocket, getSocket } from "@/features/match/lib/socket";
 import { useLobbyStore } from "@/features/match/store/lobbyStore";
@@ -14,17 +14,12 @@ import { toast } from "sonner";
 interface UseLobbySocketProps {
   teamId: string;
   userId: string;
-  isCaptain: boolean;
 }
 
-export const useLobbySocket = ({
-  teamId,
-  userId,
-  isCaptain,
-}: UseLobbySocketProps) => {
+export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
+  const [isStarting, setIsStarting] = useState(false);
   const router = useRouter();
-  const { setMembers, setConnected, setError, setGameStarted, members } =
-    useLobbyStore();
+  const { setMembers, setConnected, setError, members } = useLobbyStore();
   const setGame = useGameStore((s) => s.setGame);
 
   useEffect(() => {
@@ -64,19 +59,19 @@ export const useLobbySocket = ({
     };
 
     const handleGameStarted = (payload: GameStartedPayload) => {
+      setIsStarting(false);
+
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);
       socket.off("team-presence", handleTeamPresence);
       socket.off("game-started", handleGameStarted);
       socket.off("game-error", handleGameError);
 
-      setGameStarted(payload);
       setGame({
         sessionId: payload.sessionId,
         teamId,
         eventId: "",
         sessionExpiresAt: payload.expiresAt,
-        isCaptain,
         questions: payload.questions.map((q) => ({
           _id: q._id,
           question: q.question,
@@ -91,6 +86,7 @@ export const useLobbySocket = ({
     };
 
     const handleGameError = ({ message }: { message: string }) => {
+      setIsStarting(false);
       setError(message);
     };
 
@@ -108,22 +104,14 @@ export const useLobbySocket = ({
       socket.off("game-started", handleGameStarted);
       socket.off("game-error", handleGameError);
     };
-  }, [
-    teamId,
-    userId,
-    router,
-    setMembers,
-    setConnected,
-    setError,
-    setGameStarted,
-    setGame,
-    isCaptain,
-  ]);
+  }, [teamId, userId, router, setMembers, setConnected, setError, setGame]);
 
   const startGame = useCallback(() => {
+    if (isStarting) return;
+
     const connectedMembers = members.filter((member) => member.isOnline);
 
-    if (connectedMembers.length < 2) {
+    if (connectedMembers.length < 1) {
       toast.warning(
         "متقدرش تلعب لوحدك كمل التيم بتاعك أو عالأقل 2 يكونوا أونلاين.",
       );
@@ -131,12 +119,14 @@ export const useLobbySocket = ({
     }
 
     const socket = getSocket();
-    if (socket.connected) {
-      socket.emit("start-game", { teamId, userId });
-    } else {
-      setError("Not connected to server");
-    }
-  }, [teamId, userId, setError, members]);
 
-  return { startGame };
+    if (!socket.connected) {
+      setError("Not connected to server");
+      return;
+    }
+
+    setIsStarting(true);
+    socket.emit("start-game", { teamId, userId });
+  }, [teamId, userId, members, setError, isStarting]);
+  return { startGame, isStarting };
 };

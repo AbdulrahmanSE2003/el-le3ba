@@ -11,16 +11,6 @@ export interface GameQuestion {
   options?: string[];
 }
 
-export interface LastAnswer {
-  isCorrect: boolean;
-  score: number;
-  totalScore: number;
-  currentStreak: number;
-  correctAnswer?: string;
-  sessionComplete: boolean;
-  answeredByName?: string;
-}
-
 const STORAGE_KEY = "el-le3ba-game";
 
 interface PersistedData {
@@ -43,9 +33,6 @@ interface GameState {
   currentIndex: number;
   totalScore: number;
   currentStreak: number;
-  lastAnswer: LastAnswer | null;
-  lockedQuestionId: string | null;
-  isCaptain: boolean;
 
   setGame: (payload: {
     sessionId: string;
@@ -53,14 +40,11 @@ interface GameState {
     eventId: string;
     sessionExpiresAt: string;
     questions: GameQuestion[];
-    isCaptain?: boolean;
   }) => void;
   nextQuestion: () => void;
-  setLastAnswer: (answer: LastAnswer) => void;
-  setLockedQuestionId: (id: string | null) => void;
   restoreGame: () => boolean;
   resetGame: () => void;
-  getTeamId: () => string | null;
+  updateScore: (payload: { totalScore: number; currentStreak: number }) => void;
 }
 
 function persist(state: GameState) {
@@ -78,9 +62,7 @@ function persist(state: GameState) {
       currentStreak: state.currentStreak,
     };
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch {
-    // Storage not available
-  }
+  } catch {}
 }
 
 function loadPersisted(): Partial<GameState> | null {
@@ -99,7 +81,6 @@ function loadPersisted(): Partial<GameState> | null {
       currentIndex: data.currentIndex,
       totalScore: data.totalScore,
       currentStreak: data.currentStreak,
-      lastAnswer: null,
     };
   } catch {
     return null;
@@ -110,9 +91,7 @@ function clearPersisted() {
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(STORAGE_KEY);
-  } catch {
-    // Storage not available
-  }
+  } catch {}
 }
 
 export const useGameStore = create<GameState>((set, get) => ({
@@ -124,18 +103,8 @@ export const useGameStore = create<GameState>((set, get) => ({
   currentIndex: 0,
   totalScore: 0,
   currentStreak: 0,
-  lastAnswer: null,
-  lockedQuestionId: null,
-  isCaptain: false,
 
-  setGame: ({
-    sessionId,
-    teamId,
-    eventId,
-    sessionExpiresAt,
-    questions,
-    isCaptain = false,
-  }) => {
+  setGame: ({ sessionId, teamId, eventId, sessionExpiresAt, questions }) => {
     const state = {
       sessionId,
       teamId,
@@ -145,9 +114,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentIndex: 0,
       totalScore: 0,
       currentStreak: 0,
-      lastAnswer: null,
-      lockedQuestionId: null,
-      isCaptain,
     };
     set(state);
     persist({ ...get(), ...state });
@@ -159,18 +125,6 @@ export const useGameStore = create<GameState>((set, get) => ({
       persist({ ...state, ...next });
       return next;
     });
-  },
-
-  setLastAnswer: (answer) => {
-    set({
-      lastAnswer: answer,
-      totalScore: answer.totalScore,
-      currentStreak: answer.currentStreak,
-    });
-  },
-
-  setLockedQuestionId: (id) => {
-    set({ lockedQuestionId: id });
   },
 
   restoreGame: () => {
@@ -191,13 +145,19 @@ export const useGameStore = create<GameState>((set, get) => ({
       currentIndex: 0,
       totalScore: 0,
       currentStreak: 0,
-      lastAnswer: null,
-      lockedQuestionId: null,
-      isCaptain: false,
     });
   },
 
-  getTeamId: () => {
-    return get().teamId;
+  updateScore: ({ totalScore, currentStreak }) => {
+    set((state) => {
+      const next = {
+        totalScore,
+        currentStreak,
+      };
+
+      persist({ ...state, ...next });
+
+      return next;
+    });
   },
 }));

@@ -1,23 +1,13 @@
-import api from "@/lib/axios";
-import type { INotificationItem } from "../components/NotificationItem";
+"use server";
 
-interface NotificationRes {
-  status: boolean;
-  notifications: {
-    notifications: INotificationItem[];
-    unreadCount: number;
-  };
-}
-
-export async function fetchNotifications(): Promise<INotificationItem[]> {
-  const { data } = await api.get<NotificationRes>("/notifications");
-  return data.notifications.notifications;
-}
+import { revalidatePath } from "next/cache";
+import { serverFetch } from "@/shared/api/server";
 
 export async function markNotificationAsRead(id: string): Promise<void> {
-  await api.patch(`/notifications/${id}`);
+  await serverFetch(`notifications/${id}`, "PATCH");
+  revalidatePath("/dashboard");
 }
-
 export async function markAllNotificationsAsRead(): Promise<void> {
-  await api.patch("/notifications/all");
+  await serverFetch(`notifications/all`, "PATCH");
+  revalidatePath("/dashboard");
 }

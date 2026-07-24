@@ -56,17 +56,17 @@ export default function ResultClient({
   const confettiCount = 180;
 
   useEffect(() => {
-    if (details) {
-      resetGame();
+    if (!details) return;
 
-      const startTimer = setTimeout(() => setShowConfetti(true), 400);
-      const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
+    resetGame();
 
-      return () => {
-        clearTimeout(startTimer);
-        clearTimeout(stopTimer);
-      };
-    }
+    const startTimer = setTimeout(() => setShowConfetti(true), 400);
+    const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
+
+    return () => {
+      clearTimeout(startTimer);
+      clearTimeout(stopTimer);
+    };
   }, [details, resetGame]);
 
   useEffect(() => {
