@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function useSessionTimer({ sessionExpiresAt, onExpire }: Props) {
-  const [sessionTimeLeft, setSessionTimeLeft] = useState(450);
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(440);
   const [sessionExpired, setSessionExpired] = useState(false);
   const onExpireRef = useRef(onExpire);
   const firedRef = useRef(false);

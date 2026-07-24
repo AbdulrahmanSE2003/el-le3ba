@@ -82,7 +82,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
         })),
       });
 
-      router.replace(`/match/${payload.sessionId}`);
+      router.replace(`/game/${payload.sessionId}`);
     };
 
     const handleGameError = ({ message }: { message: string }) => {

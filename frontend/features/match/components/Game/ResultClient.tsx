@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useGameStore } from "@/features/match/store/gameStore";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import Confetti from "./Confetti";
+import { audio } from "@/features/audio/audioManager";
 
 interface Props {
   details?: SessionResult;
@@ -59,6 +60,7 @@ export default function ResultClient({
     if (!details) return;
 
     resetGame();
+    audio.play("win");
 
     const startTimer = setTimeout(() => setShowConfetti(true), 400);
     const stopTimer = setTimeout(() => setShowConfetti(false), 14000);
