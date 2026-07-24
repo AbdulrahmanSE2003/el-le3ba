@@ -54,7 +54,7 @@ export const useGameSocket = ({
         return;
       }
       if (sid) {
-        router.replace(`/match/result/${sid}`);
+        router.replace(`/result/${sid}`);
       } else {
         router.replace(`/match`);
       }

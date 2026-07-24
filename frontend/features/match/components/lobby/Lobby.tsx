@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import MemberCard from "./MemberCard";
 import StartMatch from "./StartMatch";
 import WaitingForCaptain from "./WaitingForCaptain";
@@ -9,6 +9,7 @@ import type { Team } from "@/shared/types/team";
 import { useUserStore } from "@/store/userStore";
 import { useLobbyStore } from "@/features/match/store/lobbyStore";
 import { useLobbySocket } from "@/features/match/hooks/useLobbySocket";
+import { audio } from "@/features/audio/audioManager";
 
 interface LobbyProps {
   team: Team;
@@ -47,6 +48,10 @@ const Lobby = ({ team }: LobbyProps) => {
   });
 
   const { members, error } = useLobbyStore();
+
+  useEffect(() => {
+    audio.preload();
+  }, []);
 
   if (!isHydrated || !user) return null;
   if (error) return <div className="text-destructive text-sm">{error}</div>;

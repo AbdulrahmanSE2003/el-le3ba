@@ -21,6 +21,7 @@ import { useUserStore } from "@/store/userStore";
 import type { LastAnswer } from "@/features/match/types";
 import type { QuestionResultPayload } from "@/features/match/lib/socket";
 import AbandonButton from "../game/AbandonButton";
+import { audio } from "@/features/audio/audioManager";
 
 export default function QuestionScreen() {
   const {
@@ -85,12 +86,21 @@ export default function QuestionScreen() {
 
   // ── Socket events ────────────────────────────────────
   const handleAnswerLocked = useCallback((qId: string) => {
+    audio.stop("timer");
     setLockedQuestionId(qId);
   }, []);
 
   const handleQuestionResult = useCallback((payload: QuestionResultPayload) => {
     if (processedRef.current.has(payload.questionId)) return;
     processedRef.current.add(payload.questionId);
+
+    if (payload.currentStreak > 0 && payload.currentStreak % 5 === 0) {
+      audio.play("streak");
+    } else if (payload.isCorrect) {
+      audio.play("correct");
+    } else {
+      audio.play("wrong");
+    }
 
     updateScore({
       totalScore: payload.totalScore,
@@ -121,13 +131,25 @@ export default function QuestionScreen() {
     onExpire: () => {
       const sid = useGameStore.getState().sessionId;
       resetGame();
-      router.replace(`/match/result/${sid}`);
+      router.replace(`/result/${sid}`);
     },
   });
+
+  useEffect(() => {
+    if (!question || answered || sessionExpired) return;
+
+    audio.play("timer");
+
+    return () => {
+      audio.stop("timer");
+    };
+  }, [question?._id, answered, sessionExpired, question]);
 
   // ── Answer submission ───────────────────────────────
   const handleSubmit = async (answer: string) => {
     if (lockRef.current) return;
+
+    audio.stop("timer");
     lockRef.current = true;
     setAnswered(true);
     setError(null);
@@ -154,7 +176,7 @@ export default function QuestionScreen() {
 
       if (isTerminal) {
         resetGame();
-        router.replace(`/match/result/${sessionId}`);
+        router.replace(`/result/${sessionId}`);
         return;
       }
 
