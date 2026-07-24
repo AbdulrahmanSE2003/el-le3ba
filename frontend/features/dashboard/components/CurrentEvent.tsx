@@ -23,11 +23,11 @@ export interface EventApiResponse {
 
 const CurrentEvent = async ({
   event,
-  attempts = 0,
+  attempts,
   totalTeams,
 }: {
   event: Event;
-  attempts: number | null;
+  attempts?: number;
   totalTeams: number;
 }) => {
   if (!event) {

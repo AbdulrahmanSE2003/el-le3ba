@@ -101,6 +101,22 @@ export interface MyRankResponse {
   };
 }
 
+export interface MyTeamRanking {
+  team: LeaderboardEntry;
+  rank: number;
+}
+
+export interface LeaderboardPayload {
+  results: number;
+  ranking: LeaderboardEntry[];
+  myTeamRanking: MyTeamRanking | null;
+}
+
+export interface LeaderboardApiResponse {
+  status: boolean;
+  leaderboard: LeaderboardPayload;
+}
+
 export interface TeamAttemptsResponse {
   attempts: {
     attempts: number;
@@ -188,4 +204,11 @@ export const getSessionDetails = cache(async (sessionId: string) =>
 
 export const getNotifications = cache(async () =>
   serverFetch<NotificationRes>({ url: "notifications" }),
+);
+
+export const getLeaderboard = cache(async (eventId?: string) =>
+  serverFetch<LeaderboardApiResponse>({
+    url: `leaderboard?eventId=${eventId}`,
+    ...CACHE.leaderboard,
+  }),
 );

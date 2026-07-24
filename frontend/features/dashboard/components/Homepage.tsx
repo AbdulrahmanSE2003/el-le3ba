@@ -30,7 +30,7 @@ const Homepage = async () => {
     ? eventStatsRes.data.stats.totalTeams
     : 0;
 
-  let attempts = 0;
+  let attempts: undefined | number;
   let topThree: LeaderboardEntry[] = [];
 
   if (team?.team && event) {
