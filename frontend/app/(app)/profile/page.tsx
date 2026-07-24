@@ -1,4 +1,6 @@
+import PageSkeleton from "@/features/profile/components/PageSkeleton";
 import ProfileContainer from "@/features/profile/components/ProfileContainer";
+import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,9 @@ export const metadata = {
 export default function ProfilePage() {
   return (
     <section className={`max-sm:px-4 max-sm:pt-6`}>
-      <ProfileContainer />
+      <Suspense fallback={<PageSkeleton />}>
+        <ProfileContainer />
+      </Suspense>
     </section>
   );
 }

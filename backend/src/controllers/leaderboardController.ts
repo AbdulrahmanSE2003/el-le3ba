@@ -30,29 +30,30 @@ export const getLeaderboard = catchAsync(async (req, res, next) => {
 
     // Getting user team rank
     const membership = await TeamMembership.findOne({ userId });
-    if (!membership)
-      return next(new AppError("Invalid operation, no such a team", 404));
+    if (membership) {
+      const myEntry = await Leaderboard.findOne({
+        teamId: membership.teamId,
+        eventId,
+      });
 
-    const myEntry = await Leaderboard.findOne({
-      teamId: membership.teamId,
-      eventId,
-    });
+      const rank = myEntry
+        ? (await Leaderboard.countDocuments({
+            eventId,
+            totalPoints: { $gt: myEntry.totalPoints },
+          })) + 1
+        : null;
 
-    const rank = myEntry
-      ? (await Leaderboard.countDocuments({
-          eventId,
-          totalPoints: { $gt: myEntry.totalPoints },
-        })) + 1
-      : null;
-
-    resHandler(res, 200, "Leaderboard", {
-      results: top50.length,
-      ranking: top50,
-      myTeamRanking: {
-        team: myEntry,
-        rank,
-      },
-    });
+      resHandler(res, 200, "leaderboard", {
+        results: top50.length,
+        ranking: top50,
+        myTeamRanking: {
+          team: myEntry,
+          rank,
+        },
+      });
+    } else {
+      resHandler(res, 200, "leaderboard", top50);
+    }
   } else {
     const features = new APIFeatures(Leaderboard.find(), req.query)
       .filter()

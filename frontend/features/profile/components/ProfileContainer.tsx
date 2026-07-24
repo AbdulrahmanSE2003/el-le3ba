@@ -5,10 +5,16 @@ import Settings from "./settings/Settings";
 import LastGames from "./last-games/LastGames";
 import AccountActions from "./account-actions/AccountActions";
 
-import { fetchUserData } from "../api/index";
+import { getCurrentUser } from "@/shared/api/helpers";
+import Error from "@/app/error";
 
 export default async function ProfileContainer() {
-  const { userData } = await fetchUserData();
+  const userRes = await getCurrentUser();
+  if (!userRes.success) return <Error />;
+
+  const userData = userRes.data.userData;
+  // NOTE: Here is the role of user
+  console.log(userData.myTeamRole);
 
   return (
     <div className="flex flex-col gap-5">

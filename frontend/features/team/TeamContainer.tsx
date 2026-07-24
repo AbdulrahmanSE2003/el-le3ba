@@ -17,6 +17,8 @@ const TeamContainer = async () => {
 
   if (!teamRes.data.team.team) return <NoTeam />;
 
+  // NOTE: Here is the new response in --> teamRes.data.team => {team, members, myRole, rank}
+  console.log(teamRes.data.team);
   const teamData = teamRes.data.team.team;
   const teamMembers = teamRes.data.team;
 
@@ -26,7 +28,7 @@ const TeamContainer = async () => {
       <TeamHeader teamName={teamData.teamName} />
 
       {/* Two-column layout: Members + Activity on wider screens */}
-      <MembersList members={teamMembers} />
+      <MembersList />
 
       <Suspense fallback={<TeamDataSkeleton />}>
         <TeamData />
