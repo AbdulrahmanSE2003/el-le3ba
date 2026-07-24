@@ -27,6 +27,7 @@ export interface UserData {
   currentStreak: number;
   bestStreak: number;
   highestScore?: number;
+  myTeamRole: "member" | "captain";
   createdAt: string;
   updatedAt: string;
   __v?: number;

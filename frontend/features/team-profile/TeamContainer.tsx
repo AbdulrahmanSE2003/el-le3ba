@@ -16,6 +16,8 @@ const TeamContainer = async () => {
 
   if (!teamRes.data.team.team) return <NoTeam />;
 
+  //NOTE: Here is the new response in -->  teamRes.data.team => {team, members, myRole, rank}
+  console.log(teamRes.data.team);
   const team = teamRes.data.team.team;
 
   return (

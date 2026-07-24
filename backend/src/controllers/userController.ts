@@ -56,6 +56,7 @@ export const getMe = catchAsync(async (req, res, next) => {
       lastSessions,
       highestScore,
       bestStreak,
+      myTeamRole: membership.role,
     };
 
     resHandler(res, 200, "userData", userData);
