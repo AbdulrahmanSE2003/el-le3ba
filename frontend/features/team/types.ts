@@ -1,3 +1,4 @@
+import { Member, Team } from "@/shared/types/team";
 import { LucideIcon } from "lucide-react";
 
 export type TeamStats = {
@@ -16,13 +17,6 @@ export type TeamProfileData = {
   isMyTeam: boolean;
   viewerRole: "visitor" | "member" | "captain" | "admin";
   stats: TeamStats;
-};
-
-export type TeamMember = {
-  _id: string;
-  name: string;
-  role: "captain" | "member";
-  joinedAt: string;
 };
 
 export type SessionHistory = {
@@ -67,18 +61,21 @@ export type StatItem = {
 };
 
 export type sessionsType = {
-  _id: number;
+  _id: string;
   eventId: {
-    _id: number;
+    _id: string;
     title: string;
   };
   finalScore: number;
   correctAnswers: number;
-  totalQuestions: number;
   bestStreak: number;
   endReason: string;
   completedAt: string;
-  label: string;
-  icon: LucideIcon;
-  color: string;
+};
+
+export type TeamType = {
+  team: Team;
+  members: Member[];
+  myRole: "captain" | "member";
+  rank: number;
 };

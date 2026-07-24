@@ -7,7 +7,15 @@ import TeamActions from "./TeamActions";
 
 import { MyAlertModal } from "@/components/shared/MyAlertModal";
 
-export default function TeamHeader({ teamId }: { teamId: string }) {
+import { TeamType } from "../../types";
+
+interface Props {
+  teamData: TeamType;
+}
+
+export default function TeamHeader({ teamData }: Props) {
+  const { team, myRole, rank } = teamData;
+
   const renameContent = (
     <div className="py-4">
       <Input
@@ -28,12 +36,16 @@ export default function TeamHeader({ teamId }: { teamId: string }) {
   return (
     <StyleContainer className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 md:p-8">
       {/* Team Identity */}
-      <TeamIdentity teamId={teamId} />
+      <TeamIdentity
+        teamName={team.teamName}
+        createdAt={team.createdAt}
+        role={myRole}
+      />
 
       {/* Rank Standing / Actions */}
       <div className="flex flex-row md:flex-col items-center md:items-end justify-between w-full md:w-auto gap-4 pt-4 md:pt-0 border-t md:border-t-0 border-border">
         {/* Rank Badge */}
-        <TeamRank />
+        <TeamRank rank={rank}  />
 
         {/* Action Buttons */}
         <TeamActions />

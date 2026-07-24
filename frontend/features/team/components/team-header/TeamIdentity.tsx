@@ -4,21 +4,29 @@ import Captain from "./Captain";
 
 import { Calendar } from "lucide-react";
 
-export default function TeamIdentity({ teamId }: { teamId: string }) {
-  const formattedDate = formatDate();
+interface Props {
+  teamName: string;
+  createdAt: string;
+  role: "captain" | "member";
+}
+
+export default function TeamIdentity({ teamName, createdAt, role }: Props) {
+  const formattedDate = formatDate(createdAt);
 
   return (
     <div className="flex flex-col gap-3 w-full lg:w-auto">
       <div className="flex items-center flex-wrap gap-3">
         <h1 className="font-extrabold text-3xl md:text-4xl text-foreground tracking-tight">
-          {teamId}
+          {teamName}
         </h1>
+      </div>
 
-        <span className="px-3 py-1 bg-primary/20 text-primary text-xs font-black rounded-full border border-primary/25">
+      <div className="flex items-center gap-1.5">
+        <span className="px-3 py-2 bg-primary/20 text-primary text-xs font-black rounded-full border border-primary/25">
           فريقي 🤝
         </span>
 
-        <Captain />
+        <Captain role={role} />
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">

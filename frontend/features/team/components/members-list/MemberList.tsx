@@ -4,12 +4,14 @@ import StyleContainer from "@/components/shared/StyleContainer";
 import Header from "./Header";
 import Members from "./team-members/Members";
 
-export default function MembersList() {
+import { Member } from "@/shared/types/team";
+
+export default function MembersList({ members }: { members: Member[] }) {
   return (
     <StyleContainer className="p-6 md:p-8">
-      <Header />
+      <Header membersLen={members.length} />
 
-      <Members />
+      <Members  members={members} />
 
       {/* Kick Confirmation */}
       <AlertModal

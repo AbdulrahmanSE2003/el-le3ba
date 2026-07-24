@@ -8,7 +8,7 @@ import {
   AlertTriangle,
   XCircle,
 } from "lucide-react";
-import { sessionsType, StatItem, TeamMember } from "./types";
+import { sessionsType, StatItem } from "./types";
 import { formatNumber } from "@/components/shared/numbers-format";
 
 export const ACHIEVEMENTS_POOL = [
@@ -50,20 +50,6 @@ export const ACHIEVEMENTS_POOL = [
   },
 ];
 
-export const sortedMembers: TeamMember[] = [
-  {
-    _id: "1",
-    name: "Ahmed",
-    role: "captain",
-    joinedAt: "2022-01-01",
-  },
-  {
-    _id: "2",
-    name: "Abdo",
-    role: "member",
-    joinedAt: "2022-01-01",
-  },
-];
 
 export const sessions: sessionsType[] = [
   {

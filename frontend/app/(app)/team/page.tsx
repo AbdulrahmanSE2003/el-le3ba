@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import TeamDataSkeleton from "@/features/team/components/TeamDataSkeleton";
-import TeamContainer from "@/features/team/TeamContainer";
+import TeamContainer from "@/features/team/components/TeamContainer";
 import { Suspense } from "react";
 
 export default async function TeamPage() {

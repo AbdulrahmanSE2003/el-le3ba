@@ -3,13 +3,13 @@
 import Motion from "@/components/shared/Motion";
 import { containerVariants } from "@/components/shared/animations";
 
-import { sortedMembers } from "../../../constants";
-
 import MemberCard from "./card/MemberCard";
 
 import { useState } from "react";
 
-export default function Members() {
+import { Member } from "@/shared/types/team";
+
+export default function Members({ members }: { members: Member[] }) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
@@ -20,7 +20,7 @@ export default function Members() {
       animate="visible"
       className="grid grid-cols-2 gap-4"
     >
-      {sortedMembers.map((member) => {
+      {members.map((member) => {
         return (
           <MemberCard
             key={member._id}

@@ -16,8 +16,9 @@ export interface Member {
     _id: string;
     name: string;
     email: string;
-    avatar: string | null;
+    avatar: string | "";
   };
   teamId: string;
   role: "captain" | "member";
+  joinedAt: string
 }

@@ -16,12 +16,6 @@ export default function CardStats({ session }: Props) {
         </p>
       </div>
 
-      {/* Accuracy */}
-      <div className="text-center">
-        <p className="text-xs text-muted-foreground">الدقة</p>
-        <p className="font-bold text-foreground">80%</p>
-      </div>
-
       {/* Streak */}
       <div className="text-center flex flex-col items-center">
         <p className="text-xs text-muted-foreground">ستريك</p>

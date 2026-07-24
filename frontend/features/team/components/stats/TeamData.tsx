@@ -1,6 +1,6 @@
 import { getMyTeamStats } from "@/shared/api/helpers";
-import TeamStatsGrid from "./stats/TeamStatsGrid";
-import MatchHistoryList from "./MatchHistoryList";
+import TeamStatsGrid from "./TeamStatsGrid";
+import MatchHistoryList from "../last-games/MatchHistoryList";
 
 const TeamData = async () => {
   const statsRes = await getMyTeamStats();

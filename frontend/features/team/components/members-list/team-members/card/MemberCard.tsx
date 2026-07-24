@@ -5,17 +5,23 @@ import UserAvatar from "@/components/shared/UserAvatar";
 import MemberInfo from "./MemberInfo";
 import CaptainActions from "./CaptainActions";
 
-import { TeamMember } from "@/features/team/types";
-
 import { Dispatch, SetStateAction } from "react";
 
+import { Member } from "@/shared/types/team";
+import { formatDate } from "@/components/shared/formatted-date";
+
 interface Props {
-  member: TeamMember;
+  member: Member;
   openMenu: string | null;
   setOpenMenu: Dispatch<SetStateAction<string | null>>;
 }
 
 export default function MemberCard({ member, openMenu, setOpenMenu }: Props) {
+  const { userId, joinedAt, role } = member;
+  const joinedDate = formatDate(joinedAt);
+
+  console.log(userId.avatar);
+  
   return (
     <Motion
       as="div"
@@ -25,17 +31,13 @@ export default function MemberCard({ member, openMenu, setOpenMenu }: Props) {
     >
       {/* Avatar */}
       <UserAvatar
-        src={"avatar1.png"}
-        fallback={member.name.slice(0, 1).toUpperCase()}
+        src={userId.avatar}
+        fallback={userId.name[0].toUpperCase()}
         size="xl"
       />
 
       {/* Info */}
-      <MemberInfo
-        name={member.name}
-        joinedDate={member.joinedAt}
-        role={member.role}
-      />
+      <MemberInfo name={userId.name} joinedDate={joinedDate} role={role} />
 
       {/* Captain Actions */}
       <CaptainActions

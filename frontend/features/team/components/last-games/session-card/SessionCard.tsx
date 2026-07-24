@@ -3,7 +3,6 @@ import { fadeInUp } from "@/components/shared/animations";
 
 import { sessionsType } from "../../../types";
 
-import { Flame } from "lucide-react";
 
 import CardInfo from "./CardInfo";
 import CardStats from "./CardStats";
