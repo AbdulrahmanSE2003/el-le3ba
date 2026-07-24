@@ -1,3 +1,4 @@
+import { UserData } from "@/shared/api/helpers";
 import { LucideIcon } from "lucide-react";
 
 export type LastSession = {
@@ -28,7 +29,7 @@ export type User = {
 };
 
 export interface UserProfileProps {
-  user: User["userData"];
+  user: UserData;
 }
 
 export type Stat = {

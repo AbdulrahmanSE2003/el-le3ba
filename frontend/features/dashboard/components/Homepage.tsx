@@ -8,10 +8,12 @@ import {
   getEventStats,
   getTeamAttempts,
   getLeaderboardTopThree,
+  LeaderboardEntry,
 } from "@/shared/api/helpers";
 import TeamSnapshot from "./TeamSnapshot";
 import StatsCards from "./StatsCards";
 import LeaderboardSnapshot from "./LeaderboardSnapshot";
+import EmptyState from "./EmptyState";
 
 const Homepage = async () => {
   const [userRes, eventRes, teamRes, eventStatsRes] = await Promise.all([
@@ -28,37 +30,46 @@ const Homepage = async () => {
     ? eventStatsRes.data.stats.totalTeams
     : 0;
 
-  if (!team || !event) {
-    return null;
+  let attempts: undefined | number;
+  let topThree: LeaderboardEntry[] = [];
+
+  if (team?.team && event) {
+    const [attemptsRes, topThreeRes] = await Promise.all([
+      getTeamAttempts(team.team._id, event._id),
+      getLeaderboardTopThree(event._id),
+    ]);
+
+    attempts = attemptsRes.success ? attemptsRes.data.attempts.attempts : 0;
+
+    topThree = topThreeRes.success ? topThreeRes.data.topThree : [];
   }
 
-  const [attemptsRes, topThreeRes] = await Promise.all([
-    getTeamAttempts(team.team._id, event._id),
-    getLeaderboardTopThree(event._id),
-  ]);
-
-  const attempts = attemptsRes.success ? attemptsRes.data.attempts.attempts : 0;
-  const topThree = topThreeRes.success ? topThreeRes.data.topThree : [];
-
   return (
-    <div className={`container mx-auto w-full space-y-6 max-md:px-6 py-3`}>
-      {/* Notification & Welcome message */}
-      <div className={`flex justify-between items-center`}>
+    <div className="container mx-auto w-full space-y-6 max-md:px-6 py-3">
+      <div className="flex items-center justify-between">
         <Notification />
         <WelcomeMessage />
       </div>
 
-      {/* Current Event */}
-      <CurrentEvent event={event} attempts={attempts} totalTeams={totalTeams} />
+      {event && (
+        <CurrentEvent
+          event={event}
+          attempts={attempts}
+          totalTeams={totalTeams}
+        />
+      )}
 
-      {/* Team Snapshot */}
-      <TeamSnapshot team={team.team} members={team.members} />
+      {team?.team ? (
+        <>
+          <TeamSnapshot team={team.team} members={team.members} />
 
-      {/* Stats cards */}
-      <StatsCards team={team.team} bestStreak={user?.bestStreak ?? 0} />
+          <StatsCards team={team.team} bestStreak={user?.bestStreak ?? 0} />
 
-      {/* Leaderboard Snapshot */}
-      <LeaderboardSnapshot rows={topThree} />
+          <LeaderboardSnapshot rows={topThree} />
+        </>
+      ) : (
+        <EmptyState />
+      )}
     </div>
   );
 };

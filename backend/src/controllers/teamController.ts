@@ -7,6 +7,7 @@ import { catchAsync } from "../utils/catchAsync";
 import { generateCode } from "../utils/utils";
 import resHandler from "../utils/resHandler";
 import { getAll, getOne } from "../utils/factory";
+import Leaderboard from "../models/leaderboardModel";
 
 export const createTeam = catchAsync(async (req, res, next) => {
   const user = req.user;
@@ -71,16 +72,39 @@ export const joinTeam = catchAsync(async (req, res, next) => {
 export const getMyTeam = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
-  const userTeam = await TeamMembership.findOne({ userId });
-  if (!userTeam) {
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) {
     return resHandler(res, 200, "team", { team: null, members: [] });
   }
-  const team = await Team.findById(userTeam.teamId);
+  const team = await Team.findById(membership.teamId);
+  if (!team) return resHandler(res, 200, "team", { team: null, members: [] });
+
   const teamMembers = await TeamMembership.find({
-    teamId: userTeam.teamId,
+    teamId: membership.teamId,
   }).populate("userId", "name email avatar");
 
-  resHandler(res, 200, "team", { team, members: teamMembers });
+  const teamLeaderboardEntry = await Leaderboard.findOne({ teamId: team._id });
+  if (!teamLeaderboardEntry) {
+    return resHandler(res, 200, "team", {
+      team,
+      members: teamMembers,
+      myRole: membership.role,
+      rank: null,
+    });
+  }
+
+  // Calculate the team's rank based on totalPoints
+  const rank =
+    (await Leaderboard.countDocuments({
+      totalPoints: { $gt: teamLeaderboardEntry.totalPoints },
+    })) + 1;
+
+  resHandler(res, 200, "team", {
+    team,
+    members: teamMembers,
+    myRole: membership.role,
+    rank,
+  });
 });
 
 export const getTeamStats = catchAsync(async (req, res, next) => {

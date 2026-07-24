@@ -17,17 +17,19 @@ const LobbyWrapper = async () => {
   ]);
 
   if (!teamRes.success) {
-    if (teamRes.error?.includes("You are not in a team.")) {
-      return <NoTeam />;
-    }
-
-    throw new Error(teamRes.error || "Failed...");
+    return <NoTeam />;
   }
+
+  const teamData = teamRes.data.team;
+
+  if (!teamData?.team) {
+    return <NoTeam />;
+  }
+
   if (!eventRes.success) {
     throw new Error(eventRes.error || "Failed to load event data");
   }
 
-  const teamData = teamRes.data.team;
   const event = eventRes.data.event;
 
   const teamAttempts = await getTeamAttempts(teamData.team._id, event._id);
@@ -35,8 +37,8 @@ const LobbyWrapper = async () => {
   const attempts = teamAttempts.success
     ? teamAttempts.data.attempts.attempts
     : 0;
-  const attemptsLeft = event.maxAttempts - attempts;
 
+  const attemptsLeft = event.maxAttempts - attempts;
   return (
     <>
       <EventInfo attemptsLeft={attemptsLeft} eventTitle={event.title} />

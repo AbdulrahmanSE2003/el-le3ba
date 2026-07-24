@@ -23,11 +23,11 @@ export interface EventApiResponse {
 
 const CurrentEvent = async ({
   event,
-  attempts = 0,
+  attempts,
   totalTeams,
 }: {
   event: Event;
-  attempts: number;
+  attempts?: number;
   totalTeams: number;
 }) => {
   if (!event) {
@@ -55,12 +55,14 @@ const CurrentEvent = async ({
           <Badge className="py-1 px-2.5 bg-primary/20 text-primary font-bold border-none">
             نشط الآن
           </Badge>
-          <Badge
-            variant="secondary"
-            className="py-1 px-2.5 bg-accent/15 text-amber-400 dark:text-accent font-bold border-none"
-          >
-            {attempts} / {event.maxAttempts} محاولات متبقية
-          </Badge>
+          {attempts && (
+            <Badge
+              variant="secondary"
+              className="py-1 px-2.5 bg-accent/15 text-amber-400 dark:text-accent font-bold border-none"
+            >
+              {attempts} / {event.maxAttempts} محاولات متبقية
+            </Badge>
+          )}
         </div>
 
         {/* Event stats */}

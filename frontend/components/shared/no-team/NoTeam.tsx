@@ -3,8 +3,8 @@ import NoTeamIcon from "./NoTeamIcon";
 
 export default function NoTeam() {
   return (
-    <section className="flex min-h-[calc(100dvh-4rem)]  items-center justify-center">
-      <div className="p-8 text-center shadow-lg rounded-lg">
+    <section className="flex min-h-[calc(100vh-4rem)]  items-center justify-center">
+      <div className="p-8 text-center shadow-lg border border-border rounded-lg">
         <NoTeamIcon />
 
         <h2 className="text-2xl font-bold tracking-tight">

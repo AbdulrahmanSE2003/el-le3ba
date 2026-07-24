@@ -7,7 +7,7 @@ import { formatPoints } from "@/lib/utils";
 type LeaderboardRow = LeaderboardEntry;
 
 interface LeaderboardSnapshotProps {
-  rows: LeaderboardRow[];
+  rows: LeaderboardRow[] | [];
 }
 
 const LeaderboardSnapshot = ({ rows }: LeaderboardSnapshotProps) => {

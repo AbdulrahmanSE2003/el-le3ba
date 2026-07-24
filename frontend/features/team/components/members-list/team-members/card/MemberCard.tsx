@@ -5,7 +5,7 @@ import UserAvatar from "@/components/shared/UserAvatar";
 import MemberInfo from "./MemberInfo";
 import CaptainActions from "./CaptainActions";
 
-import { TeamMember } from "@/features/team-profile/types";
+import { TeamMember } from "@/features/team/types";
 
 import { Dispatch, SetStateAction } from "react";
 

@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import ActionBtn from "./ActionBtn";
 import OpenMenu from "./OpenMenu";
 
-import { TeamMember } from "@/features/team-profile/types";
+import { TeamMember } from "@/features/team/types";
 
 import { ShieldCheck, UserMinus } from "lucide-react";
 

@@ -1,4 +1,4 @@
-import { sessionsType } from "@/features/team-profile/types";
+import { sessionsType } from "@/features/team/types";
 
 interface Props {
   session: sessionsType;

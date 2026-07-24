@@ -9,6 +9,7 @@ import Error from "@/app/error";
 
 const TeamContainer = async () => {
   const teamRes = await getCurrentTeam();
+  console.log(teamRes);
 
   if (!teamRes.success) {
     return <Error />;
@@ -16,12 +17,15 @@ const TeamContainer = async () => {
 
   if (!teamRes.data.team.team) return <NoTeam />;
 
-  const team = teamRes.data.team.team;
+  // NOTE: Here is the new response in --> teamRes.data.team => {team, members, myRole, rank}
+  console.log(teamRes.data.team);
+  const teamData = teamRes.data.team.team;
+  const teamMembers = teamRes.data.team;
 
   return (
     <div className="h-full space-y-6">
       {/* Header: Team identity, rank, actions */}
-      <TeamHeader teamName={team.teamName} />
+      <TeamHeader teamName={teamData.teamName} />
 
       {/* Two-column layout: Members + Activity on wider screens */}
       <MembersList />
