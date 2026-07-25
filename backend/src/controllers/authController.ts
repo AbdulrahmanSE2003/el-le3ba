@@ -9,7 +9,7 @@ import { sendEmail } from "../utils/sendEmail";
 import resHandler from "../utils/resHandler";
 
 interface AuthRequest extends Request {
-  user?: IUser;
+  user: IUser;
 }
 
 const signToken = (id: string): string => {
@@ -34,6 +34,7 @@ const createSendToken = (
     ),
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   res.cookie("jwt", token, cookieOptions);
@@ -50,6 +51,8 @@ export const signUp = catchAsync(
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
+      avatar: req.body.avatar,
+      role: "student",
     });
 
     createSendToken(newUser, 201, res);
@@ -61,13 +64,13 @@ export const login = catchAsync(
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError("Please provide email and password.", 400));
+      return next(new AppError("برجاء إدخال الإيميل والباسوورد", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Invalid Credentials.", 401));
+    if (!user || !(await user.correctPassword(password))) {
+      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
     }
 
     createSendToken(user, 200, res);
@@ -83,6 +86,10 @@ export const protect = catchAsync(
       req.headers.authorization.startsWith("Bearer")
     ) {
       token = req.headers.authorization.split(" ")[1];
+    }
+    // Then fall back to cookie  ← ADD THIS
+    else if (req.cookies?.jwt) {
+      token = req.cookies.jwt;
     }
 
     if (!token) {
@@ -105,6 +112,20 @@ export const protect = catchAsync(
       );
     }
 
+    if (freshUser.passwordChangedAt) {
+      const changedTimestamp = Math.floor(
+        freshUser.passwordChangedAt.getTime() / 1000,
+      );
+      if (decoded.iat && decoded.iat < changedTimestamp) {
+        return next(
+          new AppError(
+            "Password was recently changed. Please log in again.",
+            401,
+          ),
+        );
+      }
+    }
+
     req.user = freshUser;
     next();
   },
@@ -112,10 +133,6 @@ export const protect = catchAsync(
 
 export const restrictTo = (...roles: string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      return next(new AppError("You are not logged in", 401));
-    }
-
     if (!roles.includes(req.user.role)) {
       return next(
         new AppError("You do not have permission to perform this action", 403),
@@ -135,13 +152,13 @@ export const forgotPassword = catchAsync(
     const resetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`;
-
+    const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
     try {
       await sendEmail({
         email: user.email,
         name: user.name,
-        subject: "Your password reset token (valid for 10 min)",
+        subject:
+          "رابط إعادة تعيين كلمة المرور الخاصة بك - اللعبة (صالح لمدة 10 دقائق)",
         resetURL,
       });
 
@@ -190,3 +207,11 @@ export const resetPassword = catchAsync(
     createSendToken(user, 200, res);
   },
 );
+
+export const logout = catchAsync(async (req, res, next) => {
+  res.cookie("jwt", "", {
+    expires: new Date(Date.now() + 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: true, message: "Logged out successfully" });
+});

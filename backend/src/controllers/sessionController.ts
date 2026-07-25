@@ -1,0 +1,339 @@
+import mongoose from "mongoose";
+import Event from "../models/eventModel";
+import Question from "../models/questionModel";
+import Session from "../models/sessionModel";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import Leaderboard from "../models/leaderboardModel";
+import User from "../models/userModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import { getAll } from "../utils/factory";
+import resHandler from "../utils/resHandler";
+import { finalizeSession } from "../utils/finalizeSession";
+import {
+  BASE_SCORE,
+  MIN_TEAM_SIZE,
+  QUESTIONS_PER_SESSION,
+  SESSION_DURATION_MS,
+  STREAK_BONUS,
+  STREAK_MILESTONE,
+} from "../constants";
+import { broadcastQuestionResult } from "../socket";
+
+// ============================================================
+// POST /sessions/start
+// Captain only — starts a new game session for their team
+// ============================================================
+export const startSession = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  // 1. Verify there is a running event
+  const event = await Event.findOne({ status: "running" });
+  if (!event) return next(new AppError("No running event right now.", 404));
+
+  // 2. Verify user is a team captain
+  const team = await Team.findOne({ teamLeader: userId });
+  if (!team)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  // 3. Verify team has minimum 2 members
+  const memberCount = await TeamMembership.countDocuments({ teamId: team._id });
+  if (memberCount < MIN_TEAM_SIZE)
+    return next(
+      new AppError(`Minimum ${MIN_TEAM_SIZE} members required to play.`, 400),
+    );
+
+  // 4. Verify team has remaining attempts for this event
+  const attemptCount = await Session.countDocuments({
+    teamId: team._id,
+    eventId: event._id,
+  });
+  if (attemptCount >= event.maxAttempts)
+    return next(new AppError("No attempts remaining for this event.", 400));
+
+  // 5. Pick 20 random questions from the bank
+  const questions = await Question.aggregate([
+    { $sample: { size: QUESTIONS_PER_SESSION } },
+  ]);
+
+  // 6. Strip correct answers before sending to client
+  const questionsForClient = questions.map(
+    ({ correctAnswer, ...rest }) => rest,
+  );
+
+  // 7. Create the session document
+  const session = await Session.create({
+    teamId: team._id,
+    eventId: event._id,
+    questions: questions.map((q) => q._id),
+    startedAt: new Date(),
+    expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+  });
+
+  resHandler(res, 201, "session", {
+    sessionId: session._id,
+    status: session.status,
+    startedAt: session.startedAt,
+    expiresAt: session.expiresAt,
+    questions: questionsForClient,
+  });
+});
+
+// ============================================================
+// POST /sessions/:id/answer
+// Any team member — submits one answer for one question
+// ============================================================
+export const submitAnswer = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  const { questionId, submittedAnswer, timeTaken } = req.body;
+
+  // ── 1. Load and validate session ──────────────────────────
+  const session = await Session.findById(sessionId);
+  if (!session) return next(new AppError("Session not found.", 404));
+
+  if (session.status !== "running")
+    return next(new AppError("This session is no longer active.", 400));
+
+  if (session.expiresAt.getTime() < Date.now()) {
+    await finalizeSession(session, "expired");
+    return next(new AppError("Session has expired.", 400));
+  }
+
+  // ── 2. Verify user belongs to this session's team ─────────
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("You are not in a team.", 404));
+
+  if (!session.teamId.equals(membership.teamId))
+    return next(new AppError("You cannot answer for this session.", 403));
+
+  // ── 3. Validate the question ───────────────────────────────
+  const questionBelongsToSession = session.questions.some((q) =>
+    q.equals(questionId),
+  );
+  if (!questionBelongsToSession)
+    return next(new AppError("Invalid question for this session.", 400));
+
+  const alreadyAnswered = session.answerLogs.some((log) =>
+    log.questionId.equals(questionId),
+  );
+  if (alreadyAnswered)
+    return next(new AppError("Question already answered.", 400));
+
+  // ── Lock other team members immediately ─────────────────
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("answer-locked", { questionId });
+  }
+
+  // ── 4. Fetch question to check answer ─────────────────────
+  const question = await Question.findById(questionId).select(
+    "correctAnswer duration",
+  );
+  if (!question) return next(new AppError("Question not found.", 404));
+
+  const team = await Team.findById(session.teamId);
+  if (!team) return next(new AppError("Team not found.", 404));
+
+  // ── 5. Calculate score ────────────────────────────────────
+  let isCorrect = false;
+  let score = 0;
+
+  if (question.correctAnswer === submittedAnswer) {
+    isCorrect = true;
+
+    // Cap timeTaken between 0 and question duration (anti-cheat)
+    const safeTaken = Math.max(0, Math.min(timeTaken, question.duration));
+    const remainingTime = question.duration - safeTaken;
+
+    // Update streak
+    session.currentStreak += 1;
+    if (session.currentStreak > session.bestStreak) {
+      session.bestStreak = session.currentStreak;
+    }
+    if (session.bestStreak > team.bestStreak) {
+      team.bestStreak = session.bestStreak;
+      await team.save();
+    }
+
+    // Streak milestone bonus
+    const streakBonus =
+      session.currentStreak % STREAK_MILESTONE === 0 ? STREAK_BONUS : 0;
+
+    score = BASE_SCORE + remainingTime + streakBonus;
+  } else {
+    // Wrong answer — reset streak
+    session.currentStreak = 0;
+  }
+
+  // ── 6. Record the answer log ──────────────────────────────
+  session.answerLogs.push({
+    questionId,
+    submittedBy: userId,
+    answer: submittedAnswer,
+    isCorrect,
+    score,
+    answeredAt: new Date(),
+    timeTaken,
+  });
+
+  if (isCorrect) session.correctAnswers += 1;
+
+  // ── 7. Check if this was the last question ────────────────
+  const isLastQuestion = session.answerLogs.length === session.questions.length;
+
+  if (!isLastQuestion) {
+    await session.save();
+
+    const result = {
+      questionId,
+      correctAnswer: question.correctAnswer,
+      isCorrect,
+      score,
+      totalScore: session.answerLogs.reduce((sum, log) => sum + log.score, 0),
+      currentStreak: session.currentStreak,
+      sessionComplete: false,
+      answeredBy: String(userId),
+      answeredByName: req.user.name,
+    };
+
+    // broadcast for the whole team
+    // const io = req.app.get("io");
+    if (io) {
+      broadcastQuestionResult(io, String(session.teamId), result);
+    }
+
+    return resHandler(res, 200, "answerDetails", {
+      ...result,
+      alreadyAnswered: false,
+    });
+  }
+
+  // ── Last question ──
+  await finalizeSession(session, "completed");
+
+  const result = {
+    questionId,
+    correctAnswer: question.correctAnswer,
+    isCorrect,
+    score,
+    totalScore: session.finalScore,
+    currentStreak: session.currentStreak,
+    sessionComplete: true,
+    finalScore: session.finalScore,
+    correctAnswers: session.correctAnswers,
+    bestStreak: session.bestStreak,
+    answeredBy: String(userId),
+    answeredByName: req.user.name,
+  };
+
+  if (io) {
+    broadcastQuestionResult(io, String(session.teamId), result);
+  }
+
+  resHandler(res, 200, "answerDetails", {
+    ...result,
+    alreadyAnswered: false,
+  });
+});
+
+// ============================================================
+// GET /sessions/:id
+// Any team member - gets the session result (score - correctAnswers count - best streak)
+// ============================================================
+export const getSessionResult = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  if (!sessionId)
+    return next(new AppError("Invalid operation, provide session id", 400));
+
+  // 1. check the session has ended normally and not flagged
+  const session = await Session.findOne({ _id: sessionId });
+  if (!session) return next(new AppError("There is no such a session", 404));
+
+  if (session.status === "running") {
+    if (session.expiresAt.getTime() < Date.now()) {
+      await finalizeSession(session, "expired");
+    } else {
+      return next(new AppError("Session is not completed yet", 400));
+    }
+  }
+
+  if (session.endReason === "flagged")
+    return next(
+      new AppError(
+        "Sorry this session is under processing, please check later",
+        400,
+      ),
+    );
+
+  // 2. check the user get his team session not anyone else
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+  if (!session.teamId.equals(membership.teamId))
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  // 4. Get session details
+  resHandler(res, 200, "sessionDetails", {
+    score: session.finalScore,
+    correctAnswers: session.correctAnswers,
+    bestStreak: session.bestStreak,
+  });
+});
+
+// ============================================================
+// POST /sessions/:id/abandon
+// Only captains and admins - can end leave
+// ============================================================
+export const abandonSession = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+
+  if (membership.role !== "captain")
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  const session = await Session.findOne({
+    _id: req.params.id,
+    teamId: membership.teamId,
+  });
+  if (!session) return next(new AppError("There is no such a session.", 400));
+  if (session.status !== "running")
+    return next(new AppError("Session has already finished.", 400));
+
+  // End session
+  session.status = "completed";
+  session.endReason = "abandoned";
+  session.completedAt = new Date();
+  session.finalScore = 0;
+
+  await session.save();
+
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("game-ended", {
+      abandoned: true,
+      finalScore: 0,
+      correctAnswers: 0,
+      bestStreak: 0,
+    });
+  }
+
+  res.status(200).json({ status: true });
+});
+
+// ============================================================
+// GET /sessions — Admin only
+// ============================================================
+export const getAllSessions = getAll(Session, [
+  { path: "teamId", select: "teamName" },
+  { path: "eventId", select: "title" },
+]);

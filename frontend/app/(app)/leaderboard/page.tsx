@@ -1,7 +1,13 @@
-// Leaderboard page
+import { LeaderboardContainer } from "@/features/leaderboard/components/LeaderboardContainer";
+import LeaderboardSkeleton from "@/features/leaderboard/components/LeaderboardSkeleton";
+import { Suspense } from "react";
 
-const page = () => {
-  return <div>Leaderboard page</div>;
-};
-
-export default page;
+export default function LeaderboardPage() {
+  return (
+    <main className="">
+      <Suspense fallback={<LeaderboardSkeleton />}>
+        <LeaderboardContainer />
+      </Suspense>
+    </main>
+  );
+}

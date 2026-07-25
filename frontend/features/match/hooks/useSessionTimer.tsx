@@ -1,0 +1,48 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+
+interface Props {
+  sessionExpiresAt: string | null;
+  onExpire: () => void;
+}
+
+export default function useSessionTimer({ sessionExpiresAt, onExpire }: Props) {
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(440);
+  const [sessionExpired, setSessionExpired] = useState(false);
+  const onExpireRef = useRef(onExpire);
+  const firedRef = useRef(false);
+  const expireTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    onExpireRef.current = onExpire;
+  });
+
+  useEffect(() => {
+    if (!sessionExpiresAt) return;
+
+    const id = setInterval(() => {
+      const remaining = Math.max(
+        0,
+        Math.floor((new Date(sessionExpiresAt).getTime() - Date.now()) / 1000),
+      );
+      setSessionTimeLeft(remaining);
+
+      if (remaining <= 0 && !firedRef.current) {
+        firedRef.current = true;
+        setSessionExpired(true);
+        expireTimerRef.current = setTimeout(() => onExpireRef.current(), 1500);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(id);
+      if (expireTimerRef.current) {
+        clearTimeout(expireTimerRef.current);
+        expireTimerRef.current = null;
+      }
+    };
+  }, [sessionExpiresAt]);
+
+  return { sessionTimeLeft, sessionExpired };
+}

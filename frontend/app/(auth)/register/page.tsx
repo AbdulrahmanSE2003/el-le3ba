@@ -1,7 +1,10 @@
-// Register page
+import RegisterForm from "@/features/auth/components/RegisterForm";
 
-const page = () => {
-  return <div>Register page</div>;
+export const metadata = {
+  title: "إنشاء حساب جديد",
+  description: "أنشئ حساباً جديداً للانضمام وتحدي أصدقائك في اللعبة",
 };
 
-export default page;
+export default function RegisterPage() {
+  return <RegisterForm />;
+}

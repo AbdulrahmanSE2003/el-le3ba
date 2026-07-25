@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Playpen_Sans_Arabic, Zain } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/ui/provideres";
+import { Toaster } from "@/components/ui/sonner"; // or wherever shadcn puts it
 
 const playpen = Playpen_Sans_Arabic({
   subsets: ["arabic"],
   weight: ["400", "600", "700", "800"],
   variable: "--font-display",
+  fallback: ["system-ui", "Arial", "sans-serif"],
 });
 
 const zain = Zain({
@@ -50,6 +52,7 @@ export default function RootLayout({
         className={`${playpen.variable} ${zain.variable} font-body antialiased`}
       >
         <Providers>
+          <Toaster position="bottom-left" richColors dir="rtl" />
           <main>{children}</main>
         </Providers>
       </body>

@@ -1,0 +1,50 @@
+import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
+
+import { ReactNode } from "react";
+import { ComponentProps } from "react";
+
+import Motion from "../shared/Motion";
+import { fadeInUp } from "../shared/animations";
+
+import Icon from "./Icon";
+
+interface Props extends ComponentProps<"button"> {
+  title: string;
+  tooltip: string;
+  onclick?: () => void;
+  icon: ReactNode;
+}
+
+export default function SidebarFooterBtn({
+  title,
+  icon,
+  tooltip,
+  onclick,
+  className,
+}: Props) {
+  return (
+    <SidebarMenuItem>
+      <Motion
+        variants={fadeInUp}
+        initial="hidden"
+        animate="visible"
+        delay={0.4}
+        type="spring"
+      >
+        <SidebarMenuButton
+          tooltip={{
+            children: tooltip,
+            className:
+              "[&_svg]:hidden! bg-primary text-primary-foreground border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
+          }}
+          onClick={onclick}
+          className={`transition-all hover:-translate-x-1 cursor-pointer py-5 duration-300 ${className}`}
+        >
+          <Icon icon={icon} />
+
+          <span>{title}</span>
+        </SidebarMenuButton>
+      </Motion>
+    </SidebarMenuItem>
+  );
+}

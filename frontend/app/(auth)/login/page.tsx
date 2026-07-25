@@ -1,7 +1,12 @@
-// Login page
+import LoginForm from "@/features/auth/components/LoginForm";
+import { Metadata } from "next";
 
-const page = () => {
-  return <div>Login page</div>;
+export const metadata: Metadata = {
+  title: "تسجيل الدخول",
+  description: "سجل دخولك لبدء المسابقات والترتيب والتحدي مع أصدقائك في اللعبة",
 };
 
-export default page;
+export default async function LoginPage() {
+  return <LoginForm />;
+}
+

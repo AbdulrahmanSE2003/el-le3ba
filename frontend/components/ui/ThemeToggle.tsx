@@ -18,7 +18,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-      className="fixed top-4 left-4 bg-card border border-border rounded-xl px-4 py-2 font-body text-sm text-foreground hover:bg-muted transition-colors"
+      className="fixed top-3 left-4 bg-card border border-border rounded-xl px-4 py-2 font-body text-sm text-foreground hover:bg-muted transition-colors"
     >
       {theme === "dark" ? "☀️ فاتح" : "🌙 داكن"}
     </button>
