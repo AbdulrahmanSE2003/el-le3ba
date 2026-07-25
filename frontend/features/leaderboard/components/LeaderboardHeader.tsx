@@ -56,7 +56,7 @@ const LeaderboardHeader = ({
         disabled={isPending}
         className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-muted-foreground hover:text-brand transition-colors disabled:opacity-50"
       >
-        <RotateCw className={`h-4 w-4 ${false ? "animate-spin" : ""}`} />
+        <RotateCw className={`h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
         {isPending ? "جاري التحديث..." : "تحديث"}
       </button>
     </div>

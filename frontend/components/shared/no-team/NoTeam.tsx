@@ -58,6 +58,7 @@ export default function NoTeam() {
       {/* Create Team Modal */}
       <CreateTeamModal
         open={openCreateModal}
+        confirmText="إنشاء"
         onOpenChange={handleCreateModalChange}
         onConfirm={handleCreateTeam}
         teamName={teamName}
@@ -67,6 +68,7 @@ export default function NoTeam() {
       {/* Join Team Modal */}
       <JoinTeamModal
         open={openJoinModal}
+        confirmText="إنضمام"
         onOpenChange={handleJoinModalChange}
         onConfirm={handleJoinTeam}
         teamCode={teamCode}
