@@ -1,11 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { Users, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CreateTeamModal from "@/components/shared/no-team/CreateTeamModal";
 import { createTeam, joinTeam } from "@/features/team/actions";
-import Loading from "@/components/shared/Loading";
+// import Loading from "@/components/shared/Loading";
 import JoinTeamModal from "@/components/shared/no-team/JoinTeamModal";
 import { useModal } from "@/hooks/useModal";
 
@@ -13,25 +12,25 @@ const EmptyState = () => {
   const {
     handleModalChange: handleJoinModalChange,
     openModal: openJoinModal,
-    isLoading: isJoinLoading,
-    teamOrCode: teamCode,
-    setTeamOrCode: setTeamCode,
+    // isLoading: isJoinLoading,
+    data: teamCode,
+    setData: setTeamCode,
     handleAction: handleJoinTeam,
   } = useModal(joinTeam, "تم الانضمام للفريق بنجاح", "فشل الانضمام للفريق");
 
   const {
     handleModalChange: handleCreateModalChange,
     openModal: openCreateModal,
-    isLoading: isCreateLoading,
-    teamOrCode: teamName,
-    setTeamOrCode: setTeamName,
+    // isLoading: isCreateLoading,
+    data: teamName,
+    setData: setTeamName,
     handleAction: handleCreateTeam,
   } = useModal(createTeam, "تم إنشاء الفريق بنجاح", "فشل إنشاء الفريق");
 
   // Loading State
-  if (isJoinLoading || isCreateLoading) {
-    return <Loading />;
-  }
+  // if (isJoinLoading || isCreateLoading) {
+  //   return <Loading />;
+  // }
 
   return (
     <>

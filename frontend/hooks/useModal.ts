@@ -9,35 +9,39 @@ export function useModal(
 ) {
   // UI State
   const [openModal, setOpenModal] = useState(false);
-  const [teamOrCode, setTeamOrCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState("");
+  // const [isLoading, setIsLoading] = useState(false);
 
   // Handlers
   // Modal create Change
   const handleModalChange = (isOpen: boolean) => {
     setOpenModal(isOpen);
-    if (!isOpen) setTeamOrCode("");
+    if (!isOpen) setData("");
   };
 
-  // create Team action
+  // create or join Team action
   async function handleAction() {
-    const result = await action(teamOrCode);
+    // setIsLoading(true);
+    try {
+      const result = await action(data);
 
-    if (result.success) {
-      showSuccess(result.message || successMessage);
-      setIsLoading(true);
-      return true;
+      if (result.success) {
+        showSuccess(result.message || successMessage);
+        return true;
+      }
+
+      showError(result.error || errorMessage);
+    } finally {
+      // setIsLoading(false);
     }
-
-    showError(result.error || errorMessage);
   }
 
   return {
     openModal,
     handleModalChange,
-    teamOrCode,
-    setTeamOrCode,
+    data,
+    setData,
     handleAction,
-    isLoading,
+    // isLoading,
   };
 }

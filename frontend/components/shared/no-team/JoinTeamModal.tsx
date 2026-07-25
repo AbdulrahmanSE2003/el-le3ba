@@ -17,10 +17,6 @@ import { Input } from "@/components/ui/input";
 interface AlertModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  trigger?: ReactNode;
-  confirmText?: string | ReactNode;
-  cancelText?: string | ReactNode;
-  variant?: "default" | "secondary" | "outline" | "destructive";
   onConfirm?: () => Promise<boolean | void> | boolean | void;
   teamCode: string;
   setTeamCode: (teamCode: string) => void;
@@ -29,10 +25,6 @@ interface AlertModalProps {
 export default function JoinTeamModal({
   open,
   onOpenChange,
-  trigger,
-  confirmText = "إنضمام",
-  cancelText = "إلغاء",
-  variant,
   onConfirm,
   teamCode,
   setTeamCode,
@@ -70,14 +62,12 @@ export default function JoinTeamModal({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
-
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>إنشاء فريق جديد</AlertDialogTitle>
+          <AlertDialogTitle>إنضمام لفريق</AlertDialogTitle>
 
           <AlertDialogDescription>
-            اختار اسم لفريقك وابدأ رحلتك مع أصحابك.
+            أدخل كود الفريق للانضمام
           </AlertDialogDescription>
 
           {/* Content if exists */}
@@ -85,14 +75,14 @@ export default function JoinTeamModal({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>إلغاء</AlertDialogCancel>
 
           <AlertDialogAction
             disabled={loading}
             onClick={handleConfirm}
-            variant={variant || "default"}
+            variant="default"
           >
-            {loading ? "جاري التنفيذ..." : confirmText}
+            {loading ? "جاري التنفيذ..." : "انضمام"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
