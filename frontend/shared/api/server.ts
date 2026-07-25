@@ -30,7 +30,13 @@ function normalizeArgs(
   revalidate: number | undefined;
 } {
   if (typeof urlOrOptions === "string") {
-    return { url: urlOrOptions, method: method ?? "GET", body, cache: undefined, revalidate: undefined };
+    return {
+      url: urlOrOptions,
+      method: method ?? "GET",
+      body,
+      cache: undefined,
+      revalidate: undefined,
+    };
   }
   return {
     url: urlOrOptions.url,
@@ -51,7 +57,13 @@ export async function serverFetch<T = unknown>(
   body?: object,
 ): Promise<ServerActionResponse<T>> {
   try {
-    const { url, method: resolvedMethod, body: resolvedBody, cache, revalidate } = normalizeArgs(urlOrOptions, method, body);
+    const {
+      url,
+      method: resolvedMethod,
+      body: resolvedBody,
+      cache,
+      revalidate,
+    } = normalizeArgs(urlOrOptions, method, body);
 
     const cookieStore = await cookies();
     const token = cookieStore.get("jwt")?.value;
@@ -84,10 +96,14 @@ export async function serverFetch<T = unknown>(
 
     const contentType = res.headers.get("content-type") || "";
 
+    // --- Failure path: HTTP status itself indicates an error ---
     if (!res.ok) {
       if (!contentType.includes("application/json")) {
         const text = await res.text();
-        console.error(`[serverFetch] Non-JSON error response from ${resolvedUrl}:`, text.substring(0, 500));
+        console.error(
+          `[serverFetch] Non-JSON error response from ${resolvedUrl}:`,
+          text.substring(0, 500),
+        );
         return {
           success: false,
           error: `الخادم أعاد استجابة غير متوقعة (${res.status})`,
@@ -105,14 +121,17 @@ export async function serverFetch<T = unknown>(
       };
     }
 
+    // --- Success path: res.ok is true from here on ---
     if (!contentType.includes("application/json")) {
       const text = await res.text();
-      console.error(`[serverFetch] Unexpected non-JSON response from ${resolvedUrl}:`, text.substring(0, 500));
-      return {
-        success: false,
-        error: "الخادم أعاد استجابة غير متوقعة",
-        status: res.status,
-      };
+      if (text.trim().length > 0) {
+        console.error(
+          `[serverFetch] Unexpected non-JSON success response from ${resolvedUrl}:`,
+          text.substring(0, 500),
+        );
+      }
+      // e.g. 204 No Content or an empty body on a 200 — still a success
+      return { success: true, data: undefined as T };
     }
 
     const resData = await res.json();

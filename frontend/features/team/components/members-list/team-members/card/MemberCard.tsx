@@ -14,14 +14,22 @@ interface Props {
   member: Member;
   openMenu: string | null;
   setOpenMenu: Dispatch<SetStateAction<string | null>>;
+  onKickClick: (member: Member) => void;
+  onTransferClick: (member: Member) => void;
+  myRole: "captain" | "member";
 }
 
-export default function MemberCard({ member, openMenu, setOpenMenu }: Props) {
+export default function MemberCard({
+  member,
+  openMenu,
+  setOpenMenu,
+  onKickClick,
+  onTransferClick,
+  myRole,
+}: Props) {
   const { userId, joinedAt, role } = member;
   const joinedDate = formatDate(joinedAt);
 
-  console.log(userId.avatar);
-  
   return (
     <Motion
       as="div"
@@ -31,8 +39,8 @@ export default function MemberCard({ member, openMenu, setOpenMenu }: Props) {
     >
       {/* Avatar */}
       <UserAvatar
-        src={userId.avatar}
-        fallback={userId.name[0].toUpperCase()}
+        src={`http://localhost:5000/avatars/${userId.avatar}`}
+        fallback={userId.name[0]?.toUpperCase() || "U"}
         size="xl"
       />
 
@@ -40,11 +48,15 @@ export default function MemberCard({ member, openMenu, setOpenMenu }: Props) {
       <MemberInfo name={userId.name} joinedDate={joinedDate} role={role} />
 
       {/* Captain Actions */}
-      <CaptainActions
-        openMenu={openMenu}
-        setOpenMenu={setOpenMenu}
-        member={member}
-      />
+      {myRole === "captain" && (
+        <CaptainActions
+          openMenu={openMenu}
+          setOpenMenu={setOpenMenu}
+          member={member}
+          onKickClick={onKickClick}
+          onTransferClick={onTransferClick}
+        />
+      )}
     </Motion>
   );
 }

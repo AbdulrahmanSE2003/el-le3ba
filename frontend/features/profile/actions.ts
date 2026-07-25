@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 
 import { serverFetch } from "@/shared/api/server";
 
-import { ActionResponse } from "./types";
+import { ActionResponse } from "@/shared/types/response";
 
 import { logout } from "../auth/actions";
 

@@ -13,7 +13,7 @@ export default function TeamStatsGrid({ stats }: { stats: MyTeamStats }) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-2 md:grid-cols-2 gap-4"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-4"
     >
       <StatCard
         icon={Trophy}

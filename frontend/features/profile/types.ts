@@ -38,12 +38,6 @@ export type Stat = {
   icon: LucideIcon;
 };
 
-export type ActionResponse = {
-  success: boolean;
-  error?: string;
-  message?: string;
-};
-
 export type ShowPass = {
   oldPassword: boolean;
   newPassword: boolean;

@@ -10,7 +10,9 @@ export default function TeamRank({ rank }: { rank: number }) {
         <p className="text-xs text-muted-foreground font-medium">
           الترتيب الحالي
         </p>
-        <p className="text-xl font-black text-foreground">المركز {rank}</p>
+        <p className="text-xl font-black text-foreground">
+          {rank ? `المركز ${rank}` : "غير مصنف"}
+        </p>
       </div>
     </div>
   );

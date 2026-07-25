@@ -52,6 +52,7 @@ export function MyAlertModal({
       setLoading(true);
 
       const result = await onConfirm?.();
+
       if (result === true) {
         onOpenChange?.(false);
       }

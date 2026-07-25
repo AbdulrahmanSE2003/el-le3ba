@@ -9,7 +9,19 @@ import { useState } from "react";
 
 import { Member } from "@/shared/types/team";
 
-export default function Members({ members }: { members: Member[] }) {
+interface Props {
+  myRole: "captain" | "member";
+  members: Member[];
+  onKickClick: (member: Member) => void;
+  onTransferClick: (member: Member) => void;
+}
+
+export default function Members({
+  members,
+  onKickClick,
+  onTransferClick,
+  myRole,
+}: Props) {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
@@ -18,7 +30,7 @@ export default function Members({ members }: { members: Member[] }) {
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-2 gap-4"
+      className="grid grid-cols-1 lg:grid-cols-2 gap-4"
     >
       {members.map((member) => {
         return (
@@ -27,6 +39,9 @@ export default function Members({ members }: { members: Member[] }) {
             member={member}
             openMenu={openMenu}
             setOpenMenu={setOpenMenu}
+            onKickClick={onKickClick}
+            onTransferClick={onTransferClick}
+            myRole={myRole}
           />
         );
       })}
