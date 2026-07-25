@@ -1,67 +1,36 @@
 "use client";
 
-import { useState } from "react";
-
 import NoTeamActions from "./NoTeamActions";
 import NoTeamIcon from "./NoTeamIcon";
 import CreateTeamModal from "./CreateTeamModal";
 
 import { createTeam, joinTeam } from "@/features/team/actions";
 
-import { showError, showSuccess } from "../notifications";
 import Loading from "../Loading";
 import JoinTeamModal from "./JoinTeamModal";
+import { useModal } from "@/hooks/useModal";
 
 export default function NoTeam() {
-  // UI State
-  const [openCreateModal, setOpenCreateModal] = useState(false);
-  const [openJoinModal, setOpenJoinModal] = useState(false);
-  const [teamName, setTeamName] = useState("");
-  const [teamCode, setTeamCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  
+  const {
+    handleModalChange: handleJoinModalChange,
+    openModal: openJoinModal,
+    isLoading: isJoinLoading,
+    teamOrCode: teamCode,
+    setTeamOrCode: setTeamCode,
+    handleAction: handleJoinTeam,
+  } = useModal(joinTeam, "تم الانضمام للفريق بنجاح", "فشل الانضمام للفريق");
 
-  // Handlers
-  // Modal create Change
-  const handleCreateModalChange = (isOpen: boolean) => {
-    setOpenCreateModal(isOpen);
-    if (!isOpen) setTeamName("");
-  };
-
-  // Modal join Change
-  const handleJoinModalChange = (isOpen: boolean) => {
-    setOpenJoinModal(isOpen);
-    if (!isOpen) setTeamCode("");
-  };
-
-  // create Team action
-  async function handleCreateTeam() {
-    const result = await createTeam(teamName);
-
-    if (result.success) {
-      showSuccess(result.message || "تم إنشاء الفريق بنجاح");
-      setIsLoading(true);
-      return true;
-    }
-
-    showError(result.error || "فشل إنشاء الفريق. حاول مرة اخرى لاحقا");
-  }
-
-  // join Team action
-  async function handleJoinTeam() {
-    const result = await joinTeam(teamCode);
-
-    if (result.success) {
-      showSuccess(result.message || "تم الانضمام للفريق بنجاح");
-      setIsLoading(true);
-      return true;
-    }
-
-    showError(result.error || "فشل الانضمام للفريق");
-  }
+  const {
+    handleModalChange: handleCreateModalChange,
+    openModal: openCreateModal,
+    isLoading: isCreateLoading,
+    teamOrCode: teamName,
+    setTeamOrCode: setTeamName,
+    handleAction: handleCreateTeam,
+  } = useModal(createTeam, "تم إنشاء الفريق بنجاح", "فشل إنشاء الفريق");
 
   // Loading State
-  if (isLoading) {
+  if (isJoinLoading || isCreateLoading) {
     return <Loading />;
   }
 
@@ -81,8 +50,8 @@ export default function NoTeam() {
         </p>
 
         <NoTeamActions
-          onOpenCreate={() => setOpenCreateModal(true)}
-          onOpenJoin={() => setOpenJoinModal(true)}
+          onOpenCreate={() => handleCreateModalChange(true)}
+          onOpenJoin={() => handleJoinModalChange(true)}
         />
       </div>
 
