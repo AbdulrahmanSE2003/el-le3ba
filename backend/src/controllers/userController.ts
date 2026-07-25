@@ -14,7 +14,9 @@ export const getMyId = catchAsync(async (req, res, next) => {
 });
 
 export const getMe = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user._id).select("-role");
+  const user = await User.findById(req.user._id).select(
+    "-password -passwordChangedAt -passwordResetToken -passwordResetExpires",
+  );
   if (!user)
     return next(
       new AppError("Invalid operation, there is no such a user.", 400),

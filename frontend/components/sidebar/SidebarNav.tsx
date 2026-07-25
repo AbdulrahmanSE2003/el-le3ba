@@ -32,8 +32,9 @@ export function SidebarNav({ items }: SidebarNavProps) {
     >
       {items.map((item, index) => {
         const isActive =
-          pathname === item.href ||
-          (item.href !== "/" && pathname.startsWith(`${item.href}/`));
+          item.href === "/admin"
+            ? pathname === "/admin"
+            : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
         return (
           <Motion

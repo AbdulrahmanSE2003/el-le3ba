@@ -6,8 +6,23 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getCurrentUser } from "@/shared/api/helpers";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const userRes = await getCurrentUser();
+
+  if (!userRes.success) {
+    redirect("/login");
+  }
+
+  if (userRes.data.userData.role !== "admin") {
+    redirect("/dashboard");
+  }
   return (
     <SidebarProvider>
       <AdminSidebar />

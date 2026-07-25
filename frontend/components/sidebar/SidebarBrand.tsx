@@ -18,7 +18,7 @@ interface SidebarBrandProps {
 
 export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isAdmin = variant === "admin";
-  const href = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const href = isAdmin ? "/admin/" : "/dashboard";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

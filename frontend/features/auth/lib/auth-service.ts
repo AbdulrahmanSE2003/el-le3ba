@@ -35,18 +35,12 @@ export async function authenticate(
   cookieStore.set("jwt", token, {
     httpOnly: true,
     sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 90,
+    maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
-  cookieStore.set("x-jwt", token, {
-    sameSite: "lax",
-    maxAge: 60 * 60 * 24 * 90,
-    path: "/",
-  });
-
   return {
     success: true,
     message: result.message,
-    redirectPath: role === "admin" ? "/admin/dashboard" : "/dashboard",
+    redirectPath: role === "admin" ? "/admin/" : "/dashboard",
   };
 }
