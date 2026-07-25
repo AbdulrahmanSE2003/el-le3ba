@@ -2,6 +2,7 @@ import { NavItem } from "@/components/sidebar/types";
 import {
   BadgeQuestionMark,
   Bell,
+  BellCheck,
   CalendarCog,
   LayoutDashboard,
   Medal,
