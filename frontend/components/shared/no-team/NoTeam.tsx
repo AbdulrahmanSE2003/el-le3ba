@@ -2,19 +2,15 @@
 
 import { useState } from "react";
 
-import { useRouter } from "next/navigation";
-
-import { Loader2 } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
-import { MyAlertModal } from "../MyAlertModal";
 import NoTeamActions from "./NoTeamActions";
 import NoTeamIcon from "./NoTeamIcon";
+import CreateTeamModal from "./CreateTeamModal";
 
 import { createTeam, joinTeam } from "@/features/team/actions";
 
 import { showError, showSuccess } from "../notifications";
 import Loading from "../Loading";
+import JoinTeamModal from "./JoinTeamModal";
 
 export default function NoTeam() {
   // UI State
@@ -23,33 +19,7 @@ export default function NoTeam() {
   const [teamName, setTeamName] = useState("");
   const [teamCode, setTeamCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
-  const router = useRouter();
-
-  // Modal create Content
-  const createContent = (
-    <div className="py-4 w-full">
-      <Input
-        placeholder="ادخل اسم الفريق"
-        maxLength={20}
-        className="text-right rounded-xl w-full"
-        value={teamName}
-        onChange={(e) => setTeamName(e.target.value)}
-      />
-    </div>
-  );
-
-  // Modal join Content
-  const joinContent = (
-    <div className="py-4 w-full">
-      <Input
-        placeholder="كود الفريق (مثال: ABC123XYZ)"
-        className="text-right rounded-xl w-full"
-        value={teamCode}
-        onChange={(e) => setTeamCode(e.target.value)}
-      />
-    </div>
-  );
+  
 
   // Handlers
   // Modal create Change
@@ -71,7 +41,6 @@ export default function NoTeam() {
     if (result.success) {
       showSuccess(result.message || "تم إنشاء الفريق بنجاح");
       setIsLoading(true);
-      router.refresh();
       return true;
     }
 
@@ -85,7 +54,6 @@ export default function NoTeam() {
     if (result.success) {
       showSuccess(result.message || "تم الانضمام للفريق بنجاح");
       setIsLoading(true);
-      router.refresh();
       return true;
     }
 
@@ -119,23 +87,21 @@ export default function NoTeam() {
       </div>
 
       {/* Create Team Modal */}
-      <MyAlertModal
-        title="إنشاء فريق جديد"
-        description="اختار اسم لفريقك وابدأ رحلتك مع أصحابك."
-        content={createContent}
+      <CreateTeamModal
         open={openCreateModal}
         onOpenChange={handleCreateModalChange}
         onConfirm={handleCreateTeam}
+        teamName={teamName}
+        setTeamName={setTeamName}
       />
 
       {/* Join Team Modal */}
-      <MyAlertModal
-        title="الانضمام إلى فريق"
-        description="ادخل كود الفريق للانضمام."
-        content={joinContent}
+      <JoinTeamModal
         open={openJoinModal}
         onOpenChange={handleJoinModalChange}
         onConfirm={handleJoinTeam}
+        teamCode={teamCode}
+        setTeamCode={setTeamCode}
       />
     </section>
   );

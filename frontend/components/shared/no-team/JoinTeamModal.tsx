@@ -17,39 +17,35 @@ import { Input } from "@/components/ui/input";
 interface AlertModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-
   trigger?: ReactNode;
-
   confirmText?: string | ReactNode;
   cancelText?: string | ReactNode;
-
   onConfirm?: () => Promise<boolean | void> | boolean | void;
-
-  teamName: string;
-  setTeamName: (teamName: string) => void;
+  teamCode: string;
+  setTeamCode: (teamCode: string) => void;
 }
 
-export default function CreateTeamModal({
+export default function JoinTeamModal({
   open,
   onOpenChange,
   trigger,
   confirmText = "إكمال",
   cancelText = "إلغاء",
   onConfirm,
-  teamName,
-  setTeamName,
+  teamCode,
+  setTeamCode,
 }: AlertModalProps) {
   const [loading, setLoading] = useState(false);
 
   // Modal create Content
+  // Modal join Content
   const content = (
     <div className="py-4 w-full">
       <Input
-        placeholder="ادخل اسم الفريق"
-        maxLength={20}
+        placeholder="كود الفريق (مثال: ABC123XYZ)"
         className="text-right rounded-xl w-full"
-        value={teamName}
-        onChange={(e) => setTeamName(e.target.value)}
+        value={teamCode}
+        onChange={(e) => setTeamCode(e.target.value)}
       />
     </div>
   );

@@ -58,7 +58,7 @@ export function LeaderboardList({
                 <span
                   className={`text-sm md:text-base font-bold ${isMyTeam ? "text-brand" : "text-foreground"}`}
                 >
-                  {team.teamId.teamName}{" "}
+                  {team.teamId?.teamName}{" "}
                   {isMyTeam && (
                     <span className="text-xs font-medium opacity-80">
                       (فريقي)
