@@ -1,12 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { FileText, Settings, ShieldAlert, UserPlus } from "lucide-react";
-
-const quickActions = [
-  { title: "إضافة مستخدم", icon: UserPlus, desc: "إنشاء حساب مستخدم جديد" },
-  { title: "إعدادات النظام", icon: Settings, desc: "تعديل تفضيلات المنصة" },
-  { title: "توليد تقرير", icon: FileText, desc: "تصدير البيانات بصيغة PDF" },
-  { title: "سجل الأمان", icon: ShieldAlert, desc: "مراجعة محاولات الدخول" },
-];
+import { quickActions } from "../utils/constants";
+import { cn } from "@/lib/utils";
 
 const QuickActions = () => {
   return (
@@ -29,7 +23,13 @@ const QuickActions = () => {
                 size={"lg"}
                 className={`px-3 py-7 flex items-center justify-start gap-3 group border border-border`}
               >
-                <div className="rounded-md bg-muted p-2 text-muted-foreground group-hover:text-primary transition-colors">
+                <div
+                  className={cn(
+                    "rounded-lg p-2 transition-colors duration-200",
+                    action.className,
+                  )}
+                >
+                  {" "}
                   <Icon className="h-4 w-4" />
                 </div>
                 <div className={`flex flex-col items-start justify-center`}>

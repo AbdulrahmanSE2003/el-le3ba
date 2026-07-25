@@ -4,6 +4,7 @@ import RecentSessions from "@/features/admin/components/RecentSessions";
 import QuickActions from "@/features/admin/components/QuickActions";
 import DashboardStats from "@/features/admin/components/DashboardStats";
 import { Skeleton } from "@/components/ui/skeleton";
+import RecentSessionsSkeleton from "@/features/admin/components/RecentSessionsSkeleton";
 
 const Page = () => {
   return (
@@ -31,7 +32,9 @@ const Page = () => {
       {/* Main Content Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Sessions List */}
-        <RecentSessions />
+        <Suspense fallback={<RecentSessionsSkeleton />}>
+          <RecentSessions />
+        </Suspense>
 
         {/* Quick Actions Container */}
         <QuickActions />

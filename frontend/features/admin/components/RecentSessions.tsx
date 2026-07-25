@@ -12,10 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { getDashboardRecentSessions } from "../api/shared";
 import { RecentSession } from "@/shared/api/helpers";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 const statusMap = {
@@ -61,7 +61,7 @@ export default async function RecentSessions() {
         </Button>
       </div>
 
-      <ScrollArea dir="rtl" className="h-112 p-0 border-0 rounded-md ">
+      <ScrollArea dir="rtl" className="h-104 p-0 border-0 rounded-md ">
         <Table>
           <TableHeader>
             <TableRow>
@@ -70,7 +70,7 @@ export default async function RecentSessions() {
               <TableHead className="text-right">النقاط</TableHead>
               <TableHead className="text-right">الحالة</TableHead>
               <TableHead className="text-right">انتهت</TableHead>
-              <TableHead className="w-12" />
+              <TableHead className="text-right">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -80,7 +80,10 @@ export default async function RecentSessions() {
                 statusMap[session.endReason as keyof typeof statusMap];
 
               return (
-                <TableRow key={session._id} className={`text-muted-foreground`}>
+                <TableRow
+                  key={session._id}
+                  className={`text-muted-foreground w-full`}
+                >
                   <TableCell>
                     <div className="flex flex-col">
                       <span
