@@ -1,7 +1,11 @@
+import Event from "../models/eventModel";
+import Session from "../models/sessionModel";
+import Team from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
+import { getGrowthStats } from "../utils/utils";
 
 export const createAdmin = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
@@ -23,4 +27,21 @@ export const createAdmin = catchAsync(async (req, res, next) => {
   newAdmin.password = undefined as any;
 
   resHandler(res, 201, "admin", newAdmin);
+});
+
+export const getDashboardStats = catchAsync(async (_req, res) => {
+  const [totalUsers, totalTeams, totalSessions, totalEvents] =
+    await Promise.all([
+      getGrowthStats(User),
+      getGrowthStats(Team),
+      getGrowthStats(Session),
+      Event.countDocuments(),
+    ]);
+
+  resHandler(res, 200, "stats", {
+    totalUsers,
+    totalTeams,
+    totalSessions,
+    totalEvents,
+  });
 });
