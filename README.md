@@ -1,19 +1,5 @@
 # 🎮 El-Le3ba (اللعبة)
 
-<<<<<<< HEAD
-A competitive university quiz application built for university students to compete in real-time trivia matches. The app features ranked sessions, team-based gameplay, and live leaderboards.
-
----
-
-## 📁 Project Structure
-
-This is a **monorepo** containing both frontend and backend:
-
-```
-el-le3ba/
-├── frontend/          # Next.js 15 + TypeScript
-├── backend/           # Express + TypeScript + MongoDB
-=======
 A competitive university quiz application for **Borg El-Arab Technological University (BATU)** students. Teams compete in real-time ranked trivia matches with live leaderboards, event-based competition cycles, and a full admin dashboard.
 
 ---
@@ -24,7 +10,6 @@ A competitive university quiz application for **Borg El-Arab Technological Unive
 el-le3ba/
 ├── frontend/          # Next.js 16 App Router + TypeScript
 ├── backend/           # Express 5 + TypeScript + MongoDB
->>>>>>> dev
 └── README.md
 ```
 
@@ -34,111 +19,28 @@ el-le3ba/
 
 ### Tech Stack
 
-<<<<<<< HEAD
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS + shadcn/ui
-- **Fonts:** Playpen Sans (headings), Zain (body)
-- **State:** TBD (Zustand or Context API)
-=======
-| Technology              | Purpose                               |
-| ----------------------- | ------------------------------------- |
-| **Next.js 16**          | React framework (App Router)          |
-| **React 19**            | UI library                            |
-| **TypeScript**          | Language                              |
-| **Tailwind CSS 4**      | Styling                               |
-| **shadcn/ui** (Radix)   | UI component library                  |
-| **Framer Motion**       | Animations                            |
-| **Zustand**             | State management (persist middleware) |
-| **Zod**                 | Schema validation                     |
-| **React Hook Form**     | Form handling                         |
-| **Axios**               | HTTP client                           |
-| **Socket.IO Client**    | Real-time communication               |
-| **Sonner**              | Toast notifications                   |
-| **next-themes**         | Dark/light theme                      |
-| **Playpen Sans + Zain** | Arabic typography                     |
->>>>>>> dev
+| Technology | Purpose |
+|---|---|
+| **Next.js 16** | React framework (App Router) |
+| **React 19** | UI library |
+| **TypeScript** | Language |
+| **Tailwind CSS 4** | Styling |
+| **shadcn/ui** (Radix) | UI component library |
+| **Framer Motion** | Animations |
+| **Zustand** | State management (persist middleware) |
+| **Zod** | Schema validation |
+| **React Hook Form** | Form handling |
+| **Axios** | HTTP client |
+| **Socket.IO Client** | Real-time communication |
+| **Sonner** | Toast notifications |
+| **next-themes** | Dark/light theme |
+| **Vaul** | Drawer component |
+| **Playpen Sans + Zain** | Arabic typography |
 
 ### Folder Structure
 
 ```
 frontend/
-<<<<<<< HEAD
-├── app/                          # Next.js App Router
-│   ├── (app)/                    # Main app layout (authenticated)
-│   │   ├── page.tsx              # Home / Dashboard
-│   │   ├── layout.tsx            # App layout with nav
-│   │   ├── leaderboard/
-│   │   │   └── page.tsx          # Leaderboard screen
-│   │   ├── match/
-│   │   │   ├── page.tsx          # Matchmaking
-│   │   │   └── [matchId]/
-│   │   │       └── page.tsx      # Active game screen
-│   │   └── profile/
-│   │       └── page.tsx          # User profile
-│   ├── (auth)/                   # Auth layout (unauthenticated)
-│   │   ├── login/
-│   │   │   └── page.tsx          # Login page
-│   │   ├── register/
-│   │   │   └── page.tsx          # Register page
-│   │   ├── forgot-password/
-│   │   │   └── page.tsx          # Forgot password
-│   │   └── reset-password/
-│   │       └── page.tsx          # Reset password
-│   ├── admin/
-│   │   └── page.tsx              # Admin dashboard
-│   ├── globals.css               # Global styles
-│   └── layout.tsx                # Root layout
-│
-├── components/
-│   ├── ui/                       # shadcn/ui primitives
-│   │   ├── button.tsx
-│   │   ├── ThemeToggle.tsx
-│   │   └── provideres.tsx
-│   └── shared/                   # Shared components (TBD)
-│       ├── TeamCard.tsx
-│       ├── TimerRing.tsx
-│       └── ScoreDisplay.tsx
-│
-├── features/                     # Feature-based modules
-│   ├── auth/                     # Authentication feature
-│   │   ├── api/                  # API calls
-│   │   ├── components/           # Auth components
-│   │   ├── hooks/                # Auth hooks
-│   │   ├── lib/                  # Auth utilities
-│   │   └── types.ts              # Auth types
-│   ├── dashboard/                # Dashboard feature
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   └── types.ts
-│   ├── leaderboard/              # Leaderboard feature
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   └── types.ts
-│   ├── match/                    # Game/Match feature
-│   │   ├── api/
-│   │   ├── components/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   └── types.ts
-│   └── profile/                  # Profile feature
-│       ├── api/
-│       ├── components/
-│       ├── hooks/
-│       ├── lib/
-│       └── types.ts
-│
-├── lib/                          # Global utilities (TBD)
-├── hooks/                        # Global hooks (TBD)
-├── types/                        # Global types (TBD)
-├── constants/                    # App constants (TBD)
-├── store/                        # State management (TBD)
-└── public/                       # Static assets
-=======
 ├── app/                            # Next.js App Router
 │   ├── layout.tsx                  # Root layout (fonts, providers, RTL)
 │   ├── page.tsx                    # Landing/marketing page
@@ -165,6 +67,11 @@ frontend/
 │   │   ├── game/[sessionId]/page.tsx
 │   │   └── result/[sessionId]/page.tsx
 │   │
+│   ├── admin/                      # Admin dashboard
+│   │   ├── dashboard/page.tsx
+│   │   ├── users/page.tsx
+│   │   ├── matches/page.tsx
+│   │   └── settings/page.tsx
 │   │
 │   └── (static)/                   # Static pages
 │       ├── about/page.tsx
@@ -189,7 +96,7 @@ frontend/
 │
 ├── store/                          # Zustand stores
 │   ├── userStore.ts                # User state (persisted)
-│   └── storeInitializer.tsx        # Server→client hydration
+│   └── storeInitializer.tsx        # Server to client hydration
 │
 ├── hooks/                          # Global hooks
 │   ├── use-mobile.ts
@@ -206,37 +113,22 @@ frontend/
 │
 ├── proxy.ts                        # Next.js middleware (auth guards)
 └── public/                         # Static assets (avatars, images, sounds)
->>>>>>> dev
 ```
 
 ### Design System
 
-| Token       | Value     | Usage                              |
-| ----------- | --------- | ---------------------------------- |
+| Token | Value | Usage |
+|---|---|---|
 | **Primary** | `#5B5FEF` | Buttons, highlights, active states |
-| **Accent**  | `#FFD23F` | Points, badges, rewards            |
-| **Success** | `#2DC653` | Correct answers, success states    |
-| **Danger**  | `#FF4757` | Wrong answers, errors              |
-| **Surface** | `#F5F5FF` | Page background                    |
-| **Dark**    | `#1A1A2E` | Text, dark elements                |
-| **Border**  | `#E2E2F0` | Card borders                       |
+| **Accent** | `#FFD23F` | Points, badges, rewards |
+| **Success** | `#2DC653` | Correct answers, success states |
+| **Danger** | `#FF4757` | Wrong answers, errors |
+| **Surface** | `#F5F5FF` | Page background |
+| **Dark** | `#1A1A2E` | Text, dark elements |
+| **Border** | `#E2E2F0` | Card borders |
 
 ### Screens
 
-<<<<<<< HEAD
-1. **Landing Page** - Marketing page
-2. **Onboarding** - First-time user flow
-3. **Login/Register** - Authentication
-4. **Home/Dashboard** - Team info, active session, leaderboard preview
-5. **Matchmaking** - Join/Create team, find match
-6. **Game** - Question screen with timer, answer options
-7. **Score Reveal** - Between questions animation
-8. **Leaderboard** - Full rankings
-9. **Profile** - User stats, team info
-10. **Admin Dashboard** - Manage sessions, questions, teams
-
-### Getting Started (Frontend)
-=======
 1. **Landing Page** — Marketing page with Hero, Features, Community, CTA
 2. **Login / Register** — Authentication with JWT
 3. **Select Avatar** — First-time avatar pick after registration
@@ -250,7 +142,6 @@ frontend/
 11. **Admin Dashboard** — Manage events, questions, users, matches
 
 ### Getting Started
->>>>>>> dev
 
 ```bash
 cd frontend
@@ -265,71 +156,26 @@ pnpm dev
 
 ### Tech Stack
 
-<<<<<<< HEAD
-- **Runtime:** Node.js
-- **Framework:** Express.js
-- **Language:** TypeScript
-- **Database:** MongoDB Atlas (Mongoose)
-- **Auth:** JWT (jsonwebtoken)
-- **Password Hashing:** bcryptjs
-- **Dev Tool:** tsx (fast TypeScript execution)
-=======
-| Technology                   | Purpose             |
-| ---------------------------- | ------------------- |
-| **Node.js**                  | Runtime             |
-| **Express 5**                | HTTP framework      |
-| **TypeScript**               | Language            |
-| **MongoDB Atlas + Mongoose** | Database & ODM      |
-| **Socket.IO**                | Real-time WebSocket |
-| **JWT (jsonwebtoken)**       | Authentication      |
-| **bcryptjs**                 | Password hashing    |
-| **helmet**                   | Security headers    |
-| **express-rate-limit**       | Rate limiting       |
-| **cookie-parser**            | Cookie parsing      |
-| **nodemailer + Resend**      | Email service       |
-| **node-cron**                | Background jobs     |
->>>>>>> dev
+| Technology | Purpose |
+|---|---|
+| **Node.js** | Runtime |
+| **Express 5** | HTTP framework |
+| **TypeScript** | Language |
+| **MongoDB Atlas + Mongoose** | Database & ODM |
+| **Socket.IO** | Real-time WebSocket |
+| **JWT (jsonwebtoken)** | Authentication |
+| **bcryptjs** | Password hashing |
+| **helmet** | Security headers |
+| **express-rate-limit** | Rate limiting |
+| **cookie-parser** | Cookie parsing |
+| **nodemailer + Resend** | Email service |
+| **node-cron** | Background jobs |
 
 ### Folder Structure
 
 ```
 backend/
 ├── src/
-<<<<<<< HEAD
-│   ├── app.ts                    # Express app setup (middleware, routes)
-│   ├── server.ts                 # Server startup + DB connection
-│   │
-│   ├── config/
-│   │   ├── db.ts                 # MongoDB connection
-│   │   └── cors.ts               # CORS configuration
-│   │
-│   ├── controllers/
-│   │   └── authController.ts     # Auth logic (login, register, etc.)
-│   │
-│   ├── models/
-│   │   └── userModel.ts          # User Mongoose schema
-│   │
-│   ├── routes/
-│   │   └── userRoutes.ts         # Auth routes
-│   │
-│   ├── middleware/
-│   │   └── auth.ts               # JWT verification (TBD)
-│   │
-│   ├── types/
-│   │   └── express.d.ts          # Express type extensions
-│   │
-│   └── utils/
-│       ├── appError.ts           # Custom error class
-│       ├── catchAsync.ts         # Async error handler
-│       ├── resHandler.ts         # Response formatter
-│       └── sendEmail.ts          # Email service (placeholder)
-│
-├── .env                          # Environment variables (gitignored)
-├── .env.example                  # Environment template
-├── .gitignore
-├── package.json
-└── tsconfig.json
-=======
 │   ├── server.ts                    # Entry: HTTP + Socket.IO + DB + cron
 │   ├── app.ts                       # Express setup (middleware, routes)
 │   ├── constants.ts                 # Game constants (scores, timers, avatars)
@@ -351,7 +197,7 @@ backend/
 │   ├── models/
 │   │   ├── userModel.ts             # User (name, email, roles, stats)
 │   │   ├── teamModel.ts             # Team (name, code, leader, stats)
-│   │   ├── teamMembershipModel.ts   # User–team link with role
+│   │   ├── teamMembershipModel.ts   # User team link with role
 │   │   ├── sessionModel.ts          # Game session (Q&A, scores)
 │   │   ├── questionModel.ts         # Question (MCQ, true/false)
 │   │   ├── eventModel.ts            # Event (scheduled/running/finished)
@@ -394,92 +240,74 @@ backend/
 ├── .env
 ├── .env.example
 └── public/avatars/                  # 15 avatar PNGs
->>>>>>> dev
 ```
 
 ### API Endpoints
 
-<<<<<<< HEAD
-| Method | Endpoint                       | Description            | Auth |
-| ------ | ------------------------------ | ---------------------- | ---- |
-| GET    | `/`                            | Health check           | No   |
-| POST   | `/api/v1/users/signup`         | Register new user      | No   |
-| POST   | `/api/v1/users/login`          | Login user             | No   |
-| POST   | `/api/v1/users/forgot-password` | Request password reset | No   |
-| PATCH  | `/api/v1/users/reset-password`  | Reset password         | No   |
-=======
 #### Auth & Users
-
-| Method | Endpoint                              | Description      | Auth |
-| ------ | ------------------------------------- | ---------------- | ---- |
-| GET    | `/`                                   | Health check     | No   |
-| POST   | `/api/v1/users/signup`                | Register         | No   |
-| POST   | `/api/v1/users/login`                 | Login            | No   |
-| POST   | `/api/v1/users/logout`                | Logout           | Yes  |
-| GET    | `/api/v1/users/me`                    | Get current user | Yes  |
-| PATCH  | `/api/v1/users/me`                    | Update profile   | Yes  |
-| PATCH  | `/api/v1/users/change-password`       | Change password  | Yes  |
-| DELETE | `/api/v1/users/me`                    | Delete account   | Yes  |
-| POST   | `/api/v1/users/forgot-password`       | Request reset    | No   |
-| PATCH  | `/api/v1/users/reset-password/:token` | Reset password   | No   |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| GET | `/` | Health check | No |
+| POST | `/api/v1/users/signup` | Register | No |
+| POST | `/api/v1/users/login` | Login | No |
+| POST | `/api/v1/users/logout` | Logout | Yes |
+| GET | `/api/v1/users/me` | Get current user | Yes |
+| PATCH | `/api/v1/users/me` | Update profile | Yes |
+| PATCH | `/api/v1/users/change-password` | Change password | Yes |
+| DELETE | `/api/v1/users/me` | Delete account | Yes |
+| POST | `/api/v1/users/forgot-password` | Request reset | No |
+| PATCH | `/api/v1/users/reset-password/:token` | Reset password | No |
 
 #### Teams
-
-| Method | Endpoint                         | Description      | Auth |
-| ------ | -------------------------------- | ---------------- | ---- |
-| POST   | `/api/v1/teams`                  | Create team      | Yes  |
-| GET    | `/api/v1/teams/my-team`          | Get my team      | Yes  |
-| PATCH  | `/api/v1/teams/:id`              | Update team      | Yes  |
-| POST   | `/api/v1/teams/join`             | Join by code     | Yes  |
-| POST   | `/api/v1/teams/leave`            | Leave team       | Yes  |
-| PATCH  | `/api/v1/teams/transfer-captain` | Transfer captain | Yes  |
-| DELETE | `/api/v1/teams/kick-member`      | Kick member      | Yes  |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| POST | `/api/v1/teams` | Create team | Yes |
+| GET | `/api/v1/teams/my-team` | Get my team | Yes |
+| PATCH | `/api/v1/teams/:id` | Update team | Yes |
+| POST | `/api/v1/teams/join` | Join by code | Yes |
+| POST | `/api/v1/teams/leave` | Leave team | Yes |
+| PATCH | `/api/v1/teams/transfer-captain` | Transfer captain | Yes |
+| DELETE | `/api/v1/teams/kick-member` | Kick member | Yes |
 
 #### Sessions (Game)
-
-| Method | Endpoint                              | Description       | Auth |
-| ------ | ------------------------------------- | ----------------- | ---- |
-| POST   | `/api/v1/sessions/start`              | Start new session | Yes  |
-| POST   | `/api/v1/sessions/submit-answer`      | Submit answer     | Yes  |
-| GET    | `/api/v1/sessions/results/:sessionId` | Get results       | Yes  |
-| POST   | `/api/v1/sessions/abandon`            | Abandon session   | Yes  |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| POST | `/api/v1/sessions/start` | Start new session | Yes |
+| POST | `/api/v1/sessions/submit-answer` | Submit answer | Yes |
+| GET | `/api/v1/sessions/results/:sessionId` | Get results | Yes |
+| POST | `/api/v1/sessions/abandon` | Abandon session | Yes |
 
 #### Questions (Admin)
-
-| Method | Endpoint                 | Description     | Auth  |
-| ------ | ------------------------ | --------------- | ----- |
-| POST   | `/api/v1/questions`      | Create question | Admin |
-| POST   | `/api/v1/questions/bulk` | Bulk create     | Admin |
-| GET    | `/api/v1/questions`      | List questions  | Admin |
-| GET    | `/api/v1/questions/:id`  | Get question    | Admin |
-| PATCH  | `/api/v1/questions/:id`  | Update question | Admin |
-| DELETE | `/api/v1/questions/:id`  | Delete question | Admin |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| POST | `/api/v1/questions` | Create question | Admin |
+| POST | `/api/v1/questions/bulk` | Bulk create | Admin |
+| GET | `/api/v1/questions` | List questions | Admin |
+| GET | `/api/v1/questions/:id` | Get question | Admin |
+| PATCH | `/api/v1/questions/:id` | Update question | Admin |
+| DELETE | `/api/v1/questions/:id` | Delete question | Admin |
 
 #### Events
-
-| Method | Endpoint                   | Description       | Auth  |
-| ------ | -------------------------- | ----------------- | ----- |
-| GET    | `/api/v1/events/current`   | Get running event | Yes   |
-| GET    | `/api/v1/events`           | List all          | Admin |
-| POST   | `/api/v1/events`           | Create event      | Admin |
-| PATCH  | `/api/v1/events/:id`       | Update event      | Admin |
-| GET    | `/api/v1/events/:id/stats` | Event stats       | Admin |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| GET | `/api/v1/events/current` | Get running event | Yes |
+| GET | `/api/v1/events` | List all | Admin |
+| POST | `/api/v1/events` | Create event | Admin |
+| PATCH | `/api/v1/events/:id` | Update event | Admin |
+| GET | `/api/v1/events/:id/stats` | Event stats | Admin |
 
 #### Leaderboard
-
-| Method | Endpoint                      | Description      | Auth |
-| ------ | ----------------------------- | ---------------- | ---- |
-| GET    | `/api/v1/leaderboard`         | Top 50 + my rank | Yes  |
-| GET    | `/api/v1/leaderboard/top3`    | Podium           | Yes  |
-| GET    | `/api/v1/leaderboard/my-rank` | My event rank    | Yes  |
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| GET | `/api/v1/leaderboard` | Top 50 + my rank | Yes |
+| GET | `/api/v1/leaderboard/top3` | Podium | Yes |
+| GET | `/api/v1/leaderboard/my-rank` | My event rank | Yes |
 
 #### Notifications
-
-| Method | Endpoint                         | Description      | Auth |
-| ------ | -------------------------------- | ---------------- | ---- |
-| GET    | `/api/v1/notifications`          | My notifications | Yes  |
-| PATCH  | `/api/v1/notifications/:id/read` | Mark as read     | Yes  |
->>>>>>> dev
+| Method | Endpoint | Description | Auth |
+|---|---|---|---|
+| GET | `/api/v1/notifications` | My notifications | Yes |
+| PATCH | `/api/v1/notifications/:id/read` | Mark as read | Yes |
 
 ### Environment Variables
 
@@ -488,13 +316,6 @@ PORT=5000
 MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/ellu3ba
 JWT_SECRET=your_jwt_secret_here
 JWT_EXPIRES_IN=7d
-<<<<<<< HEAD
-NODE_ENV=development
-CLIENT_URL=http://localhost:3000
-```
-
-### Getting Started (Backend)
-=======
 JWT_COOKIE_EXPIRES_IN=7
 NODE_ENV=development
 CLIENT_URL=http://localhost:3000
@@ -508,7 +329,6 @@ RESEND_API_KEY=re_xxxxx
 ```
 
 ### Getting Started
->>>>>>> dev
 
 ```bash
 cd backend
@@ -519,95 +339,43 @@ pnpm dev
 
 ---
 
-<<<<<<< HEAD
-## 🌿 Git Workflow
-
-| Branch | Purpose               | Protection                              |
-| ------ | --------------------- | --------------------------------------- |
-| `main` | Production-ready code | ✅ Protected - Only repo owner can push |
-| `dev`  | Active development    | Open for team collaboration             |
-
-### Workflow
-
-```bash
-# Start working
-git checkout dev
-
-# Make changes, commit, push
-git add .
-git commit -m "feat: description"
-git push origin dev
-
-# When stable, merge to main (owner only)
-git checkout main
-git merge dev
-git push origin main
-=======
 ## 🔐 Security
 
-- **Helmet** — HTTP security headers
-- **Rate limiting** — Auth routes: 10 req / 15 min
-- **CORS** — Whitelisted origins
-- **HPP** — HTTP parameter pollution protection
-- **Body size limit** — 10kb on requests
-- **NoSQL injection sanitization** — via `express-mongo-sanitize`
-- **JWT** — httpOnly cookies (not localStorage)
-- **bcrypt** — 12 salt rounds for passwords
-- **Password reset tokens** — 10 min expiry
+- **Helmet** - HTTP security headers
+- **Rate limiting** - Auth routes: 10 req / 15 min
+- **CORS** - Whitelisted origins
+- **HPP** - HTTP parameter pollution protection
+- **Body size limit** - 10kb on requests
+- **NoSQL injection sanitization** - via express-mongo-sanitize
+- **JWT** - httpOnly cookies (not localStorage)
+- **bcrypt** - 12 salt rounds for passwords
+- **Password reset tokens** - 10 min expiry
 
 ---
 
 ## 🌿 Git Workflow
 
-| Branch | Purpose               | Protection             |
-| ------ | --------------------- | ---------------------- |
-| `main` | Production-ready code | ✅ Protected           |
-| `dev`  | Active development    | Open for collaboration |
+| Branch | Purpose | Protection |
+|---|---|---|
+| `main` | Production-ready code | Protected |
+| `dev` | Active development | Open for collaboration |
 
 ```bash
 git checkout dev
 git add .
 git commit -m "feat: description"
 git push origin dev
->>>>>>> dev
 ```
 
 ---
 
 ## 👥 Team Roles
 
-<<<<<<< HEAD
-| Member          | Role                              | Focus                                 |
-| --------------- | --------------------------------- | ------------------------------------- |
-| **Abdulrahman** | Full Stack (Backend + Match/Game) | Backend API, Game logic, Match system |
-| **Ramez**       | Frontend                          | UI/UX, Pages, Components              |
-| **Abu Zaid**    | Frontend                          | UI/UX, Pages, Components              |
-
----
-
-## 🚀 MVP Scope
-
-### Included
-
-- ✅ User authentication (register/login)
-- ✅ Team creation/joining (2-6 members)
-- ✅ Ranked game sessions
-- ✅ Question/answer system
-- ✅ Leaderboard
-- ✅ Admin dashboard
-
-### Not in MVP
-
-- ❌ Knockout/Risk mode (offline event)
-- ❌ Casual mode (solo play)
-- ❌ Real-time WebSocket
-- ❌ Email service (placeholder only)
-=======
-| Member          | Role       | Focus                                            |
-| --------------- | ---------- | ------------------------------------------------ |
+| Member | Role | Focus |
+|---|---|---|
 | **Abdulrahman** | Full Stack | Backend API, game logic, match system, Socket.IO |
-| **Ramez**       | Frontend   | UI/UX, pages, components                         |
-| **Abu Zaid**    | Frontend   | UI/UX, pages, components                         |
+| **Ramez** | Frontend | UI/UX, pages, components |
+| **Abu Zaid** | Frontend | UI/UX, pages, components |
 
 ---
 
@@ -615,97 +383,36 @@ git push origin dev
 
 ### Implemented
 
-- ✅ User authentication (register / login / logout / password reset)
-- ✅ Avatar selection on first login
-- ✅ Team creation & management (2–5 members, join by code)
-- ✅ Event system (create, schedule, auto-start)
-- ✅ Ranked game sessions with scoring (streak bonuses, time bonuses)
-- ✅ Real-time gameplay via Socket.IO (lobby, questions, answers)
-- ✅ Question bank (MCQ, true/false, bulk import)
-- ✅ Live leaderboard with podium
-- ✅ Admin dashboard (manage events, questions, users, matches)
-- ✅ Notifications system
-- ✅ Email service (password reset, Arabic templates)
-- ✅ Background jobs (session expiry, event auto-start)
-- ✅ Dark/light theme
-- ✅ RTL Arabic-first UI
+- User authentication (register / login / logout / password reset)
+- Avatar selection on first login
+- Team creation and management (2-5 members, join by code)
+- Event system (create, schedule, auto-start)
+- Ranked game sessions with scoring (streak bonuses, time bonuses)
+- Real-time gameplay via Socket.IO (lobby, questions, answers)
+- Question bank (MCQ, true/false, bulk import)
+- Live leaderboard with podium
+- Admin dashboard (manage events, questions, users, matches)
+- Notifications system
+- Email service (password reset, Arabic templates)
+- Background jobs (session expiry, event auto-start)
+- Dark/light theme
+- RTL Arabic-first UI
 
 ### Planned
 
-- ⬜ Knockout/Risk mode (offline event)
-- ⬜ Casual mode (solo play)
->>>>>>> dev
+- Knockout/Risk mode (offline event)
+- Casual mode (solo play)
 
 ---
 
 ## 📦 Package Manager
 
-<<<<<<< HEAD
-This project uses **pnpm** for all package management.
-
-```bash
-# Install dependencies
-pnpm install
-
-# Add dependency
-pnpm add package-name
-
-# Add dev dependency
-=======
 This project uses **pnpm**.
 
 ```bash
 pnpm install
 pnpm add package-name
->>>>>>> dev
 pnpm add -D package-name
-```
-
----
-
-<<<<<<< HEAD
-## 📝 Notes for Frontend Developers
-
-### Where to Start
-
-1. **Check the backend API** → `backend/src/routes/` for available endpoints
-2. **Check feature folders** → `frontend/features/` for organized code
-3. **Add shared components** → Create in `frontend/components/shared/`
-4. **Add global utilities** → Create in `frontend/lib/` or `frontend/hooks/`
-
-### Missing Folders (Create as needed)
-
-```
-frontend/
-├── components/shared/            # Shared non-UI components
-├── hooks/                        # Global custom hooks
-├── lib/                          # Utilities (axios config, helpers)
-├── types/                        # Global TypeScript types
-├── constants/                    # App constants
-└── store/                        # State management (Zustand/Context)
-```
-
-### API Base URL
-
-```typescript
-// Create: frontend/lib/axios.ts
-import axios from "axios";
-
-export const api = axios.create({
-  baseURL: "http://localhost:5000/api/v1",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Add auth token interceptor
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
 ```
 
 ---
@@ -719,17 +426,6 @@ api.interceptors.request.use((config) => {
 - **Cards** use white background on `#F5F5FF` surface
 - **Generous padding** - nothing feels cramped
 - **Micro-interactions** - correct flash green, wrong shake
-=======
-## 🎨 Design Principles
-
-- **RTL layout** throughout (Arabic-first)
-- **Rounded corners** everywhere (16–24px border-radius)
-- **Soft shadows** — no harsh shadows
-- **Timer ring** is the hero element
-- **Cards** use white background on `#F5F5FF` surface
-- **Generous padding** — nothing feels cramped
-- **Micro-interactions** — correct flash green, wrong shake
->>>>>>> dev
 - **Mobile-first** (390px base width)
 - **Feel:** Duolingo's cleanliness + Kahoot's energy
 
@@ -740,8 +436,5 @@ api.interceptors.request.use((config) => {
 ISC
 
 ---
-<<<<<<< HEAD
 
-Built with 💜 for BATU
-=======
->>>>>>> dev
+Built with for BATU
