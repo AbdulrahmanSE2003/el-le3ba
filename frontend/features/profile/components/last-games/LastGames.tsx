@@ -35,7 +35,7 @@ export default function LastGames({ user }: UserProfileProps) {
       >
         {!hasLastGames && (
           <div className="flex items-center justify-center h-20">
-            <span className="text-muted-foreground">لا توجد ألعاب</span>
+            <span className="text-muted-foreground">لا توجد ألعاب مؤخراً</span>
           </div>
         )}
 

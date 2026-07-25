@@ -44,23 +44,18 @@ const EmptyState = () => {
       </div>
 
       <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-        <Button onClick={() => handleCreateModalChange(true)} asChild size="lg">
-          <Link href="#">
-            <PlusCircle className="mr-2 size-5" />
-            كوّن فريق
-          </Link>
+        <Button onClick={() => handleCreateModalChange(true)} size="lg">
+          <PlusCircle className="mr-2 size-5" />
+          إنشاء فريق
         </Button>
 
         <Button
           onClick={() => handleJoinModalChange(true)}
-          asChild
           variant="outline"
           size="lg"
         >
-          <Link href="#">
-            <Users className="mr-2 size-5" />
-            انضم لفريق
-          </Link>
+          <Users className="mr-2 size-5" />
+          الانضمام لفريق
         </Button>
       </div>
 

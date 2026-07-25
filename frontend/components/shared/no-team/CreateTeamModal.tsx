@@ -23,6 +23,8 @@ interface AlertModalProps {
   confirmText?: string | ReactNode;
   cancelText?: string | ReactNode;
 
+  variant?: "default" | "secondary" | "outline" | "destructive";
+
   onConfirm?: () => Promise<boolean | void> | boolean | void;
 
   teamName: string;
@@ -33,9 +35,10 @@ export default function CreateTeamModal({
   open,
   onOpenChange,
   trigger,
-  confirmText = "إكمال",
+  confirmText = "إنشاء",
   cancelText = "إلغاء",
   onConfirm,
+  variant,
   teamName,
   setTeamName,
 }: AlertModalProps) {
@@ -92,7 +95,7 @@ export default function CreateTeamModal({
           <AlertDialogAction
             disabled={loading}
             onClick={handleConfirm}
-            variant={"destructive"}
+            variant={variant || "default"}
           >
             {loading ? "جاري التنفيذ..." : confirmText}
           </AlertDialogAction>

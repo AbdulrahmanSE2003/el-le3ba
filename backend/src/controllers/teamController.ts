@@ -150,6 +150,7 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
   try {
     await Team.deleteOne({ _id: teamId }, { session });
     await TeamMembership.deleteMany({ teamId }, { session });
+    await Leaderboard.deleteMany({ teamId }, { session });
     await session.commitTransaction();
     res.status(204).send();
   } catch (error) {
@@ -185,6 +186,10 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
     try {
       await Team.deleteOne({ teamLeader: userId }, { session });
       await TeamMembership.deleteOne({ userId }, { session });
+      await Leaderboard.deleteMany(
+        { teamId: userMembership.teamId },
+        { session },
+      );
       await session.commitTransaction();
       return res.status(204).send();
     } catch (error) {
