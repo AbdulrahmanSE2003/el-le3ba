@@ -1,0 +1,3311 @@
+
+
+==================== ./src/utils/APIFeatures.ts ====================
+
+import { Query } from "mongoose";
+
+interface QueryString {
+  page?: string;
+
+  sort?: string;
+
+  limit?: string;
+
+  fields?: string;
+
+  [key: string]: any;
+}
+
+class APIFeatures<T extends Query<any, any>> {
+  public query: T;
+
+  public queryString: QueryString;
+
+  constructor(query: T, queryString: QueryString) {
+    this.query = query;
+
+    this.queryString = queryString;
+  }
+
+  filter() {
+    const queryObj = { ...this.queryString };
+
+    const excludedFields = ["page", "sort", "limit", "fields"];
+
+    excludedFields.forEach((el) => delete queryObj[el]);
+
+    let queryStr = JSON.stringify(queryObj);
+
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    this.query = this.query.find(JSON.parse(queryStr)) as T;
+
+    return this;
+  }
+
+  sort() {
+    if (this.queryString.sort) {
+      const sortBy = this.queryString.sort.split(",").join(" ");
+
+      this.query = this.query.sort(sortBy);
+    } else {
+      this.query = this.query.sort("-createdAt");
+    }
+
+    return this;
+  }
+
+  limitFields(): this {
+    if (this.queryString.fields) {
+      const fields = this.queryString.fields.split(",").join(" ");
+
+      this.query = this.query.select(fields) as T;
+    } else {
+      this.query = this.query.select("-__v") as T;
+    }
+
+    return this;
+  }
+
+  paginate() {
+    const page = Number(this.queryString.page) || 1;
+
+    const limit = Number(this.queryString.limit) || 10;
+
+    const skip = (page - 1) * limit;
+
+    this.query = this.query.skip(skip).limit(limit);
+
+    return this;
+  }
+}
+
+export default APIFeatures;
+
+
+==================== ./src/utils/factory.ts ====================
+
+import { Request, Response, NextFunction, RequestHandler } from "express";
+
+import { catchAsync } from "./catchAsync";
+
+import resHandler from "./resHandler";
+
+import { AppError } from "./appError";
+
+import APIFeatures from "./APIFeatures";
+
+import { Model, PopulateOptions } from "mongoose";
+
+export const getAll = <T>(
+  Model: Model<T>,
+
+  popOptions?: PopulateOptions | PopulateOptions[],
+): RequestHandler => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const features = new APIFeatures(Model.find(), req.query)
+
+      .filter()
+
+      .sort()
+
+      .limitFields()
+
+      .paginate();
+
+    const docs = await features.query.populate(popOptions || []);
+
+    const label = `${Model.modelName.toLowerCase()}s`;
+
+    resHandler(res, 200, label, docs);
+  });
+};
+
+export const getOne = <T>(Model: Model<T>): RequestHandler => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const doc = await Model.findById(id).select("-__v");
+
+    if (!doc) {
+      return next(
+        new AppError(
+          `There is no such a ${Model.modelName.toLowerCase()}.`,
+
+          404,
+        ),
+      );
+    }
+
+    const label = Model.modelName.toLowerCase();
+
+    resHandler(res, 200, label, doc);
+  });
+};
+
+export const createOne = <T>(Model: Model<T>): RequestHandler => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const newDoc = await Model.create(req.body);
+
+    const label = `new${Model.modelName}`;
+
+    resHandler(res, 201, label, newDoc);
+  });
+};
+
+export const updateOne = <T>(Model: Model<T>): RequestHandler => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const updatedDoc = await Model.findByIdAndUpdate(id, req.body, {
+      new: true,
+
+      runValidators: true,
+    });
+
+    if (!updatedDoc) {
+      return next(
+        new AppError(
+          `There is no such a ${Model.modelName.toLowerCase()}.`,
+
+          404,
+        ),
+      );
+    }
+
+    const label = `updated${Model.modelName}`;
+
+    resHandler(res, 200, label, updatedDoc);
+  });
+};
+
+export const deleteOne = <T>(Model: Model<T>): RequestHandler => {
+  return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    const docToDelete = await Model.findByIdAndDelete(id);
+
+    if (!docToDelete) {
+      return next(
+        new AppError(
+          `There is no such a ${Model.modelName.toLowerCase()}.`,
+
+          404,
+        ),
+      );
+    }
+
+    res.status(204).send();
+  });
+};
+
+
+==================== ./src/utils/catchAsync.ts ====================
+
+import { Request, Response, NextFunction, RequestHandler } from "express";
+
+export const catchAsync = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<unknown>,
+): RequestHandler => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    fn(req, res, next).catch(next);
+  };
+};
+
+
+==================== ./src/utils/finalizeSession.ts ====================
+
+import mongoose from "mongoose";
+import Leaderboard from "../models/leaderboardModel";
+import Team from "../models/teamModel";
+import TeamMembership from "../models/teamMembershipModel";
+import User from "../models/userModel";
+
+export async function finalizeSession(session: any, endReason: string) {
+  const dbSession = await mongoose.startSession();
+  dbSession.startTransaction();
+
+  try {
+    session.status = "completed";
+    session.endReason = endReason;
+    session.completedAt = new Date();
+    session.finalScore = session.answerLogs.reduce(
+      (total: number, log: any) => total + log.score,
+      0,
+    );
+
+    await session.save({ session: dbSession });
+
+    await Leaderboard.findOneAndUpdate(
+      { teamId: session.teamId, eventId: session.eventId },
+      {
+        $inc: { totalPoints: session.finalScore, sessionsPlayed: 1 },
+        $set: { lastPlayedSession: new Date() },
+      },
+      { upsert: true, new: true, session: dbSession },
+    );
+
+    await Team.findByIdAndUpdate(
+      session.teamId,
+      { $inc: { points: session.finalScore, totalGames: 1 } },
+      { session: dbSession },
+    );
+
+    const members = await TeamMembership.find({ teamId: session.teamId });
+    const memberIds = members.map((m) => m.userId);
+
+    await User.updateMany(
+      { _id: { $in: memberIds } },
+      { $inc: { gamesPlayed: 1, totalScore: session.finalScore } },
+      { session: dbSession },
+    );
+
+    await dbSession.commitTransaction();
+  } catch (error) {
+    await dbSession.abortTransaction();
+    throw error;
+  } finally {
+    dbSession.endSession();
+  }
+}
+
+
+==================== ./src/utils/utils.ts ====================
+
+export const generateCode = () => {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
+
+==================== ./src/utils/appError.ts ====================
+
+export class AppError extends Error {
+  public statusCode: number;
+
+  public status: string;
+
+  public isOperational: boolean;
+
+  constructor(message: string, statusCode: number) {
+    super(message);
+
+    this.statusCode = statusCode;
+
+    this.status = `${statusCode}`.startsWith("4") ? "fail" : "error";
+
+    this.isOperational = true;
+
+    Error.captureStackTrace(this, this.constructor);
+  }
+}
+
+
+==================== ./src/utils/sendEmail.ts ====================
+
+// src/utils/sendEmail.ts
+import { Resend } from "resend";
+import nodemailer from "nodemailer";
+
+interface EmailOptions {
+  email: string;
+  name: string;
+  subject: string;
+  resetURL: string;
+}
+
+const buildEmailHTML = (name: string, resetURL: string): string => `
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body { 
+      font-family: 'Segoe UI', Tahoma, Arial, sans-serif; 
+      background-color: #0f0f1a; 
+      color: #ffffff; 
+      padding: 40px 20px;
+      direction: rtl;
+    }
+    
+    .wrapper {
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      padding: 32px 0 24px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: 800;
+      color: #FFD23F;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      color: #5B5FEF;
+    }
+
+    .tagline {
+      font-size: 13px;
+      color: #888;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: #1a1a2e;
+      border: 1px solid #2a2a4a;
+      border-radius: 16px;
+      padding: 40px 36px;
+      margin-top: 8px;
+    }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #5B5FEF, #8B5CF6);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 26px;
+      text-align: center;
+      line-height: 56px;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .greeting {
+      font-size: 15px;
+      color: #aaaacc;
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .greeting strong {
+      color: #FFD23F;
+    }
+
+    .divider {
+      height: 1px;
+      background: #2a2a4a;
+      margin: 28px 0;
+    }
+
+    .btn-wrapper {
+      text-align: center;
+      margin: 28px 0;
+    }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #5B5FEF, #7C3AED);
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 14px 40px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 10px;
+      letter-spacing: 0.3px;
+      box-shadow: 0 4px 20px rgba(91, 95, 239, 0.4);
+    }
+
+    .warning {
+      background: rgba(255, 210, 63, 0.08);
+      border: 1px solid rgba(255, 210, 63, 0.2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 13px;
+      color: #FFD23F;
+      text-align: center;
+      margin-top: 24px;
+      line-height: 1.6;
+    }
+
+    .ignore {
+      font-size: 12px;
+      color: #555577;
+      text-align: center;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 32px;
+      padding-bottom: 16px;
+    }
+
+    .footer-logo {
+      font-size: 18px;
+      font-weight: 700;
+      color: #FFD23F;
+    }
+
+    .footer-text {
+      font-size: 11px;
+      color: #444466;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">🎮 اللعبة</div>
+      <div class="tagline">منصة المسابقات الجامعية</div>
+    </div>
+
+    <!-- Card -->
+    <div class="card">
+      <div class="icon">🔐</div>
+
+      <div class="title">إعادة تعيين كلمة المرور</div>
+
+      <div class="greeting">
+        أهلاً <strong>${name}</strong>،<br>
+        وصلنا طلب لإعادة تعيين كلمة المرور الخاصة بحسابك.
+        اضغط على الزر أدناه لإعادة التعيين.
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="btn-wrapper">
+        <a href="${resetURL}" class="btn">
+          إعادة تعيين كلمة المرور
+        </a>
+      </div>
+
+      <div class="warning">
+        ⏱️ هذا الرابط صالح لمدة <strong>10 دقائق</strong> فقط
+      </div>
+
+      <div class="ignore">
+        إذا لم تطلب إعادة التعيين، يمكنك تجاهل هذا البريد بأمان.<br>
+        لن يتم تغيير أي شيء في حسابك.
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-logo">🎮 اللعبة</div>
+      <div class="footer-text">
+        جامعة برج العرب التكنولوجية — BATU<br>
+        الإسكندرية، مصر
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
+`;
+
+// ── Production: Resend ─────────────────────────────────────
+const sendViaResend = async (options: EmailOptions): Promise<void> => {
+  const resend = new Resend(process.env.RESEND_API_KEY);
+
+  const { error } = await resend.emails.send({
+    from: "اللعبة <noreply@yourdomain.com>",
+    to: options.email,
+    subject: options.subject,
+    html: buildEmailHTML(options.name, options.resetURL),
+  });
+
+  if (error) throw new Error(`Resend error: ${error.message}`);
+};
+
+// ── Development: Mailtrap ──────────────────────────────────
+const sendViaMailtrap = async (options: EmailOptions): Promise<void> => {
+  const transporter = nodemailer.createTransport({
+    host: process.env.MAILTRAP_HOST,
+    port: Number(process.env.MAILTRAP_PORT),
+    auth: {
+      user: process.env.MAILTRAP_USER,
+      pass: process.env.MAILTRAP_PASS,
+    },
+  });
+
+  await transporter.sendMail({
+    from: '"اللعبة" <noreply@allu3ba.com>',
+    to: options.email,
+    subject: options.subject,
+    html: buildEmailHTML(options.name, options.resetURL),
+  });
+};
+
+// ── Main export ────────────────────────────────────────────
+export const sendEmail = async (options: EmailOptions): Promise<void> => {
+  if (process.env.NODE_ENV === "production") {
+    await sendViaResend(options);
+  } else {
+    await sendViaMailtrap(options);
+  }
+};
+
+
+==================== ./src/utils/resHandler.ts ====================
+
+import { Response } from "express";
+
+const resHandler = <T>(res: Response, code: number, label: string, data: T) => {
+  const isArr = Array.isArray(data);
+
+  res.status(code).json({
+    status: true,
+
+    ...(isArr && { results: data.length }),
+
+    [label]: data,
+  });
+};
+
+export default resHandler;
+
+
+==================== ./src/jobs/sessionExpiry.ts ====================
+
+import Session from "../models/sessionModel";
+import { finalizeSession } from "../utils/finalizeSession";
+
+export const startSessionExpirationJob = () => {
+  setInterval(async () => {
+    try {
+      const expiredSessions = await Session.find({
+        status: "running",
+        expiresAt: { $lte: new Date() },
+      });
+
+      for (const session of expiredSessions) {
+        try {
+          await finalizeSession(session, "expired");
+          console.log(`✅ Session ${session._id} expired.`);
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    } catch (err) {
+      console.error("Session expiration job failed:", err);
+    }
+  }, 60 * 1000);
+};
+
+
+==================== ./src/jobs/eventStatus.ts ====================
+
+import Event from "../models/eventModel";
+
+export const startEventExpirationJob = () => {
+  setInterval(
+    async () => {
+      try {
+        const scheduledEvent = await Event.findOne({
+          status: "scheduled",
+          startTime: { $lte: new Date() },
+        });
+        if (scheduledEvent) {
+          scheduledEvent.status = "running";
+          await scheduledEvent.save();
+        }
+      } catch (error) {
+        console.error("Event finalization error ", error);
+      }
+    },
+    5 * 60 * 1000,
+  );
+};
+
+
+==================== ./src/types/express.d.ts ====================
+
+import { IUser } from "../models/userModel";
+
+declare global {
+  namespace Express {
+    interface Request {
+      user: IUser;
+    }
+  }
+}
+
+
+==================== ./src/models/userModel.ts ====================
+
+import validator from "validator";
+import bcrypt from "bcryptjs";
+import mongoose, { Document, Model } from "mongoose";
+import crypto from "crypto";
+import { AVATARS } from "../constants";
+
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  passwordConfirm?: string;
+  avatar?: string;
+  role: "student" | "admin" | "superAdmin";
+  passwordResetToken?: string;
+  passwordResetExpires?: Date;
+  passwordChangedAt?: Date;
+  currentStreak: number;
+  bestStreak: number;
+  totalScore: number;
+  gamesPlayed: number;
+  correctPassword(candidatePassword: string): Promise<boolean>;
+  createPasswordResetToken(): string;
+}
+
+const userSchema = new mongoose.Schema<IUser>(
+  {
+    name: {
+      type: String,
+      required: [true, "Please tell us your name!"],
+      trim: true,
+      maxLength: [
+        40,
+        "A user name must have less or equal than 40 characters.",
+      ],
+    },
+
+    email: {
+      type: String,
+      required: [true, "Please provide your email!"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      validate: [validator.isEmail, "Please provide a valid email!"],
+    },
+
+    password: {
+      type: String,
+      required: [true, "Please provide a password!"],
+      minLength: [8, "Password must be at least 8 characters."],
+      select: false,
+    },
+
+    passwordConfirm: {
+      type: String,
+      required: [true, "Please confirm your password!"],
+      validate: {
+        validator: function (this: any, el: string) {
+          return el === this.password;
+        },
+        message: "كلمات المرور يجب ان تكون متطابقة",
+      },
+    },
+
+    avatar: {
+      type: String,
+      default: null,
+      enum: AVATARS,
+    },
+
+    role: {
+      type: String,
+      default: "student",
+      enum: ["student", "admin", "superAdmin"],
+    },
+
+    currentStreak: { type: Number, default: 0 },
+    bestStreak: { type: Number, default: 0 },
+    totalScore: { type: Number, default: 0 },
+    gamesPlayed: { type: Number, default: 0 },
+
+    passwordResetToken: { type: String, select: false },
+    passwordResetExpires: { type: Date },
+    passwordChangedAt: { type: Date },
+  },
+
+  {
+    timestamps: true,
+  },
+);
+
+// ========================================================
+
+// 3. Mongoose Middlewares (Pre-save Hook)
+
+// ========================================================
+
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) return;
+
+  this.password = await bcrypt.hash(this.password, 12);
+
+  this.passwordConfirm = undefined;
+});
+
+// ========================================================
+
+// 4. Instance Methods
+
+// ========================================================
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword: string,
+): Promise<boolean> {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
+
+userSchema.methods.createPasswordResetToken = function (): string {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+  this.passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+  return resetToken;
+};
+
+// ==========================
+//            Indexes
+// ==========================
+userSchema.index({ totalScore: -1 });
+userSchema.index({ role: 1 });
+
+const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
+
+export default User;
+
+
+==================== ./src/models/questionModel.ts ====================
+
+import mongoose from "mongoose";
+
+export interface IQuestion extends Document {
+  question: string;
+  type: "mcq" | "a/b" | "oddOneOut" | "numberExact" | "speed";
+  options?: string[];
+  correctAnswer: string;
+  category?: string;
+  duration: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const questionSchema = new mongoose.Schema(
+  {
+    question: {
+      type: String,
+      required: true,
+    },
+
+    type: {
+      type: String,
+      enum: ["mcq", "a/b", "oddOneOut", "numberExact", "speed"],
+      required: true,
+    },
+
+    options: { type: [String], default: undefined },
+
+    correctAnswer: {
+      type: String,
+      required: true,
+    },
+
+    category: String,
+
+    duration: { type: Number, required: true, max: 20, min: 7 },
+  },
+  { timestamps: true },
+);
+
+questionSchema.index({ category: 1 });
+
+const Question = mongoose.model<IQuestion>("Question", questionSchema);
+
+export default Question;
+
+
+==================== ./src/models/sessionModel.ts ====================
+
+import mongoose from "mongoose";
+
+type AnswerLog = {
+  questionId: mongoose.Types.ObjectId;
+  submittedBy: mongoose.Types.ObjectId;
+  answer: string;
+  isCorrect: boolean;
+  score: number;
+  answeredAt: Date;
+  timeTaken: number;
+};
+
+export interface ISession extends Document {
+  teamId: mongoose.Types.ObjectId;
+  eventId: mongoose.Types.ObjectId;
+  questions: mongoose.Types.ObjectId[];
+  status: "running" | "completed" | "scored";
+  startedAt: Date;
+  expiresAt: Date;
+  completedAt: Date;
+  endReason: "completed" | "expired" | "flagged" | "abandoned";
+  finalScore: number;
+  correctAnswers: number;
+  currentStreak: number;
+  bestStreak: number;
+  answerLogs: AnswerLog[];
+}
+
+const sessionSchema = new mongoose.Schema(
+  {
+    teamId: { type: mongoose.Schema.ObjectId, ref: "Team", required: true },
+
+    eventId: { type: mongoose.Schema.ObjectId, ref: "Event", required: true },
+
+    questions: [
+      { type: mongoose.Schema.ObjectId, ref: "Question", required: true },
+    ],
+
+    status: {
+      type: String,
+      enum: ["running", "completed", "scored"],
+      default: "running",
+    },
+
+    startedAt: Date,
+    expiresAt: Date,
+    completedAt: Date,
+
+    endReason: {
+      type: String,
+      enum: ["completed", "expired", "flagged", "abandoned"],
+      default: null,
+    },
+
+    finalScore: { type: Number, default: 0 },
+    correctAnswers: { type: Number, default: 0 },
+    currentStreak: { type: Number, default: 0 },
+    bestStreak: { type: Number, default: 0 },
+
+    answerLogs: [
+      {
+        questionId: {
+          type: mongoose.Schema.ObjectId,
+          ref: "Question",
+          required: true,
+        },
+        submittedBy: {
+          type: mongoose.Schema.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        answer: { type: String, required: true },
+        isCorrect: { type: Boolean, required: true },
+        score: { type: Number, default: 0 },
+        answeredAt: { type: Date, required: true },
+        timeTaken: { type: Number, required: true },
+      },
+    ],
+  },
+  { timestamps: true },
+);
+
+sessionSchema.index({ teamId: 1, eventId: 1 });
+
+sessionSchema.index({ eventId: 1, finalScore: -1 });
+
+sessionSchema.index({ status: 1 });
+// find all inProgress sessions (timeout cleanup later)
+
+const Session = mongoose.model<ISession>("Session", sessionSchema);
+
+export default Session;
+
+
+==================== ./src/models/leaderboardModel.ts ====================
+
+import mongoose from "mongoose";
+
+export interface ILeaderboard extends Document {
+  eventId: mongoose.Types.ObjectId;
+  teamId: mongoose.Types.ObjectId;
+  totalPoints: number;
+  sessionsPlayed: number;
+  lastPlayedSession: Date;
+}
+
+const leaderboardSchema = new mongoose.Schema(
+  {
+    eventId: { type: mongoose.Schema.ObjectId, ref: "Event", required: true },
+
+    teamId: { type: mongoose.Schema.ObjectId, ref: "Team", required: true },
+
+    totalPoints: { type: Number, default: 0 },
+
+    sessionsPlayed: { type: Number, default: 0 },
+
+    lastPlayedSession: Date,
+  },
+  { timestamps: true },
+);
+
+leaderboardSchema.index({ totalPoints: -1 });
+leaderboardSchema.index({ teamId: 1, eventId: 1 }, { unique: true });
+
+const Leaderboard = mongoose.model<ILeaderboard>(
+  "Leaderboard",
+  leaderboardSchema,
+);
+
+export default Leaderboard;
+
+
+==================== ./src/models/notificationModel.ts ====================
+
+import mongoose, { Document, ObjectId, Schema, Types } from "mongoose";
+
+export interface INotification extends Document {
+  title: string;
+  message: string;
+  userId: Types.ObjectId;
+  isRead: boolean;
+  isBroadcast: boolean;
+}
+
+const notificationSchema = new Schema<INotification>(
+  {
+    title: { type: String, required: true },
+    message: { type: String, required: true },
+    userId: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+    isRead: { type: Boolean, default: false },
+    isBroadcast: { type: Boolean, default: false },
+  },
+  { timestamps: true },
+);
+
+notificationSchema.index({ userId: 1, createdAt: -1 });
+
+const Notification = mongoose.model<INotification>(
+  "Notification",
+  notificationSchema,
+);
+
+export default Notification;
+
+
+==================== ./src/models/eventModel.ts ====================
+
+import mongoose from "mongoose";
+
+export interface IEvent extends Document {
+  title: string;
+  createdBy: mongoose.Types.ObjectId;
+  startTime: Date;
+  endTime: Date;
+  status: "scheduled" | "running" | "finished";
+  maxAttempts: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const eventSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true },
+
+    createdBy: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+
+    startTime: { type: Date, required: true },
+
+    endTime: { type: Date, required: true },
+
+    status: {
+      type: String,
+      enum: ["scheduled", "running", "finished"],
+      default: "scheduled",
+    },
+
+    maxAttempts: { type: Number, required: true, min: 1 },
+  },
+  { timestamps: true },
+);
+
+eventSchema.index({ status: 1 });
+eventSchema.index({ startTime: 1, endTime: 1 });
+
+const Event = mongoose.model<IEvent>("Event", eventSchema);
+
+export default Event;
+
+
+==================== ./src/models/teamMembershipModel.ts ====================
+
+import mongoose, { Query } from "mongoose";
+
+export interface ITeamMembership extends Document {
+  userId: mongoose.Types.ObjectId;
+  teamId: mongoose.Types.ObjectId;
+  role: "captain" | "member";
+  joinedAt: Date;
+}
+
+const teamMembershipSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+
+  teamId: { type: mongoose.Schema.ObjectId, ref: "Team", required: true },
+
+  role: { type: String, enum: ["captain", "member"], required: true },
+
+  joinedAt: { type: Date, default: Date.now },
+});
+
+teamMembershipSchema.index({ userId: 1 });
+teamMembershipSchema.index({ teamId: 1 });
+teamMembershipSchema.index({ userId: 1, teamId: 1 }, { unique: true });
+
+const TeamMembership = mongoose.model<ITeamMembership>(
+  "TeamMembership",
+  teamMembershipSchema,
+);
+
+export default TeamMembership;
+
+
+==================== ./src/models/teamModel.ts ====================
+
+import mongoose from "mongoose";
+
+export interface ITeam extends Document {
+  teamName: string;
+  teamCode: string;
+  teamLeader: mongoose.Types.ObjectId;
+  totalGames: number;
+  bestStreak: number;
+  points: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const teamSchema = new mongoose.Schema(
+  {
+    teamName: {
+      type: String,
+      required: true,
+      maxlength: [20, "Team name can't be more than 20 characters"],
+      unique: true,
+    },
+
+    teamCode: {
+      type: String,
+      unique: true,
+      required: true,
+      maxlength: 8,
+      minlength: 8,
+    },
+
+    teamLeader: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    totalGames: {
+      type: Number,
+      default: 0,
+    },
+
+    bestStreak: { type: Number, default: 0 },
+
+    points: { type: Number, default: 0 },
+  },
+  {
+    timestamps: true,
+  },
+);
+
+teamSchema.index({ points: -1 });
+
+const Team = mongoose.model<ITeam>("Team", teamSchema);
+
+export default Team;
+
+
+==================== ./src/constants.ts ====================
+
+export const QUESTIONS_PER_SESSION = 5;
+export const BASE_SCORE = 15;
+export const STREAK_BONUS = 5;
+export const STREAK_MILESTONE = 5;
+export const SESSION_DURATION_MS = 7.5 * 60 * 1000; // 7 minutes
+export const MIN_TEAM_SIZE = 2;
+
+// constants/avatars.ts
+export const AVATARS = [
+  "avatar1.png",
+  "avatar2.png",
+  "avatar3.png",
+  "avatar4.png",
+  "avatar5.png",
+  "avatar6.png",
+  "avatar7.png",
+  "avatar8.png",
+  "avatar9.png",
+  "avatar10.png",
+  "avatar11.png",
+  "avatar12.png",
+  "avatar13.png",
+  "avatar14.png",
+  "avatar15.png",
+] as const;
+
+
+==================== ./src/socket/index.ts ====================
+
+import { Server, Socket } from "socket.io";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import Event from "../models/eventModel";
+import Session from "../models/sessionModel";
+import Question from "../models/questionModel";
+import { QUESTIONS_PER_SESSION, SESSION_DURATION_MS } from "../constants";
+
+const teamOnlineMembers = new Map<string, Set<string>>();
+
+const getPresence = async (teamId: string) => {
+  const members = await TeamMembership.find({ teamId }).populate(
+    "userId",
+    "name avatar",
+  );
+  const onlineIds = teamOnlineMembers.get(teamId) ?? new Set<string>();
+  return members.map((m: any) => ({
+    userId: String(m.userId._id),
+    name: m.userId.name,
+    avatar: m.userId.avatar,
+    role: m.role,
+    isOnline: onlineIds.has(String(m.userId._id)),
+  }));
+};
+
+// ضيف في الأول
+export const broadcastQuestionResult = (
+  io: Server,
+  teamId: string,
+  payload: {
+    questionId: string;
+    correctAnswer: string;
+    isCorrect: boolean;
+    score: number;
+    totalScore: number;
+    currentStreak: number;
+    sessionComplete: boolean;
+    finalScore?: number;
+    correctAnswers?: number;
+    bestStreak?: number;
+    answeredBy?: string;
+    answeredByName?: string;
+  },
+) => {
+  io.to(teamId).emit("question-result", payload);
+
+  if (!payload.sessionComplete) {
+    setTimeout(() => {
+      io.to(teamId).emit("next-question");
+    }, 2000);
+  } else {
+    setTimeout(() => {
+      io.to(teamId).emit("game-ended", {
+        finalScore: payload.finalScore,
+        correctAnswers: payload.correctAnswers,
+        bestStreak: payload.bestStreak,
+      });
+    }, 2000);
+  }
+};
+
+export const initSocket = (io: Server) => {
+  io.on("connection", (socket: Socket) => {
+    socket.on("join-lobby", async ({ teamId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+
+        socket.join(tid);
+        socket.data.teamId = tid;
+        socket.data.userId = uid;
+
+        if (!teamOnlineMembers.has(tid)) {
+          teamOnlineMembers.set(tid, new Set());
+        }
+        teamOnlineMembers.get(tid)!.add(uid);
+
+        const presence = await getPresence(tid);
+        io.to(tid).emit("team-presence", presence);
+      } catch (err) {
+        console.error("join-lobby error:", err);
+      }
+    });
+
+    socket.on("leave-lobby", async ({ teamId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+        teamOnlineMembers.get(tid)?.delete(uid);
+        const presence = await getPresence(tid);
+        io.to(tid).emit("team-presence", presence);
+      } catch (err) {
+        console.error("leave-lobby error:", err);
+      }
+    });
+
+    socket.on("start-game", async ({ teamId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+
+        const team = await Team.findOne({ teamLeader: uid });
+        if (!team || team._id.toString() !== tid) {
+          socket.emit("game-error", { message: "أنت مش الكابتن." });
+          return;
+        }
+
+        const event = await Event.findOne({ status: "running" });
+        if (!event) {
+          socket.emit("game-error", { message: "مفيش ايفنت شغال دلوقتي." });
+          return;
+        }
+
+        const attemptCount = await Session.countDocuments({
+          teamId: tid,
+          eventId: event._id,
+        });
+        if (attemptCount >= event.maxAttempts) {
+          socket.emit("game-error", { message: "خلصت المحاولات." });
+          return;
+        }
+
+        const questions = await Question.aggregate([
+          { $sample: { size: QUESTIONS_PER_SESSION } },
+        ]);
+
+        const questionsForClient = questions.map(
+          ({ correctAnswer, ...rest }) => rest,
+        );
+
+        const session = await Session.create({
+          teamId: tid,
+          eventId: event._id,
+          questions: questions.map((q) => q._id),
+          startedAt: new Date(),
+          expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+        });
+
+        io.to(tid).emit("game-started", {
+          sessionId: String(session._id),
+          teamId: tid,
+          eventId: String(event._id),
+          questions: questionsForClient,
+          expiresAt: session.expiresAt,
+        });
+      } catch (err) {
+        console.error("start-game error:", err);
+        socket.emit("game-error", { message: "حصل خطأ، حاول تاني." });
+      }
+    });
+
+    socket.on(
+      "answer-submitted",
+      ({
+        teamId,
+        userId,
+        userName,
+        questionId,
+        isCorrect,
+        score,
+        currentStreak,
+      }) => {
+        io.to(String(teamId)).emit("answer-update", {
+          userId,
+          userName,
+          questionId,
+          isCorrect,
+          score,
+          currentStreak,
+        });
+      },
+    );
+
+    socket.on("disconnect", () => {
+      const tid = socket.data.teamId as string | undefined;
+      const uid = socket.data.userId as string | undefined;
+      if (!tid || !uid) return;
+
+      setTimeout(async () => {
+        try {
+          const sockets = await io.in(tid).fetchSockets();
+          const stillConnected = sockets.some(
+            (s) => String(s.data.userId) === uid,
+          );
+          if (stillConnected) return;
+
+          teamOnlineMembers.get(tid)?.delete(uid);
+          const presence = await getPresence(tid);
+          io.to(tid).emit("team-presence", presence);
+        } catch (err) {
+          console.error("disconnect cleanup error:", err);
+        }
+      }, 2000);
+    });
+
+    socket.on("abandon-game", async ({ teamId, sessionId, userId }) => {
+      try {
+        const tid = String(teamId);
+        const uid = String(userId);
+
+        const team = await Team.findOne({ teamLeader: uid });
+        if (!team || team._id.toString() !== tid) {
+          socket.emit("game-error", {
+            message: "فقط الكابتن يمكنه إنهاء الجلسة.",
+          });
+          return;
+        }
+
+        const session = await Session.findById(sessionId);
+        if (session && session.status === "running") {
+          session.status = "completed";
+          session.endReason = "abandoned";
+          session.completedAt = new Date();
+          session.finalScore = 0;
+          await session.save();
+        }
+        io.to(tid).emit("game-ended", {
+          abandoned: true,
+          finalScore: 0,
+          correctAnswers: 0,
+          bestStreak: 0,
+        });
+      } catch (err) {
+        console.error("abandon-game error:", err);
+      }
+    });
+  });
+};
+
+
+==================== ./src/config/cors.ts ====================
+
+import cors from "cors";
+
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:3000",
+  "http://127.0.0.1:5173",
+  // ← ضيف الـ local network
+  "http://192.168.1.7:3000",
+];
+
+if (process.env.CLIENT_URL) {
+  allowedOrigins.push(process.env.CLIENT_URL);
+}
+
+export const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+export const corsConfig = cors(corsOptions);
+
+
+==================== ./src/config/db.ts ====================
+
+import mongoose from "mongoose";
+
+export const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGODB_URI as string);
+    console.log(`✅ MongoDB Connected`);
+  } catch (error) {
+    console.error("❌ MongoDB Connection Error:", error);
+    process.exit(1);
+  }
+};
+
+
+==================== ./src/app.ts ====================
+
+import express from "express";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import cookieParser from "cookie-parser";
+
+import { corsConfig } from "./config/cors";
+import { globalErrorHandler } from "./middleware/errorMiddleware";
+
+import userRoutes from "./routes/userRoutes";
+import teamRoutes from "./routes/teamRoutes";
+import eventRoutes from "./routes/eventRoutes";
+import leaderboardRoutes from "./routes/leaderboardRoutes";
+import sessionRoutes from "./routes/sessionRoutes";
+import questionRoutes from "./routes/questionRoutes";
+import { sanitizeInput } from "./middleware/sanitize";
+import path from "path";
+import notificationRoutes from "./routes/notificationRoutes";
+
+const app = express();
+
+// ── Security: HTTP headers ─────────────────────────────────
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
+
+// ── Security: Rate limiting ────────────────────────────────
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes
+//   max: 100, // max 100 requests per IP per window
+//   message: "Too many requests from this IP, please try again later.",
+// });
+// app.use("/api", limiter);
+
+// ── Security: Stricter limiter for auth routes ─────────────
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10, // only 10 login/signup attempts per 15 minutes
+  message: "Too many auth attempts, please try again later.",
+});
+app.use("/api/v1/users/login", authLimiter);
+app.use("/api/v1/users/signup", authLimiter);
+
+// ── Security: CORS ─────────────────────────────────────────
+app.use(corsConfig);
+
+// ── Body parser ────────────────────────────────────────────
+app.use(express.json({ limit: "10kb" })); // body size limit
+app.use(cookieParser());
+
+// ── Security: NoSQL injection sanitization ─────────────────
+app.use(sanitizeInput);
+
+// ── Security: HTTP parameter pollution ────────────────────
+app.use(hpp());
+
+app.get("/", (req, res) => {
+  res.json({ message: "اللعبة API is running! 🎮" });
+});
+
+// ── Static files ───────────────────────────────────────────
+app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
+
+// ── Routes ─────────────────────────────────────────────────
+app.use("/api/v1/users", userRoutes);
+app.use("/api/v1/teams", teamRoutes);
+app.use("/api/v1/events", eventRoutes);
+app.use("/api/v1/leaderboard", leaderboardRoutes);
+app.use("/api/v1/sessions", sessionRoutes);
+app.use("/api/v1/questions", questionRoutes);
+app.use("/api/v1/notifications", notificationRoutes);
+
+// ── Global error handler ───────────────────────────────────
+app.use(globalErrorHandler);
+
+export default app;
+
+
+==================== ./src/controllers/teamController.ts ====================
+
+import mongoose from "mongoose";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import Session from "../models/sessionModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import { generateCode } from "../utils/utils";
+import resHandler from "../utils/resHandler";
+import { getAll, getOne } from "../utils/factory";
+import Leaderboard from "../models/leaderboardModel";
+
+export const createTeam = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const isInTeam = await TeamMembership.findOne({ userId: user!._id });
+  if (isInTeam) return next(new AppError("User is already in a team.", 400));
+
+  let codeIsUnique = false;
+  let GCode: string = "";
+  while (!codeIsUnique) {
+    GCode = generateCode();
+    const exists = await Team.exists({ teamCode: GCode });
+    if (!exists) codeIsUnique = true;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const [newTeam] = await Team.create(
+      [{ teamName: req.body.teamName, teamLeader: user!._id, teamCode: GCode }],
+      { session },
+    );
+
+    await TeamMembership.create(
+      [{ userId: user!._id, teamId: newTeam._id, role: "captain" }],
+      { session },
+    );
+
+    await session.commitTransaction();
+    resHandler(res, 201, "team", newTeam);
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
+
+export const joinTeam = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const isInTeam = await TeamMembership.exists({ userId });
+  if (isInTeam) return next(new AppError("User is already in a team.", 400));
+
+  const team = await Team.findOne({ teamCode: req.body.teamCode });
+  if (!team) return next(new AppError("Invalid invite code.", 404));
+
+  const teamMembersCount = await TeamMembership.countDocuments({
+    teamId: team._id,
+  });
+  if (teamMembersCount >= 5) return next(new AppError("Team is full.", 400));
+
+  const membership = await TeamMembership.create({
+    userId,
+    teamId: team._id,
+    role: "member",
+  });
+
+  resHandler(res, 201, "membership", membership);
+});
+
+export const getMyTeam = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) {
+    return resHandler(res, 200, "team", { team: null, members: [] });
+  }
+  const team = await Team.findById(membership.teamId);
+  if (!team) return resHandler(res, 200, "team", { team: null, members: [] });
+
+  const teamMembers = await TeamMembership.find({
+    teamId: membership.teamId,
+  }).populate("userId", "name email avatar");
+
+  const teamLeaderboardEntry = await Leaderboard.findOne({ teamId: team._id });
+  if (!teamLeaderboardEntry) {
+    return resHandler(res, 200, "team", {
+      team,
+      members: teamMembers,
+      myRole: membership.role,
+      rank: null,
+    });
+  }
+
+  // Calculate the team's rank based on totalPoints
+  const rank =
+    (await Leaderboard.countDocuments({
+      totalPoints: { $gt: teamLeaderboardEntry.totalPoints },
+    })) + 1;
+
+  resHandler(res, 200, "team", {
+    team,
+    members: teamMembers,
+    myRole: membership.role,
+    rank,
+  });
+});
+
+export const getTeamStats = catchAsync(async (req, res, next) => {
+  if (!req.user) return next(new AppError("Not Authenticated.", 401));
+
+  const membership = await TeamMembership.findOne({ userId: req.user._id });
+  if (!membership) return next(new AppError("You are not in a team.", 400));
+
+  const team = await Team.findById(membership.teamId);
+  if (!team) return next(new AppError("Team not found.", 404));
+
+  const recentSessions = await Session.find({ teamId: team._id })
+    .sort({ createdAt: -1 })
+    .limit(5)
+    .select(
+      "finalScore correctAnswers bestStreak eventId completedAt endReason",
+    )
+    .populate("eventId", "title");
+
+  const avgScore =
+    team.totalGames > 0 ? Math.round(team.points / team.totalGames) : 0;
+
+  resHandler(res, 200, "teamStats", {
+    totalGames: team.totalGames,
+    totalPoints: team.points,
+    bestStreak: team.bestStreak ?? 0,
+    avgScore,
+    recentSessions,
+  });
+});
+
+export const deleteMyTeam = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const userTeam = await Team.findOne({ teamLeader: userId });
+  if (!userTeam)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  const teamId = userTeam._id;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await Team.deleteOne({ _id: teamId }, { session });
+    await TeamMembership.deleteMany({ teamId }, { session });
+    await Leaderboard.deleteMany({ teamId }, { session });
+    await session.commitTransaction();
+    res.status(204).send();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
+
+export const leaveTeam = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const userMembership = await TeamMembership.findOne({ userId });
+  if (!userMembership) return next(new AppError("You are not in a team.", 400));
+
+  // Regular member — just remove
+  if (userMembership.role === "member") {
+    await TeamMembership.deleteOne({ userId });
+    return res.status(204).send();
+  }
+
+  // Captain leaving — find next oldest member to promote
+  const nextCaptain = await TeamMembership.findOne({
+    teamId: userMembership.teamId,
+    userId: { $ne: userId },
+  }).sort({ joinedAt: 1 });
+
+  // If no members left, delete the team entirely
+  if (!nextCaptain) {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    try {
+      await Team.deleteOne({ teamLeader: userId }, { session });
+      await TeamMembership.deleteOne({ userId }, { session });
+      await Leaderboard.deleteMany(
+        { teamId: userMembership.teamId },
+        { session },
+      );
+      await session.commitTransaction();
+      return res.status(204).send();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  // Promote next member and remove captain
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    await TeamMembership.deleteOne({ userId }, { session });
+
+    nextCaptain.role = "captain";
+    await nextCaptain.save({ session });
+
+    await Team.findOneAndUpdate(
+      { teamLeader: userId },
+      { teamLeader: nextCaptain.userId },
+      { session },
+    );
+
+    await session.commitTransaction();
+    res.status(204).send();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
+
+// ===================================
+// NOTE: Captain Only
+// ===================================
+
+export const changeCaptain = catchAsync(async (req, res, next) => {
+  // Getting user id and ensure he is the captain
+  const userId = req.user._id;
+
+  const team = await Team.findOne({ teamLeader: userId });
+  if (!team)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  const newCaptainId = req.body.newCaptainId;
+
+  const newCaptainMembership = await TeamMembership.findOne({
+    userId: newCaptainId,
+    teamId: team._id,
+  });
+  if (!newCaptainMembership)
+    return next(new AppError("This user is not in your team.", 400));
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    team.teamLeader = newCaptainId;
+    await team.save({ session });
+
+    await TeamMembership.findOneAndUpdate(
+      { userId },
+      { role: "member" },
+      { session },
+    );
+
+    await TeamMembership.findOneAndUpdate(
+      { userId: newCaptainId },
+      { role: "captain" },
+      { session },
+    );
+
+    await session.commitTransaction();
+    resHandler(res, 200, "team", team);
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
+
+export const changeTeamName = catchAsync(async (req, res, next) => {
+  // Getting user id and ensure he is the captain
+  const userId = req.user._id;
+
+  const team = await Team.findOne({ teamLeader: userId });
+  if (!team)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  if (!req.body.newTeamName)
+    return next(new AppError("Please provide a new team name.", 400));
+
+  team.teamName = req.body.newTeamName;
+
+  await team.save();
+
+  resHandler(res, 200, "team", team);
+});
+
+export const kickMember = catchAsync(async (req, res, next) => {
+  // Getting user id and ensure he is the captain
+  const userId = req.user._id;
+
+  const team = await Team.findOne({ teamLeader: userId });
+  if (!team)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  const targetUserId = req.params.userId;
+
+  // Preventing captain to kick himself
+  if (targetUserId.toString() === userId.toString())
+    return next(new AppError("you can't kick yourself.", 400));
+
+  const targetUserTeam = await TeamMembership.findOne({ userId: targetUserId });
+
+  if (!targetUserTeam)
+    return next(new AppError("There is no such a user.", 404));
+
+  // Preventing to kick a member not in the same team
+  if (targetUserTeam.teamId.toString() !== team._id.toString())
+    return next(new AppError("This user not in your team.", 400));
+
+  await TeamMembership.deleteOne({ userId: targetUserId });
+
+  res.status(204).send();
+});
+
+export const getTeamAttempts = catchAsync(async (req, res, next) => {
+  const { eventId } = req.query;
+  if (!eventId) return next(new AppError("eventId is required.", 400));
+
+  const teamMembership = await TeamMembership.findOne({
+    userId: req.user._id,
+  });
+  if (!teamMembership) return next(new AppError("You are not in a team.", 400));
+
+  const attempts = await Session.countDocuments({
+    teamId: teamMembership.teamId,
+    eventId: eventId as string,
+  });
+
+  resHandler(res, 200, "attempts", { attempts, teamId: teamMembership.teamId });
+});
+
+// ===================================
+// NOTE: Admins Only
+// ===================================
+export const getTeam = getOne(Team);
+export const getAllTeams = getAll(Team);
+
+
+==================== ./src/controllers/questionController.ts ====================
+
+import Question from "../models/questionModel";
+import { catchAsync } from "../utils/catchAsync";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "../utils/factory";
+import resHandler from "../utils/resHandler";
+
+export const bulkCreateQuestions = catchAsync(async (req, res, next) => {
+  const questions = await Question.insertMany(req.body.questions);
+  resHandler(res, 201, "questions", questions);
+});
+
+export const createQuestion = createOne(Question);
+
+export const getAllQuestions = getAll(Question);
+
+export const getQuestion = getOne(Question);
+
+export const updateQuestion = updateOne(Question);
+
+export const deleteQuestion = deleteOne(Question);
+
+
+==================== ./src/controllers/leaderboardController.ts ====================
+
+import Event from "../models/eventModel";
+import Leaderboard from "../models/leaderboardModel";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import APIFeatures from "../utils/APIFeatures";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import resHandler from "../utils/resHandler";
+
+export const getLeaderboard = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  if (req.user.role === "student") {
+    // Getting top 50 teams points
+    const top50 = await Leaderboard.find({ eventId })
+      .populate("teamId", "teamName teamCode")
+      .sort({ totalPoints: -1 })
+      .limit(50);
+
+    // Getting user team rank
+    const membership = await TeamMembership.findOne({ userId });
+    if (membership) {
+      const myEntry = await Leaderboard.findOne({
+        teamId: membership.teamId,
+        eventId,
+      });
+
+      const rank = myEntry
+        ? (await Leaderboard.countDocuments({
+            eventId,
+            totalPoints: { $gt: myEntry.totalPoints },
+          })) + 1
+        : null;
+
+      resHandler(res, 200, "leaderboard", {
+        results: top50.length,
+        ranking: top50,
+        myTeamRanking: {
+          team: myEntry,
+          rank,
+        },
+      });
+    } else {
+      resHandler(res, 200, "leaderboard", top50);
+    }
+  } else {
+    const features = new APIFeatures(Leaderboard.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const leaderboard = await features.query;
+    resHandler(res, 200, "leaderboard", leaderboard);
+  }
+});
+
+export const getTopThree = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  // Getting top 3 teams points
+  const top3 = await Leaderboard.find({ eventId })
+    .populate("teamId", "teamName teamCode")
+    .sort({ totalPoints: -1 })
+    .limit(3);
+
+  resHandler(res, 200, "topThree", top3);
+});
+
+export const getMyRank = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const eventId = req.query.eventId as string;
+  if (!eventId)
+    return next(
+      new AppError("Invalid operation, please provide event id", 400),
+    );
+
+  const event = await Event.findById(eventId);
+  if (!event) return next(new AppError("Event not found.", 404));
+  if (event.status === "finished")
+    return next(new AppError("This event has ended.", 400));
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership)
+    return next(new AppError("Invalid operation, no such a team", 404));
+
+  const myEntry = await Leaderboard.findOne({
+    teamId: membership.teamId,
+    eventId,
+  });
+
+  const rank = myEntry
+    ? (await Leaderboard.countDocuments({
+        eventId,
+        totalPoints: { $gt: myEntry.totalPoints },
+      })) + 1
+    : null;
+
+  resHandler(res, 200, "MyRank", {
+    rank,
+    totalPoints: myEntry?.totalPoints || 0,
+  });
+});
+
+
+==================== ./src/controllers/authController.ts ====================
+
+// /src/controllers/authController.ts
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
+import crypto from "node:crypto";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import User, { IUser } from "../models/userModel";
+import { sendEmail } from "../utils/sendEmail";
+import resHandler from "../utils/resHandler";
+
+interface AuthRequest extends Request {
+  user: IUser;
+}
+
+const signToken = (id: string): string => {
+  if (!process.env.JWT_SECRET)
+    throw new Error("JWT_SECRET is missing from env!");
+  return jwt.sign({ id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN as SignOptions["expiresIn"],
+  });
+};
+
+const createSendToken = (
+  user: any,
+  statusCode: number,
+  res: Response,
+): void => {
+  const token = signToken(user._id);
+
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() +
+        Number(process.env.JWT_COOKIE_EXPIRES_IN || 90) * 24 * 60 * 60 * 1000,
+    ),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  res.cookie("jwt", token, cookieOptions);
+
+  user.password = undefined;
+
+  resHandler(res, statusCode, "auth", { user, token });
+};
+
+export const signUp = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+      avatar: req.body.avatar,
+      role: "student",
+    });
+
+    createSendToken(newUser, 201, res);
+  },
+);
+
+export const login = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return next(new AppError("برجاء إدخال الإيميل والباسوورد", 400));
+    }
+
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user || !(await user.correctPassword(password))) {
+      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+    }
+
+    createSendToken(user, 200, res);
+  },
+);
+
+export const protect = catchAsync(
+  async (req: AuthRequest, res: Response, next: NextFunction) => {
+    let token: string | undefined;
+
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    // Then fall back to cookie  ← ADD THIS
+    else if (req.cookies?.jwt) {
+      token = req.cookies.jwt;
+    }
+
+    if (!token) {
+      return next(
+        new AppError(
+          "You are not logged in. Please log in to get access.",
+          401,
+        ),
+      );
+    }
+
+    if (!process.env.JWT_SECRET)
+      throw new Error("JWT_SECRET is missing from env!");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+
+    const freshUser = await User.findById(decoded.id);
+    if (!freshUser) {
+      return next(
+        new AppError("The user belonging to this token no longer exists.", 401),
+      );
+    }
+
+    if (freshUser.passwordChangedAt) {
+      const changedTimestamp = Math.floor(
+        freshUser.passwordChangedAt.getTime() / 1000,
+      );
+      if (decoded.iat && decoded.iat < changedTimestamp) {
+        return next(
+          new AppError(
+            "Password was recently changed. Please log in again.",
+            401,
+          ),
+        );
+      }
+    }
+
+    req.user = freshUser;
+    next();
+  },
+);
+
+export const restrictTo = (...roles: string[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action", 403),
+      );
+    }
+    next();
+  };
+};
+
+export const forgotPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const user = await User.findOne({ email: req.body.email });
+    if (!user) {
+      return next(new AppError("There is no such user with this email.", 404));
+    }
+
+    const resetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    const resetURL = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+    try {
+      await sendEmail({
+        email: user.email,
+        name: user.name,
+        subject:
+          "رابط إعادة تعيين كلمة المرور الخاصة بك - اللعبة (صالح لمدة 10 دقائق)",
+        resetURL,
+      });
+
+      res.status(200).json({
+        status: true,
+        message: "Token was sent to email!",
+      });
+    } catch (e) {
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save({ validateBeforeSave: false });
+
+      console.error(e);
+      return next(
+        new AppError(
+          "There was an error sending the email, Try again later.",
+          500,
+        ),
+      );
+    }
+  },
+);
+
+export const resetPassword = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const token = req.params.resetToken as string;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: new Date() },
+    });
+
+    if (!user) {
+      return next(new AppError("Token is invalid or has expired.", 404));
+    }
+
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    user.passwordChangedAt = new Date(Date.now() - 1000);
+    await user.save();
+
+    createSendToken(user, 200, res);
+  },
+);
+
+export const logout = catchAsync(async (req, res, next) => {
+  res.cookie("jwt", "", {
+    expires: new Date(Date.now() + 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: true, message: "Logged out successfully" });
+});
+
+
+==================== ./src/controllers/sessionController.ts ====================
+
+import mongoose from "mongoose";
+import Event from "../models/eventModel";
+import Question from "../models/questionModel";
+import Session from "../models/sessionModel";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import Leaderboard from "../models/leaderboardModel";
+import User from "../models/userModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import { getAll } from "../utils/factory";
+import resHandler from "../utils/resHandler";
+import { finalizeSession } from "../utils/finalizeSession";
+import {
+  BASE_SCORE,
+  MIN_TEAM_SIZE,
+  QUESTIONS_PER_SESSION,
+  SESSION_DURATION_MS,
+  STREAK_BONUS,
+  STREAK_MILESTONE,
+} from "../constants";
+import { broadcastQuestionResult } from "../socket";
+
+// ============================================================
+// POST /sessions/start
+// Captain only — starts a new game session for their team
+// ============================================================
+export const startSession = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  // 1. Verify there is a running event
+  const event = await Event.findOne({ status: "running" });
+  if (!event) return next(new AppError("No running event right now.", 404));
+
+  // 2. Verify user is a team captain
+  const team = await Team.findOne({ teamLeader: userId });
+  if (!team)
+    return next(new AppError("You are not a captain of any team.", 404));
+
+  // 3. Verify team has minimum 2 members
+  const memberCount = await TeamMembership.countDocuments({ teamId: team._id });
+  if (memberCount < MIN_TEAM_SIZE)
+    return next(
+      new AppError(`Minimum ${MIN_TEAM_SIZE} members required to play.`, 400),
+    );
+
+  // 4. Verify team has remaining attempts for this event
+  const attemptCount = await Session.countDocuments({
+    teamId: team._id,
+    eventId: event._id,
+  });
+  if (attemptCount >= event.maxAttempts)
+    return next(new AppError("No attempts remaining for this event.", 400));
+
+  // 5. Pick 20 random questions from the bank
+  const questions = await Question.aggregate([
+    { $sample: { size: QUESTIONS_PER_SESSION } },
+  ]);
+
+  // 6. Strip correct answers before sending to client
+  const questionsForClient = questions.map(
+    ({ correctAnswer, ...rest }) => rest,
+  );
+
+  // 7. Create the session document
+  const session = await Session.create({
+    teamId: team._id,
+    eventId: event._id,
+    questions: questions.map((q) => q._id),
+    startedAt: new Date(),
+    expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
+  });
+
+  resHandler(res, 201, "session", {
+    sessionId: session._id,
+    status: session.status,
+    startedAt: session.startedAt,
+    expiresAt: session.expiresAt,
+    questions: questionsForClient,
+  });
+});
+
+// ============================================================
+// POST /sessions/:id/answer
+// Any team member — submits one answer for one question
+// ============================================================
+export const submitAnswer = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  const { questionId, submittedAnswer, timeTaken } = req.body;
+
+  // ── 1. Load and validate session ──────────────────────────
+  const session = await Session.findById(sessionId);
+  if (!session) return next(new AppError("Session not found.", 404));
+
+  if (session.status !== "running")
+    return next(new AppError("This session is no longer active.", 400));
+
+  if (session.expiresAt.getTime() < Date.now()) {
+    await finalizeSession(session, "expired");
+    return next(new AppError("Session has expired.", 400));
+  }
+
+  // ── 2. Verify user belongs to this session's team ─────────
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("You are not in a team.", 404));
+
+  if (!session.teamId.equals(membership.teamId))
+    return next(new AppError("You cannot answer for this session.", 403));
+
+  // ── 3. Validate the question ───────────────────────────────
+  const questionBelongsToSession = session.questions.some((q) =>
+    q.equals(questionId),
+  );
+  if (!questionBelongsToSession)
+    return next(new AppError("Invalid question for this session.", 400));
+
+  const alreadyAnswered = session.answerLogs.some((log) =>
+    log.questionId.equals(questionId),
+  );
+  if (alreadyAnswered)
+    return next(new AppError("Question already answered.", 400));
+
+  // ── Lock other team members immediately ─────────────────
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("answer-locked", { questionId });
+  }
+
+  // ── 4. Fetch question to check answer ─────────────────────
+  const question = await Question.findById(questionId).select(
+    "correctAnswer duration",
+  );
+  if (!question) return next(new AppError("Question not found.", 404));
+
+  const team = await Team.findById(session.teamId);
+  if (!team) return next(new AppError("Team not found.", 404));
+
+  // ── 5. Calculate score ────────────────────────────────────
+  let isCorrect = false;
+  let score = 0;
+
+  if (question.correctAnswer === submittedAnswer) {
+    isCorrect = true;
+
+    // Cap timeTaken between 0 and question duration (anti-cheat)
+    const safeTaken = Math.max(0, Math.min(timeTaken, question.duration));
+    const remainingTime = question.duration - safeTaken;
+
+    // Update streak
+    session.currentStreak += 1;
+    if (session.currentStreak > session.bestStreak) {
+      session.bestStreak = session.currentStreak;
+    }
+    if (session.bestStreak > team.bestStreak) {
+      team.bestStreak = session.bestStreak;
+      await team.save();
+    }
+
+    // Streak milestone bonus
+    const streakBonus =
+      session.currentStreak % STREAK_MILESTONE === 0 ? STREAK_BONUS : 0;
+
+    score = BASE_SCORE + remainingTime + streakBonus;
+  } else {
+    // Wrong answer — reset streak
+    session.currentStreak = 0;
+  }
+
+  // ── 6. Record the answer log ──────────────────────────────
+  session.answerLogs.push({
+    questionId,
+    submittedBy: userId,
+    answer: submittedAnswer,
+    isCorrect,
+    score,
+    answeredAt: new Date(),
+    timeTaken,
+  });
+
+  if (isCorrect) session.correctAnswers += 1;
+
+  // ── 7. Check if this was the last question ────────────────
+  const isLastQuestion = session.answerLogs.length === session.questions.length;
+
+  if (!isLastQuestion) {
+    await session.save();
+
+    const result = {
+      questionId,
+      correctAnswer: question.correctAnswer,
+      isCorrect,
+      score,
+      totalScore: session.answerLogs.reduce((sum, log) => sum + log.score, 0),
+      currentStreak: session.currentStreak,
+      sessionComplete: false,
+      answeredBy: String(userId),
+      answeredByName: req.user.name,
+    };
+
+    // broadcast for the whole team
+    // const io = req.app.get("io");
+    if (io) {
+      broadcastQuestionResult(io, String(session.teamId), result);
+    }
+
+    return resHandler(res, 200, "answerDetails", {
+      ...result,
+      alreadyAnswered: false,
+    });
+  }
+
+  // ── Last question ──
+  await finalizeSession(session, "completed");
+
+  const result = {
+    questionId,
+    correctAnswer: question.correctAnswer,
+    isCorrect,
+    score,
+    totalScore: session.finalScore,
+    currentStreak: session.currentStreak,
+    sessionComplete: true,
+    finalScore: session.finalScore,
+    correctAnswers: session.correctAnswers,
+    bestStreak: session.bestStreak,
+    answeredBy: String(userId),
+    answeredByName: req.user.name,
+  };
+
+  if (io) {
+    broadcastQuestionResult(io, String(session.teamId), result);
+  }
+
+  resHandler(res, 200, "answerDetails", {
+    ...result,
+    alreadyAnswered: false,
+  });
+});
+
+// ============================================================
+// GET /sessions/:id
+// Any team member - gets the session result (score - correctAnswers count - best streak)
+// ============================================================
+export const getSessionResult = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const sessionId = req.params.id;
+  if (!sessionId)
+    return next(new AppError("Invalid operation, provide session id", 400));
+
+  // 1. check the session has ended normally and not flagged
+  const session = await Session.findOne({ _id: sessionId });
+  if (!session) return next(new AppError("There is no such a session", 404));
+
+  if (session.status === "running") {
+    if (session.expiresAt.getTime() < Date.now()) {
+      await finalizeSession(session, "expired");
+    } else {
+      return next(new AppError("Session is not completed yet", 400));
+    }
+  }
+
+  if (session.endReason === "flagged")
+    return next(
+      new AppError(
+        "Sorry this session is under processing, please check later",
+        400,
+      ),
+    );
+
+  // 2. check the user get his team session not anyone else
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+  if (!session.teamId.equals(membership.teamId))
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  // 4. Get session details
+  resHandler(res, 200, "sessionDetails", {
+    score: session.finalScore,
+    correctAnswers: session.correctAnswers,
+    bestStreak: session.bestStreak,
+  });
+});
+
+// ============================================================
+// POST /sessions/:id/abandon
+// Only captains and admins - can end leave
+// ============================================================
+export const abandonSession = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const membership = await TeamMembership.findOne({ userId });
+  if (!membership) return next(new AppError("The user is not in team.", 400));
+
+  if (membership.role !== "captain")
+    return next(
+      new AppError("You are not authorized to perform this action", 400),
+    );
+
+  const session = await Session.findOne({
+    _id: req.params.id,
+    teamId: membership.teamId,
+  });
+  if (!session) return next(new AppError("There is no such a session.", 400));
+  if (session.status !== "running")
+    return next(new AppError("Session has already finished.", 400));
+
+  // End session
+  session.status = "completed";
+  session.endReason = "abandoned";
+  session.completedAt = new Date();
+  session.finalScore = 0;
+
+  await session.save();
+
+  const io = req.app.get("io");
+  if (io) {
+    io.to(String(session.teamId)).emit("game-ended", {
+      abandoned: true,
+      finalScore: 0,
+      correctAnswers: 0,
+      bestStreak: 0,
+    });
+  }
+
+  res.status(200).json({ status: true });
+});
+
+// ============================================================
+// GET /sessions — Admin only
+// ============================================================
+export const getAllSessions = getAll(Session, [
+  { path: "teamId", select: "teamName" },
+  { path: "eventId", select: "title" },
+]);
+
+
+==================== ./src/controllers/eventController.ts ====================
+
+import Event from "../models/eventModel";
+import Leaderboard from "../models/leaderboardModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import {
+  createOne,
+  deleteOne,
+  getAll,
+  getOne,
+  updateOne,
+} from "../utils/factory";
+import resHandler from "../utils/resHandler";
+
+export const getCurrentEvent = catchAsync(async (req, res, next) => {
+  const event = await Event.findOne({ status: "running" });
+  if (!event) return next(new AppError("No active event right now.", 404));
+  resHandler(res, 200, "event", event);
+});
+
+export const getEventStats = catchAsync(async (req, res, next) => {
+  const event = await Event.findOne({ status: "running" });
+  if (!event) return next(new AppError("No running event.", 404));
+
+  const totalTeams = await Leaderboard.countDocuments({ eventId: event._id });
+
+  resHandler(res, 200, "stats", { totalTeams });
+});
+
+export const getAllEvents = getAll(Event, {
+  path: "createdBy",
+  select: "name email",
+});
+
+export const createEvent = catchAsync(async (req, res, next) => {
+  const newEvent = await Event.create({
+    title: req.body.title,
+    createdBy: req.user._id,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
+    maxAttempts: req.body.maxAttempts,
+  });
+
+  resHandler(res, 201, "newEvent", newEvent);
+});
+
+export const getEvent = getOne(Event);
+
+export const updateEvent = updateOne(Event);
+
+export const deleteEvent = deleteOne(Event);
+
+
+==================== ./src/controllers/userController.ts ====================
+
+import Session from "../models/sessionModel";
+import TeamMembership from "../models/teamMembershipModel";
+import Team from "../models/teamModel";
+import User from "../models/userModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import { getOne } from "../utils/factory";
+import resHandler from "../utils/resHandler";
+
+export const getMyId = catchAsync(async (req, res, next) => {
+  req.params.id = req.user._id.toString();
+  next();
+});
+
+export const getMe = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id).select("-role");
+  if (!user)
+    return next(
+      new AppError("Invalid operation, there is no such a user.", 400),
+    );
+
+  // Getting user team
+  const membership = await TeamMembership.findOne({ userId: req.user._id });
+  if (membership) {
+    // NOTE Getting last 5 sessions
+    const lastSessions = await Session.find({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("eventId finalScore correctAnswers bestStreak endReason")
+      .populate("eventId", "title")
+      .sort({ completedAt: -1 })
+      .limit(5);
+
+    const bestStreakSession = await Session.findOne({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("bestStreak")
+      .sort({ bestStreak: -1 });
+
+    const bestStreak = bestStreakSession?.bestStreak ?? 0;
+
+    const highestScoreSession = await Session.findOne({
+      teamId: membership.teamId,
+      status: "completed",
+    })
+      .select("finalScore")
+      .sort({ finalScore: -1 })
+      .limit(1);
+
+    const highestScore = highestScoreSession?.finalScore ?? 0;
+
+    const userData = {
+      ...user.toObject(),
+      lastSessions,
+      highestScore,
+      bestStreak,
+      myTeamRole: membership.role,
+    };
+
+    resHandler(res, 200, "userData", userData);
+  } else {
+    resHandler(res, 200, "userData", user);
+  }
+});
+
+export const updateMe = catchAsync(async (req, res, next) => {
+  if ("password" in req.body || "passwordConfirm" in req.body) {
+    return next(
+      new AppError(
+        "Invalid operation, you can't change password through this route",
+        400,
+      ),
+    );
+  }
+  const { email, name, avatar } = req.body;
+
+  if (!email && !name && !avatar)
+    return next(
+      new AppError("Invalid operation, please provide fields to update.", 400),
+    );
+
+  const newUser = await User.findByIdAndUpdate(
+    { _id: req.user._id },
+    {
+      email,
+      name,
+      avatar,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  if (!newUser)
+    return next(new AppError("Invalid operation, no such user to update", 404));
+
+  resHandler(res, 200, "newUser", newUser);
+});
+
+export const changePassword = catchAsync(async (req, res, next) => {
+  const { oldPassword, newPassword, newPasswordConfirm } = req.body;
+
+  if (!oldPassword || !newPassword || !newPasswordConfirm)
+    return next(
+      new AppError("Invalid operation, please provide needed data.", 400),
+    );
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user)
+    return next(new AppError("Invalid operation, no such a user found.", 400));
+
+  if (!(await user.correctPassword(oldPassword)))
+    return next(new AppError("Invalid operation, password is incorrect.", 400));
+
+  user.password = newPassword;
+  user.passwordConfirm = newPasswordConfirm;
+  user.passwordChangedAt = new Date();
+
+  await user.save();
+
+  resHandler(res, 200, "user", user);
+});
+
+export const deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
+  if (!user)
+    return next(new AppError("Invalid operation, no such a user found.", 404));
+
+  const membership = await TeamMembership.findOne({ userId: user._id });
+
+  if (membership && membership.role === "captain")
+    return next(
+      new AppError(
+        "Invalid operation, captain can't delete his account assign new captain first.",
+        400,
+      ),
+    );
+  await membership?.deleteOne();
+  await user.deleteOne();
+
+  res.status(204).send();
+});
+
+
+==================== ./src/controllers/notificationController.ts ====================
+
+import Notification from "../models/notificationModel";
+import User from "../models/userModel";
+import { AppError } from "../utils/appError";
+import { catchAsync } from "../utils/catchAsync";
+import resHandler from "../utils/resHandler";
+
+export const getNotifications = catchAsync(async (req, res, next) => {
+  const notifications = await Notification.find({ userId: req.user._id }).sort({
+    createdAt: -1,
+  });
+  const unreadCount = await Notification.countDocuments({
+    userId: req.user._id,
+    isRead: false,
+  });
+
+  resHandler(res, 200, "notifications", { notifications, unreadCount });
+});
+
+export const sendNotifications = catchAsync(async (req, res, next) => {
+  if (req.body.broadcast) {
+    // get all user IDs → insertMany one doc per user
+    const users = await User.find({}, "_id");
+    const notifications = users.map((u) => ({
+      userId: u._id,
+      title: req.body.title,
+      message: req.body.message,
+      isBroadcast: true,
+    }));
+    await Notification.insertMany(notifications);
+  } else {
+    if (!req.body.userIds)
+      return next(
+        new AppError("Invalid operation, please provide userIds.", 400),
+      );
+    // targeted — req.body.userIds is an array
+    const notifications = req.body.userIds.map((id: string) => ({
+      userId: id,
+      title: req.body.title,
+      message: req.body.message,
+    }));
+    await Notification.insertMany(notifications);
+  }
+
+  res
+    .status(200)
+    .json({ status: true, message: "All notifications sent successfully." });
+});
+
+export const markAsRead = catchAsync(async (req, res, next) => {
+  if (!req.params.id)
+    return next(
+      new AppError(
+        "Invalid operation, please provide the notification id.",
+        400,
+      ),
+    );
+  await Notification.findByIdAndUpdate(
+    { _id: req.params.id },
+    { isRead: true },
+  );
+
+  res.status(200).json({
+    status: true,
+    message: "Notification marked as read successfully.",
+  });
+});
+export const markAllAsRead = catchAsync(async (req, res, next) => {
+  await Notification.updateMany(
+    {
+      userId: req.user._id,
+      isRead: false,
+    },
+    {
+      $set: { isRead: true },
+    },
+  );
+
+  res.status(200).json({
+    status: true,
+    message: "All notifications marked as read successfully.",
+  });
+});
+
+
+==================== ./src/server.ts ====================
+
+import dotenv from "dotenv";
+dotenv.config();
+
+import { createServer } from "http";
+import { Server } from "socket.io";
+import app from "./app";
+import { connectDB } from "./config/db";
+import { startSessionExpirationJob } from "./jobs/sessionExpiry";
+import { initSocket } from "./socket";
+
+const PORT = process.env.PORT || 5000;
+
+const httpServer = createServer(app);
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: (origin, callback) => {
+      // السماح لأي origin في dev — في production حدد الـ domains
+      if (!origin || process.env.NODE_ENV === "development") {
+        return callback(null, true);
+      }
+      const allowed = [process.env.CLIENT_URL].filter(Boolean);
+      if (allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  },
+});
+
+app.set("io", io);
+initSocket(io);
+
+connectDB().then(() => {
+  httpServer.listen(Number(PORT), "0.0.0.0", () => {
+    console.log(`🚀 Server running on PORT ${PORT}`);
+    startSessionExpirationJob();
+  });
+});
+
+
+==================== ./src/middleware/errorMiddleware.ts ====================
+
+import { Request, Response, NextFunction } from "express";
+
+// 1. Handle Invalid Database IDs (e.g., trying to fetch /api/v1/products/123)
+
+function handleCastErrorDB(err: any) {
+  const message = `Invalid ${err.path}: ${err.value}.`;
+
+  return { statusCode: 400, status: "fail", message };
+}
+
+// 2. Handle MongoDB Duplicate Fields (Your current function)
+
+function handleDuplicateFieldsDB(err: any) {
+  const keyValue = err.errorResponse?.keyValue || err.keyValue;
+
+  let message = "Duplicate field value entered. Please use another value!";
+
+  if (keyValue) {
+    const field = Object.keys(keyValue)[0];
+
+    const value = keyValue[field];
+
+    message = `Duplicate field value: "${value}" for field: "${field}". Please use another value!`;
+  } else if (err.errmsg || err.message) {
+    const targetString = err.errmsg || err.message;
+
+    const match = targetString.match(/(["'])(?:(?=(\\?))\2.)*?\1/);
+
+    if (match) {
+      message = `Duplicate field value: ${match[0]}. Please use another value!`;
+    }
+  }
+
+  return { statusCode: 400, status: "fail", message };
+}
+
+// 3. Handle Mongoose Schema Validation Failures (e.g., missing required fields)
+
+function handleValidationErrorDB(err: any) {
+  const errors = Object.values(err.errors).map((el: any) => el.message);
+
+  const message = `Invalid input data. ${errors.join(" ")}`;
+
+  return { statusCode: 400, status: "fail", message };
+}
+
+// Main Global Error Handler Middleware
+
+export function globalErrorHandler(
+  err: any,
+
+  req: Request,
+
+  res: Response,
+
+  next: NextFunction,
+) {
+  let error = { ...err };
+
+  error.message = err.message;
+
+  error.statusCode = err.statusCode || 500;
+
+  error.status = err.status || "error";
+
+  // DB Error Layer Interception
+
+  if (err.name === "CastError") {
+    const handled = handleCastErrorDB(err);
+
+    error.statusCode = handled.statusCode;
+
+    error.status = handled.status;
+
+    error.message = handled.message;
+  }
+
+  if (err.code === 11000) {
+    const handled = handleDuplicateFieldsDB(err);
+
+    error.statusCode = handled.statusCode;
+
+    error.status = handled.status;
+
+    error.message = handled.message;
+  }
+
+  if (err.name === "ValidationError") {
+    const handled = handleValidationErrorDB(err);
+
+    error.statusCode = handled.statusCode;
+
+    error.status = handled.status;
+
+    error.message = handled.message;
+  }
+
+  if (err.name === "JsonWebTokenError") {
+    error.statusCode = 401;
+    error.status = "fail";
+    error.message = "Invalid token. Please log in again.";
+  }
+
+  if (err.name === "TokenExpiredError") {
+    error.statusCode = 401;
+    error.status = "fail";
+    error.message = "Your token has expired. Please log in again.";
+  }
+
+  // Unified Clean JSON Response Output
+
+  res.status(error.statusCode).json({
+    status: error.status,
+
+    message: error.message,
+
+    ...(process.env.NODE_ENV === "development" && {
+      stack: err.stack,
+
+      error: err,
+    }),
+  });
+}
+
+
+==================== ./src/middleware/sanitize.ts ====================
+
+// src/middleware/sanitize.ts
+import { Request, Response, NextFunction } from "express";
+
+export const sanitizeInput = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const sanitize = (obj: any): any => {
+    if (!obj) return obj;
+    for (const key of Object.keys(obj)) {
+      if (key.startsWith("$") || key.includes(".")) {
+        delete obj[key];
+      } else if (typeof obj[key] === "object") {
+        sanitize(obj[key]);
+      }
+    }
+    return obj;
+  };
+
+  sanitize(req.body);
+  sanitize(req.params);
+  next();
+};
+
+
+==================== ./src/routes/eventRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  deleteEvent,
+  createEvent,
+  getAllEvents,
+  getEvent,
+  updateEvent,
+  getCurrentEvent,
+  getEventStats,
+} from "../controllers/eventController";
+
+const eventRoutes = express.Router();
+
+eventRoutes.use(protect);
+
+eventRoutes.route("/current").get(getCurrentEvent);
+eventRoutes.route("/stats").get(getEventStats);
+
+eventRoutes.use(restrictTo("admin", "superAdmin"));
+eventRoutes.route("/").get(getAllEvents).post(createEvent);
+
+eventRoutes.route("/:id").get(getEvent).patch(updateEvent).delete(deleteEvent);
+
+export default eventRoutes;
+
+
+==================== ./src/routes/userRoutes.ts ====================
+
+import express from "express";
+import {
+  forgotPassword,
+  login,
+  logout,
+  protect,
+  resetPassword,
+  signUp,
+} from "../controllers/authController";
+import {
+  changePassword,
+  deleteMe,
+  getMe,
+  getMyId,
+  updateMe,
+} from "../controllers/userController";
+
+const userRoutes = express.Router();
+
+userRoutes.post("/login", login);
+userRoutes.post("/signup", signUp);
+userRoutes.post("/forgot-password", forgotPassword);
+userRoutes.post("/logout", logout);
+userRoutes.patch("/reset-password/:resetToken", resetPassword);
+
+userRoutes.use(protect);
+
+userRoutes.route("/me").get(getMyId, getMe).patch(updateMe).delete(deleteMe);
+userRoutes.route("/me/change-password").patch(changePassword);
+
+export default userRoutes;
+
+
+==================== ./src/routes/leaderboardRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  getLeaderboard,
+  getMyRank,
+  getTopThree,
+} from "../controllers/leaderboardController";
+
+const leaderboardRoutes = express.Router();
+
+leaderboardRoutes.use(protect);
+
+leaderboardRoutes.route("/").get(getLeaderboard);
+leaderboardRoutes.route("/top-three").get(getTopThree);
+
+leaderboardRoutes.route("/my-rank").get(getMyRank);
+
+export default leaderboardRoutes;
+
+
+==================== ./src/routes/notificationRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  getNotifications,
+  markAllAsRead,
+  markAsRead,
+  sendNotifications,
+} from "../controllers/notificationController";
+
+const notificationRoutes = express.Router();
+
+notificationRoutes.use(protect);
+
+notificationRoutes
+  .route("/")
+  .get(getNotifications)
+  .post(restrictTo("admin", "superAdmin"), sendNotifications);
+notificationRoutes.route("/all").patch(markAllAsRead);
+notificationRoutes.route("/:id").patch(markAsRead);
+
+export default notificationRoutes;
+
+
+==================== ./src/routes/teamRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  changeCaptain,
+  changeTeamName,
+  createTeam,
+  deleteMyTeam,
+  getAllTeams,
+  getMyTeam,
+  getTeam,
+  getTeamAttempts,
+  getTeamStats,
+  joinTeam,
+  kickMember,
+  leaveTeam,
+} from "../controllers/teamController";
+
+const teamRoutes = express.Router();
+
+teamRoutes.use(protect);
+
+teamRoutes
+  .route("/")
+  .get(restrictTo("admin", "superAdmin"), getAllTeams)
+  .post(createTeam);
+
+teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
+teamRoutes.route("/my-team/stats").get(getTeamStats);
+
+teamRoutes.route("/join").post(joinTeam);
+teamRoutes.route("/leave").delete(leaveTeam);
+teamRoutes.route("/:id/attempts").get(getTeamAttempts);
+
+// NOTE: All next routes for captain only
+teamRoutes.route("/:id/name").patch(changeTeamName);
+teamRoutes.route("/:id/captain").patch(changeCaptain);
+teamRoutes.route("/:id/members/:userId").delete(kickMember);
+
+// NOTE: Admins only
+teamRoutes.route("/:id").get(restrictTo("admin", "superAdmin"), getTeam);
+
+export default teamRoutes;
+
+
+==================== ./src/routes/sessionRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  abandonSession,
+  getAllSessions,
+  getSessionResult,
+  startSession,
+  submitAnswer,
+} from "../controllers/sessionController";
+
+const sessionRoutes = express.Router();
+
+sessionRoutes.use(protect);
+
+sessionRoutes.route("/start").post(startSession);
+
+sessionRoutes.route("/:id/answer").post(submitAnswer);
+
+sessionRoutes.route("/:id").get(getSessionResult);
+
+sessionRoutes.route("/:id/abandon").post(abandonSession);
+
+sessionRoutes.route("/").get(restrictTo("admin", "superAdmin"), getAllSessions);
+
+export default sessionRoutes;
+
+
+==================== ./src/routes/questionRoutes.ts ====================
+
+import express from "express";
+import { protect, restrictTo } from "../controllers/authController";
+import {
+  deleteQuestion,
+  bulkCreateQuestions,
+  getQuestion,
+  updateQuestion,
+  createQuestion,
+  getAllQuestions,
+} from "../controllers/questionController";
+
+const questionRoutes = express.Router();
+
+questionRoutes.use(protect);
+questionRoutes.use(restrictTo("admin", "superAdmin"));
+
+questionRoutes.route("/").get(getAllQuestions).post(createQuestion);
+
+questionRoutes.route("/bulk").post(bulkCreateQuestions);
+
+questionRoutes
+  .route("/:id")
+  .get(getQuestion)
+  .patch(updateQuestion)
+  .delete(deleteQuestion);
+
+export default questionRoutes;
