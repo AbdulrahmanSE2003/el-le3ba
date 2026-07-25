@@ -5,6 +5,12 @@ import QuickActions from "@/features/admin/components/QuickActions";
 import DashboardStats from "@/features/admin/components/DashboardStats";
 import { Skeleton } from "@/components/ui/skeleton";
 import RecentSessionsSkeleton from "@/features/admin/components/RecentSessionsSkeleton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "لوحة التحكم | الإدارة",
+  description: "نظرة عامة على أداء النظام والأنشطة الأخيرة.",
+};
 
 const Page = () => {
   return (
