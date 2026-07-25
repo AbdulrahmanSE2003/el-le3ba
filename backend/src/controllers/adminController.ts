@@ -45,3 +45,14 @@ export const getDashboardStats = catchAsync(async (_req, res) => {
     totalEvents,
   });
 });
+
+export const getRecentSessions = catchAsync(async (req, res, next) => {
+  const recentSessions = await Session.find()
+    .sort({ createdAt: -1 })
+    .select("_id teamId eventId endReason startedAt finalScore completedAt")
+    .limit(10)
+    .populate("teamId", "teamName teamCode")
+    .populate("eventId", "title");
+
+  resHandler(res, 200, "recentSessions", recentSessions);
+});

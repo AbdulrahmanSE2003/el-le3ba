@@ -42,6 +42,11 @@ export interface CurrentUserResponse {
 
 export interface RecentSession {
   _id: string;
+  teamId: {
+    _id: string;
+    teamName: string;
+    teamCode: string;
+  };
   eventId: {
     _id: string;
     title: string;

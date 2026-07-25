@@ -1,119 +1,135 @@
-import React from "react";
-import { ArrowUpRight, MoreVertical } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-const recentSessions = [
-  {
-    id: "1",
-    user: "أحمد محمود",
-    email: "ahmed@example.com",
-    role: "مدير",
-    status: "نشط",
-    time: "منذ 2 دقيقة",
-  },
-  {
-    id: "2",
-    user: "سارة علي",
-    email: "sara@example.com",
-    role: "محرر",
-    status: "نشط",
-    time: "منذ 5 دقائق",
-  },
-  {
-    id: "3",
-    user: "عمر خالد",
-    email: "omar@example.com",
-    role: "مستخدم",
-    status: "غير نشط",
-    time: "منذ ساعتين",
-  },
-  {
-    id: "4",
-    user: "منى يوسف",
-    email: "mona@example.com",
-    role: "مستخدم",
-    status: "نشط",
-    time: "منذ 3 ساعات",
-  },
-];
+import { ArrowUpRight, MoreVertical } from "lucide-react";
 
-const RecentSessions = () => {
+import Error from "@/app/error";
+
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { getDashboardRecentSessions } from "../api/shared";
+import { RecentSession } from "@/shared/api/helpers";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+
+const statusMap = {
+  completed: {
+    label: "مكتملة",
+    className: "bg-emerald-500/10 text-emerald-500",
+    dot: "bg-emerald-500",
+  },
+  abandoned: {
+    label: "منسحب",
+    className: "bg-amber-500/10 text-amber-500",
+    dot: "bg-amber-500",
+  },
+  expired: {
+    label: "منتهية",
+    className: "bg-red-500/10 text-red-500",
+    dot: "bg-red-500",
+  },
+};
+
+export default async function RecentSessions() {
+  const sessionsRes = await getDashboardRecentSessions();
+
+  if (!sessionsRes.success) return <Error />;
+
+  const sessions = sessionsRes.data.recentSessions;
+
   return (
-    <div className="lg:col-span-2 rounded-xl border border-border bg-card p-6 shadow-sm">
-      <div className="flex items-center justify-between pb-4 border-b border-border">
-        <div>
-          <h2 className="text-lg font-semibold text-card-foreground">
-            الجلسات الأخيرة
-          </h2>
+    <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
+      <div className="flex items-center justify-between border-b p-6">
+        <div className={`space-y-1`}>
+          <h2 className="text-lg font-semibold">المباريات الأخيرة</h2>
           <p className="text-xs text-muted-foreground">
-            المستخدمون المتواجدون حالياً على المنصة
+            آخر 10 جلسات تم إنشاؤها
           </p>
         </div>
-        <Button variant={"link"} size={"xs"}>
-          <Link href={"admin/sessions"} className={`flex items-center gap-0.5`}>
+
+        <Button variant="link" size="xs" asChild>
+          <Link href="/admin/sessions" className="flex items-center gap-1">
             عرض الكل
             <ArrowUpRight className="h-3 w-3" />
-          </Link>{" "}
+          </Link>
         </Button>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full text-right text-sm">
-          <thead>
-            <tr className="border-b border-border text-xs text-muted-foreground">
-              <th className="pb-3 font-medium">المستخدم</th>
-              <th className="pb-3 font-medium">الدور</th>
-              <th className="pb-3 font-medium">الحالة</th>
-              <th className="pb-3 font-medium">آخر ظهور</th>
-              <th className="pb-3 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {recentSessions.map((session) => (
-              <tr
-                key={session.id}
-                className="group hover:bg-muted/50 transition-colors"
-              >
-                <td className="py-3">
-                  <div className="flex flex-col">
-                    <span className="font-medium text-foreground">
-                      {session.user}
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {session.email}
-                    </span>
-                  </div>
-                </td>
-                <td className="py-3 text-muted-foreground">{session.role}</td>
-                <td className="py-3">
-                  <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      session.status === "نشط"
-                        ? "bg-primary/10 text-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}
-                  >
+      <ScrollArea dir="rtl" className="h-112 p-0 border-0 rounded-md ">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-right">الفريق</TableHead>
+              <TableHead className="text-right">الموسم</TableHead>
+              <TableHead className="text-right">النقاط</TableHead>
+              <TableHead className="text-right">الحالة</TableHead>
+              <TableHead className="text-right">انتهت</TableHead>
+              <TableHead className="w-12" />
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {sessions.map((session: RecentSession) => {
+              const status =
+                statusMap[session.endReason as keyof typeof statusMap];
+
+              return (
+                <TableRow key={session._id} className={`text-muted-foreground`}>
+                  <TableCell>
+                    <div className="flex flex-col">
+                      <span
+                        className={cn(
+                          `text-foreground font-medium`,
+                          !session.teamId?.teamName ? "opacity-50" : "",
+                        )}
+                      >
+                        {session.teamId?.teamName ?? "فريق محذوف"}
+                      </span>
+
+                      {session.teamId?.teamCode && (
+                        <span className="text-xs text-muted-foreground">
+                          #{session.teamId.teamCode}
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  <TableCell>{session.eventId?.title ?? "-"}</TableCell>
+
+                  <TableCell className="font-semibold">
+                    {session.finalScore}
+                  </TableCell>
+
+                  <TableCell>
                     <span
-                      className={`h-1.5 w-1.5 rounded-full ${session.status === "نشط" ? "bg-primary" : "bg-muted-foreground"}`}
-                    />
-                    {session.status}
-                  </span>
-                </td>
-                <td className="py-3 text-muted-foreground text-xs">
-                  {session.time}
-                </td>
-                <td className="py-3 text-left">
-                  <button className="text-muted-foreground hover:text-foreground p-1 rounded transition-colors">
-                    <MoreVertical className="h-4 w-4" />
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                      className={`inline-flex items-center gap-2 rounded-full px-2.5 py-1 text-xs font-medium ${status.className}`}
+                    >
+                      <span className={`h-2 w-2 rounded-full ${status.dot}`} />
+                      {status.label}
+                    </span>
+                  </TableCell>
+
+                  <TableCell className="text-muted-foreground">
+                    {new Date(session.completedAt).toLocaleString("ar-EG")}
+                  </TableCell>
+
+                  <TableCell>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </ScrollArea>
     </div>
   );
-};
-
-export default RecentSessions;
+}

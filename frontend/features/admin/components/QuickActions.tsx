@@ -11,7 +11,7 @@ const quickActions = [
 const QuickActions = () => {
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm flex flex-col justify-between">
-      <div>
+      <div className={`space-y-1`}>
         <h2 className="text-lg font-semibold text-card-foreground">
           إجراءات سريعة
         </h2>
