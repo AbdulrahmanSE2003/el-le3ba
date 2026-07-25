@@ -6,8 +6,7 @@ import { SidebarBrand } from "./SidebarBrand";
 import { SidebarFooterActions } from "./SidebarFooterActions";
 import { SidebarNav } from "./SidebarNav";
 import SidebarWrapper from "./SidebarWrapper";
-
-import { adminNavItems } from "./nav-config";
+import { adminNavItems } from "@/features/admin/utils/constants";
 
 export function AdminSidebar() {
   return (

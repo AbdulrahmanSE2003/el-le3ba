@@ -19,7 +19,7 @@ export interface UserData {
   _id: string;
   name: string;
   email: string;
-  role: "student" | "admin";
+  role: "student" | "admin" | "superAdmin";
   avatar: string | null;
   totalScore: number;
   gamesPlayed: number;
@@ -42,6 +42,11 @@ export interface CurrentUserResponse {
 
 export interface RecentSession {
   _id: string;
+  teamId: {
+    _id: string;
+    teamName: string;
+    teamCode: string;
+  };
   eventId: {
     _id: string;
     title: string;

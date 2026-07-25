@@ -59,6 +59,7 @@ const userSchema = new mongoose.Schema<IUser>(
         },
         message: "كلمات المرور يجب ان تكون متطابقة",
       },
+      select: false,
     },
 
     avatar: {
@@ -79,8 +80,8 @@ const userSchema = new mongoose.Schema<IUser>(
     gamesPlayed: { type: Number, default: 0 },
 
     passwordResetToken: { type: String, select: false },
-    passwordResetExpires: { type: Date },
-    passwordChangedAt: { type: Date },
+    passwordResetExpires: { type: Date, select: false },
+    passwordChangedAt: { type: Date, select: false },
   },
 
   {
