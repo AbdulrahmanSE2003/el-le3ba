@@ -8,6 +8,7 @@ import { generateCode } from "../utils/utils";
 import resHandler from "../utils/resHandler";
 import { getAll, getOne } from "../utils/factory";
 import Leaderboard from "../models/leaderboardModel";
+import Event from "../models/eventModel";
 
 export const createTeam = catchAsync(async (req, res, next) => {
   const user = req.user;
@@ -94,8 +95,11 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
   }
 
   // Calculate the team's rank based on totalPoints
+
+  const event = await Event.findOne({ status: "running" });
   const rank =
     (await Leaderboard.countDocuments({
+      eventId: event?._id,
       totalPoints: { $gt: teamLeaderboardEntry.totalPoints },
     })) + 1;
 

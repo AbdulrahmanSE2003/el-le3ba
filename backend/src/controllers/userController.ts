@@ -1,3 +1,4 @@
+import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
@@ -140,6 +141,6 @@ export const deleteMe = catchAsync(async (req, res, next) => {
     );
   await membership?.deleteOne();
   await user.deleteOne();
-
+  await Notification.deleteMany({ userId: user._id });
   res.status(204).send();
 });
