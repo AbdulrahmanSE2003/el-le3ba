@@ -22,8 +22,8 @@ export default function UserAvatar({
 }: UserAvatarProps) {
   return (
     <Avatar size={size} className={className}>
-      <AvatarImage src={src} alt={fallback} className={className} />
-      <AvatarFallback className="text-3xl object-cover">
+      <AvatarImage src={src} className={className} />
+      <AvatarFallback className="text-3xl object-cover" delayMs={1000}>
         {fallback}
       </AvatarFallback>
       {showBadge && <AvatarBadge className="bg-green-600 dark:bg-green-800" />}
