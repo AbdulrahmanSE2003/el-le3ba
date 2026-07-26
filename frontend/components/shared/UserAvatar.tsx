@@ -23,7 +23,7 @@ export default function UserAvatar({
   return (
     <Avatar size={size} className={className}>
       <AvatarImage src={src} className={className} />
-      <AvatarFallback className="text-3xl object-cover" delayMs={1000}>
+      <AvatarFallback className="text-3xl object-cover" delayMs={100}>
         {fallback}
       </AvatarFallback>
       {showBadge && <AvatarBadge className="bg-green-600 dark:bg-green-800" />}
