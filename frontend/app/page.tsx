@@ -16,7 +16,7 @@ export default function LandingPage() {
       <main>
         <HeroSection />
         <FeaturesSection />
-        <CommunitySection />
+        {/* <CommunitySection /> */}
         <WhyChooseUsSection />
         <CtaSection />
       </main>

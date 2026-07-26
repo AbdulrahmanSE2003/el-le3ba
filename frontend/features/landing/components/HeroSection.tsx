@@ -17,7 +17,7 @@ export function HeroSection() {
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-center justify-center bg-background px-4 text-center overflow-hidden">
       {/* (Grid Pattern) */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--popover-foreground)_1px,transparent_1px),linear-gradient(to_bottom,var(--popover-foreground)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20 dark:opacity-10" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--popover-foreground)_1px,transparent_1px),linear-gradient(to_bottom,var(--popover-foreground)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-9 dark:opacity-10" />
 
       {/* (Glowing Blurs)*/}
       <div className="absolute top-1/4 left-1/4 -z-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl dark:bg-primary/5" />

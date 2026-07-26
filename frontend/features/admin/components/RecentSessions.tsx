@@ -65,11 +65,11 @@ export default async function RecentSessions() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-right">الفريق</TableHead>
-              <TableHead className="text-right">الموسم</TableHead>
-              <TableHead className="text-right">النقاط</TableHead>
-              <TableHead className="text-right">الحالة</TableHead>
-              <TableHead className="text-right">انتهت</TableHead>
+              <TableHead className="text-center">الفريق</TableHead>
+              <TableHead className="text-center">الموسم</TableHead>
+              <TableHead className="text-center">النقاط</TableHead>
+              <TableHead className="text-center">الحالة</TableHead>
+              <TableHead className="text-center">انتهت</TableHead>
               <TableHead className="text-right">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
@@ -82,7 +82,7 @@ export default async function RecentSessions() {
               return (
                 <TableRow
                   key={session._id}
-                  className={`text-muted-foreground w-full`}
+                  className={`text-muted-foreground w-full text-center`}
                 >
                   <TableCell>
                     <div className="flex flex-col">
