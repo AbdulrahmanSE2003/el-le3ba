@@ -26,7 +26,7 @@ const RecentSessionsSkeleton = () => {
       <ScrollArea dir="rtl" className="h-104 p-0 border-0 rounded-md">
         <Table>
           <TableHeader>
-            <TableRow className={`text-right`}>
+            <TableRow className={`text-center`}>
               <TableHead>الفريق</TableHead>
               <TableHead>الموسم</TableHead>
               <TableHead>النقاط</TableHead>
@@ -38,7 +38,7 @@ const RecentSessionsSkeleton = () => {
 
           <TableBody>
             {Array.from({ length: 8 }).map((_, i) => (
-              <TableRow key={i}>
+              <TableRow key={i} className={`text-center`}>
                 {/* الفريق */}
                 <TableCell>
                   <div className="flex flex-col gap-1.5">
