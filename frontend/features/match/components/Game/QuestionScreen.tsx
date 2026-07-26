@@ -20,7 +20,7 @@ import { useGameSocket } from "@/features/match/hooks/useGameSocket";
 import { useUserStore } from "@/store/userStore";
 import type { LastAnswer } from "@/features/match/types";
 import type { QuestionResultPayload } from "@/features/match/lib/socket";
-import AbandonButton from "./AbandonButton";
+import AbandonButton from "@/features/match/components/game/AbandonButton";
 import { audio } from "@/features/audio/audioManager";
 
 export default function QuestionScreen() {
