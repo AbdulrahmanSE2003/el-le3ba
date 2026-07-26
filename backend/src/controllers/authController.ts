@@ -69,7 +69,20 @@ export const login = catchAsync(
 
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user || !(await user.correctPassword(password))) {
+    if (!user) {
+      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+    }
+
+    if (!user.isActive) {
+      return next(
+        new AppError(
+          "Your account has been deactivated. Please contact an administrator.",
+          403,
+        ),
+      );
+    }
+
+    if (!(await user.correctPassword(password))) {
       return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
     }
 
@@ -110,6 +123,10 @@ export const protect = catchAsync(
       return next(
         new AppError("The user belonging to this token no longer exists.", 401),
       );
+    }
+
+    if (!freshUser?.isActive) {
+      return next(new AppError("Your account has been deactivated.", 403));
     }
 
     if (freshUser.passwordChangedAt) {
