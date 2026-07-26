@@ -70,7 +70,7 @@ export default async function RecentSessions() {
               <TableHead className="text-center">النقاط</TableHead>
               <TableHead className="text-center">الحالة</TableHead>
               <TableHead className="text-center">انتهت</TableHead>
-              <TableHead className="text-center">إجراءات</TableHead>
+              <TableHead className="text-right">إجراءات</TableHead>
             </TableRow>
           </TableHeader>
 
