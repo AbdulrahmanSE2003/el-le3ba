@@ -2,7 +2,11 @@
 
 import { useEffect, useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { connectSocket, getSocket } from "@/features/match/lib/socket";
+import {
+  connectSocket,
+  getSocket,
+  onGlobalConnectError,
+} from "@/features/match/lib/socket";
 import { useLobbyStore } from "@/features/match/store/lobbyStore";
 import { useGameStore } from "@/features/match/store/gameStore";
 import type {
@@ -29,6 +33,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
 
     const handleConnect = () => {
       setConnected(true);
+      setError(null);
       socket.emit("join-lobby", { teamId, userId });
     };
 
@@ -38,6 +43,11 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
 
     const handleDisconnect = () => {
       setConnected(false);
+    };
+
+    const handleConnectError = (err: Error) => {
+      setConnected(false);
+      setError("مش قادر أتصل بالسيرفر، جرب تاني.");
     };
 
     const handleTeamPresence = (presenceMembers: PresenceMember[]) => {
@@ -90,6 +100,8 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
       setError(message);
     };
 
+    onGlobalConnectError(handleConnectError);
+
     socket.on("connect", handleConnect);
     socket.on("disconnect", handleDisconnect);
     socket.on("team-presence", handleTeamPresence);
@@ -97,6 +109,7 @@ export const useLobbySocket = ({ teamId, userId }: UseLobbySocketProps) => {
     socket.on("game-error", handleGameError);
 
     return () => {
+      onGlobalConnectError(null);
       socket.emit("leave-lobby", { teamId, userId });
       socket.off("connect", handleConnect);
       socket.off("disconnect", handleDisconnect);

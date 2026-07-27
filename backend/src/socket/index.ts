@@ -1,11 +1,12 @@
 import { Server, Socket } from "socket.io";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
-import Event from "../models/eventModel";
 import Session from "../models/sessionModel";
-import Question from "../models/questionModel";
-import { QUESTIONS_PER_SESSION, SESSION_DURATION_MS } from "../constants";
+import { createSessionForTeam, SessionServiceError } from "../services/sessionService";
 
+// TODO: teamOnlineMembers is in-memory and only works for a single Node process.
+// For multi-instance deployment, replace with a Redis-backed adapter
+// (e.g. socket.io-redis) so presence data is shared across instances.
 const teamOnlineMembers = new Map<string, Set<string>>();
 
 const getPresence = async (teamId: string) => {
@@ -96,56 +97,24 @@ export const initSocket = (io: Server) => {
 
     socket.on("start-game", async ({ teamId, userId }) => {
       try {
-        const tid = String(teamId);
-        const uid = String(userId);
-
-        const team = await Team.findOne({ teamLeader: uid });
-        if (!team || team._id.toString() !== tid) {
-          socket.emit("game-error", { message: "أنت مش الكابتن." });
-          return;
-        }
-
-        const event = await Event.findOne({ status: "running" });
-        if (!event) {
-          socket.emit("game-error", { message: "مفيش ايفنت شغال دلوقتي." });
-          return;
-        }
-
-        const attemptCount = await Session.countDocuments({
-          teamId: tid,
-          eventId: event._id,
-        });
-        if (attemptCount >= event.maxAttempts) {
-          socket.emit("game-error", { message: "خلصت المحاولات." });
-          return;
-        }
-
-        const questions = await Question.aggregate([
-          { $sample: { size: QUESTIONS_PER_SESSION } },
-        ]);
-
-        const questionsForClient = questions.map(
-          ({ correctAnswer, ...rest }) => rest,
+        const result = await createSessionForTeam(
+          String(teamId),
+          String(userId),
         );
-
-        const session = await Session.create({
-          teamId: tid,
-          eventId: event._id,
-          questions: questions.map((q) => q._id),
-          startedAt: new Date(),
-          expiresAt: new Date(Date.now() + SESSION_DURATION_MS),
-        });
-
-        io.to(tid).emit("game-started", {
-          sessionId: String(session._id),
-          teamId: tid,
-          eventId: String(event._id),
-          questions: questionsForClient,
-          expiresAt: session.expiresAt,
+        io.to(result.teamId).emit("game-started", {
+          sessionId: result.sessionId,
+          teamId: result.teamId,
+          eventId: result.eventId,
+          questions: result.questions,
+          expiresAt: String(result.expiresAt),
         });
       } catch (err) {
-        console.error("start-game error:", err);
-        socket.emit("game-error", { message: "حصل خطأ، حاول تاني." });
+        if (err instanceof SessionServiceError) {
+          socket.emit("game-error", { message: err.message });
+        } else {
+          console.error("start-game error:", err);
+          socket.emit("game-error", { message: "حصل خطأ، حاول تاني." });
+        }
       }
     });
 

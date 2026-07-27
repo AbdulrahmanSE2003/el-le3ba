@@ -2,9 +2,10 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { connectSocket } from "@/features/match/lib/socket";
+import { connectSocket, onGlobalConnectError } from "@/features/match/lib/socket";
 import { useGameStore } from "@/features/match/store/gameStore";
 import type { QuestionResultPayload } from "@/features/match/lib/socket";
+import { toast } from "sonner";
 
 interface Props {
   teamId: string;
@@ -31,6 +32,10 @@ export const useGameSocket = ({
 
     const handleConnect = () => {
       socket.emit("join-lobby", { teamId, userId });
+    };
+
+    const handleConnectError = () => {
+      toast.error("مش قادر أتصل بالسيرفر، جرب تاني.");
     };
 
     const handleAnswerLocked = (payload: { questionId: string }) => {
@@ -64,6 +69,8 @@ export const useGameSocket = ({
       handleConnect();
     }
 
+    onGlobalConnectError(handleConnectError);
+
     socket.on("connect", handleConnect);
     socket.on("answer-locked", handleAnswerLocked);
     socket.on("question-result", handleQuestionResult);
@@ -71,6 +78,7 @@ export const useGameSocket = ({
     socket.on("game-ended", handleGameEnded);
 
     return () => {
+      onGlobalConnectError(null);
       socket.off("connect", handleConnect);
       socket.off("answer-locked", handleAnswerLocked);
       socket.off("question-result", handleQuestionResult);
