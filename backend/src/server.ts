@@ -15,10 +15,11 @@ const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
     origin: (origin, callback) => {
-      // السماح لأي origin في dev — في production حدد الـ domains
+      // Development: allow any origin (localhost, LAN IPs, etc.)
       if (!origin || process.env.NODE_ENV === "development") {
         return callback(null, true);
       }
+      // Production: only allow the explicit CLIENT_URL (set in .env)
       const allowed = [process.env.CLIENT_URL].filter(Boolean);
       if (allowed.includes(origin)) {
         callback(null, true);

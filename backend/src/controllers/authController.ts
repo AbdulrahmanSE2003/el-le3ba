@@ -1,5 +1,5 @@
 // /src/controllers/authController.ts
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, CookieOptions } from "express";
 import jwt, { JwtPayload, SignOptions } from "jsonwebtoken";
 import crypto from "node:crypto";
 import { AppError } from "../utils/appError";
@@ -27,7 +27,7 @@ const createSendToken = (
 ): void => {
   const token = signToken(user._id);
 
-  const cookieOptions = {
+  const cookieOptions: CookieOptions = {
     expires: new Date(
       Date.now() +
         Number(process.env.JWT_COOKIE_EXPIRES_IN || 90) * 24 * 60 * 60 * 1000,

@@ -4,15 +4,12 @@ import {
   abandonSession,
   getAllSessions,
   getSessionResult,
-  startSession,
   submitAnswer,
 } from "../controllers/sessionController";
 
 const sessionRoutes = express.Router();
 
 sessionRoutes.use(protect);
-
-sessionRoutes.route("/start").post(startSession);
 
 sessionRoutes.route("/:id/answer").post(submitAnswer);
 

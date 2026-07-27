@@ -83,6 +83,14 @@ const SOCKET_URL =
 
 let socket: Socket<ServerToClientEvents, ClientToServerEvents> | null = null;
 
+export type ConnectErrorHandler = (err: Error) => void;
+
+// Register a global connect_error observer (used by lobby/game hooks)
+let _onConnectError: ConnectErrorHandler | null = null;
+export const onGlobalConnectError = (handler: ConnectErrorHandler | null) => {
+  _onConnectError = handler;
+};
+
 export const getSocket = (): Socket<
   ServerToClientEvents,
   ClientToServerEvents
@@ -93,6 +101,11 @@ export const getSocket = (): Socket<
       autoConnect: false,
       reconnectionDelay: 2000,
       reconnectionDelayMax: 5000,
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("socket connect_error:", err.message);
+      _onConnectError?.(err);
     });
   }
   return socket;
