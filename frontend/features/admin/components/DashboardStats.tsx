@@ -1,6 +1,6 @@
 import Error from "@/app/error";
 import { getDashboardStats } from "../api/shared";
-import StatCard from "./StatCard";
+import StatCard from "./shared/StatCard";
 import { Play, Trophy, User, Users } from "lucide-react";
 
 const DashboardStats = async () => {

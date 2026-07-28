@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 
-import PageHeader from "@/features/admin/components/PageHeader";
+import PageHeader from "@/features/admin/components/shared/PageHeader";
 import { GeneralSettingsCard } from "@/features/admin/components/settings/GeneralSettingsCard";
 import { QuizDefaultsCard } from "@/features/admin/components/settings/QuizDefaultsCard";
 import { SecurityCard } from "@/features/admin/components/settings/SecurityCard";

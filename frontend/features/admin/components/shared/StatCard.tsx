@@ -6,18 +6,32 @@ interface Stat {
   value: string | number;
   description?: string;
   change?: number;
+  iconClassName?: string;
+  bgClassName?: string;
 }
 
-const StatCard = ({ title, Icon, value, change, description }: Stat) => {
+const StatCard = ({
+  title,
+  Icon,
+  value,
+  change,
+  description,
+  iconClassName,
+  bgClassName,
+}: Stat) => {
   const isPositive = (change ?? 0) > 0;
   const isNegative = (change ?? 0) < 0;
 
   return (
-    <div className="group rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md">
+    <div
+      className={`group rounded-xl border border-border bg-card p-5 shadow-sm transition-all hover:shadow-md ${bgClassName}`}
+    >
       <div className="flex items-center justify-between">
         <h4 className="text-md font-medium text-foreground">{title}</h4>
 
-        <div className="rounded-lg bg-muted p-2 text-foreground transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
+        <div
+          className={`rounded-lg bg-muted p-2 text-foreground transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground ${iconClassName}`}
+        >
           <Icon className="h-4 w-4" />
         </div>
       </div>

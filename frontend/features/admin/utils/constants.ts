@@ -2,15 +2,18 @@ import { NavItem } from "@/components/sidebar/types";
 import {
   BadgeQuestionMark,
   Bell,
+  CalendarCheck2,
   CalendarCog,
   CalendarDaysIcon,
   FileText,
   LayoutDashboard,
   Medal,
   Play,
+  Radio,
   Settings,
   Settings2Icon,
   ShieldAlert,
+  Timer,
   UserCog,
   UserPlus,
   Users,
@@ -108,3 +111,4 @@ export const quickActions = [
     desc: "نظّم تقويم الأحداث",
   },
 ];
+

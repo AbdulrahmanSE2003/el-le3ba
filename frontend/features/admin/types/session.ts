@@ -7,19 +7,17 @@ import type { RecentSession } from "@/shared/api/helpers";
 export type SessionEndReason = "completed" | "abandoned" | "expired";
 export type SessionStatus = "in_progress" | SessionEndReason;
 
-/**
- * Full session record as needed by the admin "المباريات" screen.
- * Extends the shared `RecentSession` shape (already used on the dashboard)
- * instead of redefining team/event fields from scratch.
- */
-export interface AdminSession
-  extends Omit<RecentSession, "endReason" | "completedAt"> {
-  status: SessionStatus;
-  endReason: SessionEndReason | null;
+export interface AdminSession {
+  teamName: string;
+  teamCode: string;
+  status: {
+    label: string;
+    className: string;
+    dotClassName: string;
+  };
+  season: string;
+  points: number;
   startedAt: string;
-  completedAt: string | null;
-  totalQuestions: number;
-  durationSeconds: number | null;
 }
 
 export interface SessionsKpis {

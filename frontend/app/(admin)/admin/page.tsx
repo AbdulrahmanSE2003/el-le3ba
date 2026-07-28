@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import PageHeader from "@/features/admin/components/PageHeader";
+import PageHeader from "@/features/admin/components/shared/PageHeader";
 import RecentSessions from "@/features/admin/components/RecentSessions";
 import QuickActions from "@/features/admin/components/QuickActions";
 import DashboardStats from "@/features/admin/components/DashboardStats";
