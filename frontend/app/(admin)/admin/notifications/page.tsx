@@ -1,5 +1,13 @@
+import NotificationsContainer from "@/features/admin/components/notifications/NotificationsContainer";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "الإشعارات | الإدارة",
+  description: "إدارة الإشعارات المرسلة للمستخدمين",
+};
+
 const page = () => {
-  return <div>page</div>;
+  return <NotificationsContainer />;
 };
 
 export default page;
