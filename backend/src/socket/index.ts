@@ -2,7 +2,11 @@ import { Server, Socket } from "socket.io";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
 import Session from "../models/sessionModel";
-import { createSessionForTeam, SessionServiceError } from "../services/sessionService";
+import {
+  createSessionForTeam,
+  SessionServiceError,
+} from "../services/sessionService";
+import { logAudit } from "../utils/AuditLog";
 
 // TODO: teamOnlineMembers is in-memory and only works for a single Node process.
 // For multi-instance deployment, replace with a Redis-backed adapter
@@ -108,6 +112,12 @@ export const initSocket = (io: Server) => {
           questions: result.questions,
           expiresAt: String(result.expiresAt),
         });
+        await logAudit({
+          actor: userId,
+          action: "session.started",
+          target: result.sessionId,
+          targetModel: "Session",
+        });
       } catch (err) {
         if (err instanceof SessionServiceError) {
           socket.emit("game-error", { message: err.message });
@@ -182,12 +192,25 @@ export const initSocket = (io: Server) => {
           session.completedAt = new Date();
           session.finalScore = 0;
           await session.save();
+          await logAudit({
+            actor: userId,
+            action: "session.abandoned",
+            target: session._id,
+            targetModel: "Session",
+          });
         }
         io.to(tid).emit("game-ended", {
           abandoned: true,
           finalScore: 0,
           correctAnswers: 0,
           bestStreak: 0,
+        });
+
+        await logAudit({
+          actor: userId,
+          action: "session.completed",
+          target: session?._id,
+          targetModel: "Session",
         });
       } catch (err) {
         console.error("abandon-game error:", err);

@@ -9,8 +9,7 @@ const page = async () => {
     <section className="h-full">
       <div className="container mx-auto w-full  p-4 space-y-6">
         <Suspense fallback={<LobbySkeleton />}>
-          {/* <LobbyWrapper /> */}
-          <LobbySkeleton />
+          <LobbyWrapper />
         </Suspense>
       </div>
     </section>

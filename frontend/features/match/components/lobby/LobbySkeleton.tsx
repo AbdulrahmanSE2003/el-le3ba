@@ -1,5 +1,4 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 
 const MemberCardSkeleton = () => (
   <div className="bg-white dark:bg-zinc-900/50 border border-border rounded-lg flex flex-col items-center gap-y-2 p-2 py-3">

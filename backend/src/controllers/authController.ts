@@ -7,6 +7,7 @@ import { catchAsync } from "../utils/catchAsync";
 import User, { IUser } from "../models/userModel";
 import { sendEmail } from "../utils/sendEmail";
 import resHandler from "../utils/resHandler";
+import { logAudit } from "../utils/AuditLog";
 
 interface AuthRequest extends Request {
   user: IUser;
@@ -55,6 +56,12 @@ export const signUp = catchAsync(
       role: "student",
     });
 
+    await logAudit({
+      actor: req.user._id,
+      action: "user.signup",
+      target: newUser._id,
+      targetModel: "User",
+    });
     createSendToken(newUser, 201, res);
   },
 );
@@ -86,6 +93,12 @@ export const login = catchAsync(
       return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
     }
 
+    await logAudit({
+      actor: req.user._id,
+      action: "user.login",
+      target: user._id,
+      targetModel: "User",
+    });
     createSendToken(user, 200, res);
   },
 );

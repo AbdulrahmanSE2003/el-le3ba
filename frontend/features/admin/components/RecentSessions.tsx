@@ -12,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import { getDashboardRecentSessions } from "../api/shared";
 import { RecentSession } from "@/shared/api/helpers";
@@ -62,7 +62,7 @@ export default async function RecentSessions() {
       </div>
 
       <ScrollArea dir="rtl" className="h-104 p-0 border-0 rounded-md ">
-        <Table>
+        <Table className={`overflow-x-scroll`}>
           <TableHeader>
             <TableRow>
               <TableHead className="text-center">الفريق</TableHead>
@@ -132,6 +132,7 @@ export default async function RecentSessions() {
             })}
           </TableBody>
         </Table>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
     </div>
   );

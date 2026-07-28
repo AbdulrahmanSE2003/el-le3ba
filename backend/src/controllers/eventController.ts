@@ -1,6 +1,7 @@
 import Event from "../models/eventModel";
 import Leaderboard from "../models/leaderboardModel";
 import { AppError } from "../utils/appError";
+import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import {
   createOne,
@@ -38,6 +39,13 @@ export const createEvent = catchAsync(async (req, res, next) => {
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     maxAttempts: req.body.maxAttempts,
+  });
+
+  await logAudit({
+    actor: req.user._id,
+    action: "event.created",
+    target: newEvent._id,
+    targetModel: "Event",
   });
 
   resHandler(res, 201, "newEvent", newEvent);

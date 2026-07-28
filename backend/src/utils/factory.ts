@@ -8,7 +8,8 @@ import { AppError } from "./appError";
 
 import APIFeatures from "./APIFeatures";
 
-import { Model, PopulateOptions } from "mongoose";
+import { Model, PopulateOptions, Types } from "mongoose";
+import { logAudit } from "./AuditLog";
 
 export const getAll = <T>(
   Model: Model<T>,
@@ -62,6 +63,12 @@ export const createOne = <T>(Model: Model<T>): RequestHandler => {
 
     const label = `new${Model.modelName}`;
 
+    await logAudit({
+      actor: req.user._id,
+      action: `${Model.modelName.toLowerCase()}.created`,
+      target: newDoc._id as Types.ObjectId,
+      targetModel: Model.modelName,
+    });
     resHandler(res, 201, label, newDoc);
   });
 };
@@ -88,6 +95,12 @@ export const updateOne = <T>(Model: Model<T>): RequestHandler => {
 
     const label = `updated${Model.modelName}`;
 
+    await logAudit({
+      actor: req.user._id,
+      action: `${Model.modelName.toLowerCase()}.updated`,
+      target: updatedDoc._id as Types.ObjectId,
+      targetModel: Model.modelName,
+    });
     resHandler(res, 200, label, updatedDoc);
   });
 };
@@ -108,6 +121,12 @@ export const deleteOne = <T>(Model: Model<T>): RequestHandler => {
       );
     }
 
+    await logAudit({
+      actor: req.user._id,
+      action: `${Model.modelName.toLowerCase()}.deleted`,
+      target: docToDelete._id as Types.ObjectId,
+      targetModel: Model.modelName,
+    });
     res.status(204).send();
   });
 };

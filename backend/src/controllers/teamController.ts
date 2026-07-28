@@ -9,6 +9,7 @@ import resHandler from "../utils/resHandler";
 import { getAll, getOne } from "../utils/factory";
 import Leaderboard from "../models/leaderboardModel";
 import Event from "../models/eventModel";
+import { logAudit } from "../utils/AuditLog";
 
 export const createTeam = catchAsync(async (req, res, next) => {
   const user = req.user;
@@ -38,6 +39,14 @@ export const createTeam = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.created",
+      target: newTeam._id,
+      targetModel: "Team",
+    });
+
     resHandler(res, 201, "team", newTeam);
   } catch (error) {
     await session.abortTransaction();
@@ -65,6 +74,13 @@ export const joinTeam = catchAsync(async (req, res, next) => {
     userId,
     teamId: team._id,
     role: "member",
+  });
+
+  await logAudit({
+    actor: req.user._id,
+    action: "team.joined",
+    target: membership._id,
+    targetModel: "TeamMembership",
   });
 
   resHandler(res, 201, "membership", membership);
@@ -156,6 +172,13 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
     await TeamMembership.deleteMany({ teamId }, { session });
     await Leaderboard.deleteMany({ teamId }, { session });
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.deleted",
+      target: teamId,
+      targetModel: "Team",
+    });
     res.status(204).send();
   } catch (error) {
     await session.abortTransaction();
@@ -174,6 +197,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
   // Regular member — just remove
   if (userMembership.role === "member") {
     await TeamMembership.deleteOne({ userId });
+    await logAudit({
+      actor: req.user._id,
+      action: "team.left",
+      target: userMembership._id,
+      targetModel: "TeamMembership",
+    });
     return res.status(204).send();
   }
 
@@ -195,6 +224,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
         { session },
       );
       await session.commitTransaction();
+      await logAudit({
+        actor: req.user._id,
+        action: "team.delete",
+        target: userMembership.teamId,
+        targetModel: "Team",
+      });
       return res.status(204).send();
     } catch (error) {
       await session.abortTransaction();
@@ -221,6 +256,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+    await logAudit({
+      actor: req.user._id,
+      action: "team.left",
+      target: userMembership._id,
+      targetModel: "Team",
+    });
     res.status(204).send();
   } catch (error) {
     await session.abortTransaction();
@@ -271,6 +312,14 @@ export const changeCaptain = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.captain_transferred",
+      target: newCaptainId,
+      targetModel: "Team",
+    });
+
     resHandler(res, 200, "team", team);
   } catch (error) {
     await session.abortTransaction();
@@ -322,6 +371,13 @@ export const kickMember = catchAsync(async (req, res, next) => {
     return next(new AppError("This user not in your team.", 400));
 
   await TeamMembership.deleteOne({ userId: targetUserId });
+
+  await logAudit({
+    actor: req.user._id,
+    action: "team.member_removed",
+    target: targetUserId as string,
+    targetModel: "Team",
+  });
 
   res.status(204).send();
 });
