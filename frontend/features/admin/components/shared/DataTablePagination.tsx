@@ -1,4 +1,6 @@
 "use client";
+
+import { useTransition } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import {
   ChevronRight,
@@ -14,25 +16,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DataTablePaginationProps } from "../../types/users";
 
-interface PaginationProps {
-  page: number;
-  totalPages: number;
-  totalResults: number;
-  limit: number;
-}
-
-export function UsersPagination({
+export function DataTablePagination({
   page,
   totalPages,
   totalResults,
   limit,
-}: PaginationProps) {
+  itemLabel = "عنصر",
+}: DataTablePaginationProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
 
-  // Update the URL without reload
   const createPageUrl = (newPage: number, newLimit?: number) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("page", newPage.toString());
@@ -44,32 +41,34 @@ export function UsersPagination({
 
   const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= totalPages) {
-      router.push(createPageUrl(newPage));
+      startTransition(() => {
+        router.push(createPageUrl(newPage));
+      });
     }
   };
 
   const handleLimitChange = (newLimit: string) => {
-    // When limit change return to the first page
-    router.push(createPageUrl(1, Number(newLimit)));
+    startTransition(() => {
+      router.push(createPageUrl(1, Number(newLimit)));
+    });
   };
 
-  // Calculate the range
-  const startResult = (page - 1) * limit + 1;
+  const startResult = totalResults === 0 ? 0 : (page - 1) * limit + 1;
   const endResult = Math.min(page * limit, totalResults);
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-card border border-border rounded-xl shadow-sm text-sm dir-rtl">
-      {/* Summary of the results */}
-      <div className="text-muted-foreground">
+      {/* Results */}
+      <div className="text-muted-foreground text-xs sm:text-sm">
         عرض <span className="font-semibold text-foreground">{startResult}</span>{" "}
         - <span className="font-semibold text-foreground">{endResult}</span> من
         إجمالي{" "}
         <span className="font-semibold text-foreground">{totalResults}</span>{" "}
-        مستخدم
+        {itemLabel}
       </div>
 
-      <div className="flex items-center gap-6">
-        {/* Choose the number of rows per page */}
+      <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto">
+        {/* Change the row number */}
         <div className="flex items-center gap-2">
           <span className="text-muted-foreground text-xs whitespace-nowrap">
             لكل صفحة:
@@ -87,14 +86,13 @@ export function UsersPagination({
           </Select>
         </div>
 
-        {/* The current page number */}
-        <div className="text-xs font-medium text-foreground">
-          صفحة {page} من {totalPages}
+        {/* No. of the page*/}
+        <div className="text-xs font-medium text-foreground whitespace-nowrap">
+          صفحة {page} من {totalPages || 1}
         </div>
 
-        {/* Forward & Back arrows */}
+        {/* Buttons */}
         <div className="flex items-center gap-1">
-          {/* go to the first */}
           <Button
             variant="outline"
             size="icon"
@@ -106,7 +104,6 @@ export function UsersPagination({
             <ChevronsRight className="w-4 h-4" />
           </Button>
 
-          {/* Previous Page */}
           <Button
             variant="outline"
             size="icon"
@@ -118,25 +115,23 @@ export function UsersPagination({
             <ChevronRight className="w-4 h-4" />
           </Button>
 
-          {/* Next Page */}
           <Button
             variant="outline"
             size="icon"
             className="h-8 w-8"
             onClick={() => handlePageChange(page + 1)}
-            disabled={page >= totalPages}
+            disabled={page >= totalPages || totalPages === 0}
             title="الصفحة التالية"
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
 
-          {/* go to the final page */}
           <Button
             variant="outline"
             size="icon"
             className="h-8 w-8"
             onClick={() => handlePageChange(totalPages)}
-            disabled={page >= totalPages}
+            disabled={page >= totalPages || totalPages === 0}
             title="الصفحة الأخيرة"
           >
             <ChevronsLeft className="w-4 h-4" />
