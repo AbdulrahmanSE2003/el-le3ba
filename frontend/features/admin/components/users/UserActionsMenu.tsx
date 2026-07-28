@@ -20,7 +20,7 @@ export function UserActionsMenu({ userId }: { userId: string }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
+        <DropdownMenuLabel>إجراءات المستخدم</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           className="gap-2 cursor-pointer"

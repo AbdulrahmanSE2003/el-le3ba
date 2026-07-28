@@ -7,19 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-export interface Column<T> {
-  header: React.ReactNode;
-  accessorKey?: keyof T;
-  cell?: (item: T) => React.ReactNode;
-  className?: string;
-}
-
-interface ServerTableProps<T> {
-  columns: Column<T>[];
-  data: T[];
-  emptyMessage?: string;
-}
+import { ServerTableProps } from "../../types/shared";
 
 export function ServerTable<T extends { id: string }>({
   columns,

@@ -2,17 +2,11 @@ import { UserPlus, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UsersKpiCards } from "@/features/admin/components/users/UsersKpiCards";
-import { UsersPagination } from "@/features/admin/components/users/UsersPagination";
-import {
-  GenericFilterBar,
-  FilterConfig,
-} from "@/features/admin/components/shared/GenericFilterBar";
-import {
-  ServerTable,
-  Column,
-} from "@/features/admin/components/shared/ServerTable";
-import { UserActionsMenu } from "@/features/admin/components/shared/UserActionsMenu";
-import { User } from "@/features/admin/types/user";
+import { DataTablePagination } from "@/features/admin/components/shared/DataTablePagination";
+import { GenericFilterBar } from "@/features/admin/components/shared/GenericFilterBar";
+import { ServerTable } from "@/features/admin/components/shared/ServerTable";
+import { UserActionsMenu } from "@/features/admin/components/users/UserActionsMenu";
+import { Column, FilterConfig, User } from "@/features/admin/types/users";
 import { getUsersData } from "@/features/admin/api/shared";
 import {
   HeaderCheckbox,
@@ -199,11 +193,12 @@ export default async function UsersPage({
         </TableSelectionProvider>
 
         {/* Pagination */}
-        <UsersPagination
+        <DataTablePagination
           page={currentPage}
           totalPages={totalPages}
           totalResults={totalResults}
           limit={currentLimit}
+          itemLabel="مستخدم"
         />
       </div>
     </div>

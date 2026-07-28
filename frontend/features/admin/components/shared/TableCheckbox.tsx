@@ -2,20 +2,13 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-
-// Context بسيط للتواصل بين Checkbox الـ Header و Checkboxes الصفوف
-interface TableSelectionContextType {
-  selectedIds: string[];
-  toggleAll: (allIds: string[]) => void;
-  toggleRow: (id: string) => void;
-  isAllSelected: (allIds: string[]) => boolean;
-}
+import { TableSelectionContextType } from "../../types/users";
 
 const TableSelectionContext = createContext<TableSelectionContextType | null>(
   null,
 );
 
-// 1️⃣ Provider نغلف بيه الجدول
+// Provider for wrapping the table
 export function TableSelectionProvider({
   children,
 }: {
@@ -25,9 +18,9 @@ export function TableSelectionProvider({
 
   const toggleAll = (allIds: string[]) => {
     if (selectedIds.length === allIds.length) {
-      setSelectedIds([]); // إلغاء تحديد الكل
+      setSelectedIds([]); // Cancel select all
     } else {
-      setSelectedIds(allIds); // تحديد الكل
+      setSelectedIds(allIds); // Select all
     }
   };
 
@@ -50,7 +43,7 @@ export function TableSelectionProvider({
   );
 }
 
-// Hook لاستخدام الـ Selection في أي مكان (مثلاً أزرار Bulk Delete)
+// Hook for selection for bulk delete
 export function useTableSelection() {
   const context = useContext(TableSelectionContext);
   if (!context) {
@@ -61,7 +54,7 @@ export function useTableSelection() {
   return context;
 }
 
-// 2️⃣ Checkbox للـ Header
+// Header checkbox
 export function HeaderCheckbox({ allIds }: { allIds: string[] }) {
   const { toggleAll, isAllSelected, selectedIds } = useTableSelection();
   const checked = isAllSelected(allIds);
@@ -78,7 +71,7 @@ export function HeaderCheckbox({ allIds }: { allIds: string[] }) {
   );
 }
 
-// 3️⃣ Checkbox لكل صف (Row)
+// Normal rwo checkbox
 export function RowCheckbox({ id }: { id: string }) {
   const { selectedIds, toggleRow } = useTableSelection();
   const checked = selectedIds.includes(id);

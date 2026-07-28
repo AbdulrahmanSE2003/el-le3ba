@@ -12,23 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-export interface FilterOption {
-  value: string;
-  label: string;
-}
-
-export interface FilterConfig {
-  key: string;
-  placeholder: string;
-  options: FilterOption[];
-}
-
-interface GenericFilterBarProps {
-  searchPlaceholder?: string;
-  filters?: FilterConfig[];
-  sortOptions?: FilterOption[];
-}
+import { GenericFilterBarProps } from "../../types/users";
 
 export function GenericFilterBar({
   searchPlaceholder = "بحث...",
