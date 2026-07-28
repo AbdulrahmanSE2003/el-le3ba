@@ -17,7 +17,7 @@ interface Props {
 export default function CustomSelect({ items, placeholder }: Props) {
   return (
     <Select>
-      <SelectTrigger className="bg-background cursor-pointer">
+      <SelectTrigger className="bg-background  dark:text-white cursor-pointer">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

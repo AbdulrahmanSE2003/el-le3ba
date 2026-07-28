@@ -4,7 +4,7 @@ import { paginationBtns } from "../constants/constants";
 
 export function SessionsPagination() {
   return (
-    <div className="flex items-center justify-center p-4 bg-white border border-border rounded-xl shadow-sm text-sm">
+    <div className="flex items-center justify-center p-4 bg-white dark:bg-card border border-border rounded-xl shadow-sm text-sm">
       {paginationBtns.map((btn) => (
         <Button
           key={btn.title}

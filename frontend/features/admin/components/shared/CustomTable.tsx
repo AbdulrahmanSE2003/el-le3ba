@@ -23,7 +23,7 @@ interface Props {
 
 export default function CustomTable({ tableHeaders, sessions }: Props) {
   return (
-    <div className="p-5 bg-white rounded-lg">
+    <div className="p-5 bg-white dark:bg-card rounded-lg">
       <Table className="text-center">
         {/* Table Headers */}
         <TableHeader className="bg-muted/50">
