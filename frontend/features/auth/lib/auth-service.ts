@@ -38,6 +38,14 @@ export async function authenticate(
     maxAge: 60 * 60 * 24 * 30,
     path: "/",
   });
+
+  cookieStore.set("role", role || "", {
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 60 * 60 * 24 * 30,
+    path: "/",
+  });
+
   return {
     success: true,
     message: result.message,
