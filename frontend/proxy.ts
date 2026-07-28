@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_ROUTES = ["/", "/about", "/support", "/privacy", "/terms"];
-const AUTH_ROUTES_PREFIX = ["/login", "/register", "/forgot-password", "/reset-password"];
+const AUTH_ROUTES_PREFIX = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -11,10 +16,14 @@ export function proxy(request: NextRequest) {
   const isPublic = PUBLIC_ROUTES.includes(pathname);
   const isAuthRoute = AUTH_ROUTES_PREFIX.some((p) => pathname.startsWith(p));
 
+  if (token && isPublic) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   // Stale role cookie with no valid token — clear it, don't loop
   if (!token && role) {
     const res = NextResponse.redirect(
-      new URL(isPublic || isAuthRoute ? pathname : "/login", request.url)
+      new URL(isPublic || isAuthRoute ? pathname : "/login", request.url),
     );
     res.cookies.delete("role");
     return res;
@@ -29,7 +38,7 @@ export function proxy(request: NextRequest) {
   // Logged in: keep off auth forms, but public pages stay accessible to everyone
   if (isAuthRoute) {
     return NextResponse.redirect(
-      new URL(role === "admin" ? "/admin" : "/dashboard", request.url)
+      new URL(role === "admin" ? "/admin" : "/dashboard", request.url),
     );
   }
 
