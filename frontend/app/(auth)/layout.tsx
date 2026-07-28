@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
       {/* Theme toggle switch in top corner */}
       <ThemeToggle />
 
-      <div className="shadow-2xl border border-border/20 dark:border-white/5 rounded-lg p-6 sm:p-10 bg-white/95 dark:bg-[#1A1A2E]/95 w-2/5">
+      <div className="w-fit md:w-150 shadow-2xl border border-border/20 dark:border-white/5 rounded-lg p-6 sm:p-10 bg-white/95 dark:bg-[#1A1A2E]/95">
         {children}
       </div>
     </div>
