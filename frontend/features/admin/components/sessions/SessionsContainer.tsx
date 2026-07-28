@@ -2,7 +2,7 @@ import PageHeader from "@/features/admin/components/shared/PageHeader";
 import { SessionsKpiCards } from "@/features/admin/components/sessions/SessionsKpiCards";
 import { SessionsPagination } from "@/features/admin/components/sessions/pagination/SessionsPagination";
 import SessionFilter from "./session-filter/SessionFilter";
-import CustomTable from "../shared/CustomTable";
+import SessionsTable from "./session-table/SessionsTable";
 
 import { sessionsTable } from "./constants/constants";
 
@@ -23,7 +23,7 @@ export default async function SessionsContainer({ searchParams }: PageProps) {
       <div className="space-y-4">
         <SessionFilter />
 
-        <CustomTable
+        <SessionsTable
           tableHeaders={sessionsTable.tableHeaders}
           sessions={sessionsTable.sessions}
         />

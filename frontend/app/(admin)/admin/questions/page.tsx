@@ -1,5 +1,7 @@
+import QuestionsContainer from "@/features/admin/components/questions/QuestionsContainer";
+
 const page = () => {
-  return <div>page</div>;
+  return <QuestionsContainer />;
 };
 
 export default page;

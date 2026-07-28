@@ -7,12 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { SessionStatusBadge } from "../sessions/session-table/SessionStatusBadge";
-import TableActions from "../sessions/session-table/TableActions";
+import { SessionStatusBadge } from "./SessionStatusBadge";
+import TableActions from "./TableActions";
 
 import { formatDate } from "@/components/shared/formatted-date";
 
-import { AdminSession } from "../../types/session";
+import { AdminSession } from "../../../types/session";
 
 import { Trophy } from "lucide-react";
 
@@ -21,7 +21,7 @@ interface Props {
   sessions: AdminSession[];
 }
 
-export default function CustomTable({ tableHeaders, sessions }: Props) {
+export default function SessionsTable({ tableHeaders, sessions }: Props) {
   return (
     <div className="p-5 bg-white dark:bg-card rounded-lg">
       <Table className="text-center">
