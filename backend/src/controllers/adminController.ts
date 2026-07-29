@@ -4,6 +4,7 @@ import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
+import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import { getAll, updateOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
@@ -27,6 +28,13 @@ export const createAdmin = catchAsync(async (req, res, next) => {
   });
 
   newAdmin.password = undefined as any;
+
+  await logAudit({
+    actor: req.user._id,
+    action: "admin.created",
+    target: newAdmin._id,
+    targetModel: "User",
+  });
 
   resHandler(res, 201, "admin", newAdmin);
 });
@@ -230,6 +238,13 @@ export const createUser = catchAsync(async (req, res, next) => {
     password,
     passwordConfirm,
   });
+
+  await logAudit({
+    actor: req.user._id,
+    action: "user.created",
+    target: newUser._id,
+    targetModel: "User",
+  });
   resHandler(res, 201, "user", newUser);
 });
 
@@ -259,8 +274,15 @@ export const updateUser = catchAsync(async (req, res, next) => {
     return next(new AppError("User not found.", 404));
   }
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.updated",
+    target: user._id,
+    targetModel: "User",
+  });
   resHandler(res, 200, "updatedUser", user);
 });
+
 export const deleteUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
@@ -291,5 +313,83 @@ export const deleteUser = catchAsync(async (req, res, next) => {
   user.isActive = false;
   await user.save({ validateBeforeSave: false });
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.deactivated",
+    target: user._id,
+    targetModel: "User",
+  });
   res.status(204).send();
+});
+
+export const adminResetPassword = catchAsync(async (req, res, next) => {
+  const userId = req.params.id;
+  if (!userId)
+    return next(new AppError("Invalid operation, user id is required.", 400));
+
+  const user = await User.findOne({ _id: userId });
+  if (!user)
+    return next(
+      new AppError("Invalid operation, there is no such a user.", 404),
+    );
+
+  user.password = "newPass1234";
+  user.passwordConfirm = "newPass1234";
+  await user.save();
+
+  await logAudit({
+    actor: req.user._id,
+    action: "user.password_reset",
+    target: user._id,
+    targetModel: "User",
+  });
+  res.status(200).json({
+    status: true,
+    message: "Password reset done successfully.",
+  });
+});
+
+export const bulkDeactivateUsers = catchAsync(async (req, res, next) => {
+  const userIds: string[] = req.body.userIds;
+
+  if (!Array.isArray(userIds) || userIds.length === 0) {
+    return next(
+      new AppError("Invalid operation, please provide at least one user.", 400),
+    );
+  }
+
+  const captainMemberships = await TeamMembership.find({
+    userId: { $in: userIds },
+    role: "captain",
+  }).select("userId");
+
+  if (captainMemberships.length) {
+    return next(
+      new AppError(
+        "Invalid operation, One or more selected users are team captains. Transfer ownership first.",
+        400,
+      ),
+    );
+  }
+
+  await TeamMembership.deleteMany({
+    userId: { $in: userIds },
+  });
+
+  const result = await User.updateMany(
+    { _id: { $in: userIds } },
+    { $set: { isActive: false } },
+  );
+
+  await logAudit({
+    actor: req.user._id,
+    action: "user.bulk_deactivated",
+    metadata: {
+      usersCount: result.modifiedCount,
+    },
+  });
+
+  resHandler(res, 200, "bulkDeactivate", {
+    modifiedCount: result.modifiedCount,
+  });
 });

@@ -22,10 +22,15 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  if (userRes.data.userData.role !== "admin") {
-    redirect("/dashboard");
+  const { role } = userRes.data.userData;
+
+  if (role === "superAdmin") {
+    redirect("/super-admin");
   }
 
+  if (role !== "admin") {
+    redirect("/dashboard");
+  }
   const user = userRes.data.userData;
   return (
     <SidebarProvider>

@@ -4,6 +4,7 @@ import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
+import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import { getOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
@@ -100,6 +101,11 @@ export const updateMe = catchAsync(async (req, res, next) => {
   if (!newUser)
     return next(new AppError("Invalid operation, no such user to update", 404));
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.profile_updated",
+    targetModel: "User",
+  });
   resHandler(res, 200, "newUser", newUser);
 });
 
@@ -124,6 +130,12 @@ export const changePassword = catchAsync(async (req, res, next) => {
 
   await user.save();
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.password_changed",
+    targetModel: "User",
+  });
+
   resHandler(res, 200, "user", user);
 });
 
@@ -144,5 +156,11 @@ export const deleteMe = catchAsync(async (req, res, next) => {
   await membership?.deleteOne();
   await user.deleteOne();
   await Notification.deleteMany({ userId: user._id });
+
+  await logAudit({
+    actor: req.user._id,
+    action: "user.deactivated",
+    targetModel: "User",
+  });
   res.status(204).send();
 });

@@ -38,7 +38,14 @@ export function proxy(request: NextRequest) {
   // Logged in: keep off auth forms, but public pages stay accessible to everyone
   if (isAuthRoute) {
     return NextResponse.redirect(
-      new URL(role === "admin" ? "/admin" : "/dashboard", request.url),
+      new URL(
+        role === "admin"
+          ? "/admin"
+          : role === "superAdmin"
+            ? "/super-admin"
+            : "/dashboard",
+        request.url,
+      ),
     );
   }
 

@@ -7,6 +7,7 @@ import { catchAsync } from "../utils/catchAsync";
 import User, { IUser } from "../models/userModel";
 import { sendEmail } from "../utils/sendEmail";
 import resHandler from "../utils/resHandler";
+import { logAudit } from "../utils/AuditLog";
 
 interface AuthRequest extends Request {
   user: IUser;
@@ -55,6 +56,12 @@ export const signUp = catchAsync(
       role: "student",
     });
 
+    await logAudit({
+      actor: newUser._id,
+      action: "user.signup",
+      target: newUser._id,
+      targetModel: "User",
+    });
     createSendToken(newUser, 201, res);
   },
 );
@@ -64,28 +71,31 @@ export const login = catchAsync(
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError("برجاء إدخال الإيميل والباسوورد", 400));
+      return next(new AppError(".برجاء إدخال الإيميل والباسوورد", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+      return next(new AppError(".برجاء إدخال بيانات صحيحة", 401));
     }
 
     if (!user.isActive) {
       return next(
-        new AppError(
-          "Your account has been deactivated. Please contact an administrator.",
-          403,
-        ),
+        new AppError("تم إيقاف حسابك ، برجاء التواصل مع الدعم الفني.", 403),
       );
     }
 
     if (!(await user.correctPassword(password))) {
-      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+      return next(new AppError(".برجاء إدخال بيانات صحيحة", 401));
     }
 
+    await logAudit({
+      actor: user._id,
+      action: "user.login",
+      target: user._id,
+      targetModel: "User",
+    });
     createSendToken(user, 200, res);
   },
 );

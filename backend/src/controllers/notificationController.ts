@@ -1,6 +1,7 @@
 import Notification from "../models/notificationModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
+import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
 
@@ -20,25 +21,54 @@ export const sendNotifications = catchAsync(async (req, res, next) => {
   if (req.body.broadcast) {
     // get all user IDs → insertMany one doc per user
     const users = await User.find({}, "_id");
-    const notifications = users.map((u) => ({
+    const notificationDocs = users.map((u) => ({
       userId: u._id,
       title: req.body.title,
       message: req.body.message,
       isBroadcast: true,
     }));
-    await Notification.insertMany(notifications);
+
+    const insertedNotifications =
+      await Notification.insertMany(notificationDocs);
+
+    await logAudit({
+      actor: req.user._id,
+      action: "notification.broadcast",
+      metadata: {
+        usersCount: notificationDocs.length,
+        title: req.body.title,
+      },
+    });
   } else {
+    const { userIds, title, message } = req.body;
     if (!req.body.userIds)
       return next(
         new AppError("Invalid operation, please provide userIds.", 400),
       );
+
+    if (!title || !message)
+      return next(
+        new AppError(
+          "Invalid operation, please provide message and its title.",
+          400,
+        ),
+      );
     // targeted — req.body.userIds is an array
-    const notifications = req.body.userIds.map((id: string) => ({
+    const notificationDocs = req.body.userIds.map((id: string) => ({
       userId: id,
-      title: req.body.title,
-      message: req.body.message,
+      title,
+      message,
     }));
-    await Notification.insertMany(notifications);
+    const insertedNotifications =
+      await Notification.insertMany(notificationDocs);
+    await logAudit({
+      actor: req.user._id,
+      action: "notification.bulk_sent",
+      metadata: {
+        usersCount: userIds.length,
+        title,
+      },
+    });
   }
 
   res
