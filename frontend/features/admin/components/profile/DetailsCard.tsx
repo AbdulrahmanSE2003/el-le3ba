@@ -9,9 +9,9 @@ const DetailsCard = async () => {
 
   const profile = profileRes.data.userData;
   return (
-    <div className="md:col-span-2 rounded-xl border border-border bg-card p-6 shadow-sm flex flex-col justify-between gap-y-4">
-      <div className="flex flex-col gap-4">
-        <div className="space-y-2 border border-border py-1.5 p-3 rounded-md shadow">
+    <div className="md:col-span-2 rounded-xl max-h-104 border border-border bg-card p-6 shadow-sm  gap-y-4">
+      <div className="flex flex-col justify-between gap-4 h-full">
+        <div className="space-y-2.5 border border-border py-2 p-3 rounded-md shadow">
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
             <User className="size-4" />
             الاسم
@@ -19,7 +19,7 @@ const DetailsCard = async () => {
           <p className="text-sm font-semibold">{profile.name}</p>
         </div>
 
-        <div className="space-y-2 border border-border py-1.5 p-3 rounded-md shadow">
+        <div className="space-y-2.5 border border-border py-2 p-3 rounded-md shadow">
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
             <Mail className="size-4" />
             البريد الإلكتروني
@@ -27,7 +27,7 @@ const DetailsCard = async () => {
           <p className="text-sm font-semibold">{profile.email}</p>
         </div>
 
-        <div className="space-y-2 border border-border py-1.5 p-3 rounded-md shadow">
+        <div className="space-y-2.5 border border-border py-2 p-3 rounded-md shadow">
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
             <ShieldCheck className="size-4" />
             الدور
@@ -39,7 +39,7 @@ const DetailsCard = async () => {
           </p>
         </div>
 
-        <div className="space-y-2 border border-border py-1.5 p-3 rounded-md shadow">
+        <div className="space-y-2.5 border border-border py-2 p-3 rounded-md shadow">
           <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5">
             <Calendar className="size-4" />
             تاريخ إنشاء الحساب

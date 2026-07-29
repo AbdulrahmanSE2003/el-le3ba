@@ -1,6 +1,7 @@
 "use client";
 
-import { Key, Loader, Lock } from "lucide-react";
+import { useState } from "react";
+import { Eye, EyeOff, Key, Loader, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Controller, useForm } from "react-hook-form";
@@ -31,11 +32,23 @@ const FIELDS: {
 ];
 
 const ChangePasswordForm = () => {
+  // State لتتبع حالة إظهار/إخفاء الباسوورد لكل حقل بشكل مستقل
+  const [showPasswords, setShowPasswords] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const togglePasswordVisibility = (name: string) => {
+    setShowPasswords((prev) => ({
+      ...prev,
+      [name]: !prev[name],
+    }));
+  };
+
   const {
     handleSubmit,
     reset,
     control,
-    formState: { isSubmitting, isValid, isDirty },
+    formState: { isSubmitting, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(ProfileFormSchema),
     defaultValues: {
@@ -48,10 +61,9 @@ const ChangePasswordForm = () => {
   async function onSubmit(data: ProfileFormValues) {
     try {
       await api.patch("/users/me/change-password", data);
-
       toast.success("تم تغيير الباسوورد بنجاح.");
-
       reset();
+      setShowPasswords({});
     } catch (error) {
       toast.error(getErrorMessage(error));
     }
@@ -70,42 +82,60 @@ const ChangePasswordForm = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
         <FieldSet>
           <FieldGroup className="gap-y-3">
-            {FIELDS.map((f) => (
-              <Controller
-                key={f.name}
-                name={f.name}
-                control={control}
-                render={({ field, fieldState }) => (
-                  <Field
-                    data-invalid={fieldState.invalid}
-                    className="space-y-1"
-                  >
-                    <FieldLabel htmlFor={f.name}>{f.label}</FieldLabel>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        value={field.value ?? ""}
-                        id={f.name}
-                        type="password"
-                        placeholder="••••••••"
-                        aria-invalid={fieldState.invalid}
-                        className="bg-background pr-9"
-                      />
-                      <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-                    </div>
-                    {fieldState.invalid && (
-                      <FieldError
-                        errors={
-                          fieldState.error
-                            ? [{ message: fieldState.error.message }]
-                            : []
-                        }
-                      />
-                    )}
-                  </Field>
-                )}
-              />
-            ))}
+            {FIELDS.map((f) => {
+              const isVisible = !!showPasswords[f.name];
+
+              return (
+                <Controller
+                  key={f.name}
+                  name={f.name}
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <Field
+                      data-invalid={fieldState.invalid}
+                      className="space-y-1"
+                    >
+                      <FieldLabel htmlFor={f.name}>{f.label}</FieldLabel>
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          id={f.name}
+                          type={isVisible ? "text" : "password"}
+                          placeholder="••••••••"
+                          aria-invalid={fieldState.invalid}
+                          className="bg-background pr-9 pl-9"
+                        />
+                        <Lock className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+
+                        {/* زرار الـ Show/Hide */}
+                        <button
+                          type="button"
+                          onClick={() => togglePasswordVisibility(f.name)}
+                          className="absolute left-3 top-2.5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          tabIndex={-1}
+                        >
+                          {isVisible ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      {fieldState.invalid && (
+                        <FieldError
+                          errors={
+                            fieldState.error
+                              ? [{ message: fieldState.error.message }]
+                              : []
+                          }
+                        />
+                      )}
+                    </Field>
+                  )}
+                />
+              );
+            })}
           </FieldGroup>
         </FieldSet>
 
@@ -114,13 +144,14 @@ const ChangePasswordForm = () => {
             type="button"
             disabled={isSubmitting}
             variant="outline"
-            onClick={() =>
+            onClick={() => {
               reset({
                 oldPassword: "",
                 newPassword: "",
                 newPasswordConfirm: "",
-              })
-            }
+              });
+              setShowPasswords({});
+            }}
           >
             إلغاء
           </Button>
