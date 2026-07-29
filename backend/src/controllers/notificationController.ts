@@ -23,7 +23,6 @@ export const getNotifications = catchAsync(async (req, res) => {
     unreadCount,
   });
 });
-
 export const sendNotifications = catchAsync(async (req, res, next) => {
   const { title, message, broadcast, userIds = [] } = req.body;
 

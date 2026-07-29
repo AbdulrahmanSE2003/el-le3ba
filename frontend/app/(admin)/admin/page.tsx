@@ -3,9 +3,9 @@ import PageHeader from "@/features/admin/components/shared/PageHeader";
 import RecentSessions from "@/features/admin/components/RecentSessions";
 import QuickActions from "@/features/admin/components/QuickActions";
 import DashboardStats from "@/features/admin/components/DashboardStats";
-import { Skeleton } from "@/components/ui/skeleton";
 import RecentSessionsSkeleton from "@/features/admin/components/RecentSessionsSkeleton";
 import { Metadata } from "next";
+import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 
 export const metadata: Metadata = {
   title: "لوحة التحكم | الإدارة",
@@ -22,16 +22,7 @@ const Page = () => {
       />
 
       {/* KPI Stats Grid */}
-      <Suspense
-        fallback={
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Skeleton className={`h-32 w-full`} />
-            <Skeleton className={`h-32 w-full`} />
-            <Skeleton className={`h-32 w-full`} />
-            <Skeleton className={`h-32 w-full`} />
-          </div>
-        }
-      >
+      <Suspense fallback={<StatsCardsSkeleton />}>
         <DashboardStats />
       </Suspense>
 

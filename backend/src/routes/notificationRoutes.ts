@@ -11,10 +11,7 @@ const notificationRoutes = express.Router();
 
 notificationRoutes.use(protect);
 
-notificationRoutes
-  .route("/")
-  .get(getNotifications)
-  .post(restrictTo("admin", "superAdmin"), sendNotifications);
+notificationRoutes.route("/").get(getNotifications);
 notificationRoutes.route("/all").patch(markAllAsRead);
 notificationRoutes.route("/:id").patch(markAsRead);
 

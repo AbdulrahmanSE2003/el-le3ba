@@ -5,6 +5,8 @@ import NotificationFilter from "./notification-filter/NotificationFilter";
 import NotificationsTable from "./notification-table/NotificationsTable";
 
 import { notificationsTable } from "./constants/constants";
+import { Suspense } from "react";
+import StatsCardsSkeleton from "../StatsCardsSkeleton";
 
 export default async function NotificationsContainer() {
   return (
@@ -14,18 +16,20 @@ export default async function NotificationsContainer() {
         description="سجل كل الإشعارات اللي اتبعتت للمستخدمين، الفرق، والمواسم."
       />
 
-      <NotificationsKpiCards />
+      <Suspense fallback={<StatsCardsSkeleton />}>
+        <NotificationsKpiCards />
+      </Suspense>
 
-      <div className="space-y-4">
-        <NotificationFilter />
+      {/* TODO handle skeleton loading */}
+      <Suspense fallback={<div className={``}>ss</div>}>
+        <div className="space-y-4">
+          <NotificationFilter />
 
-        <NotificationsTable
-          tableHeaders={notificationsTable.tableHeaders}
-          notifications={notificationsTable.notifications}
-        />
+          <NotificationsTable />
 
-        <NotificationsPagination />
-      </div>
+          <NotificationsPagination />
+        </div>
+      </Suspense>
     </div>
   );
 }

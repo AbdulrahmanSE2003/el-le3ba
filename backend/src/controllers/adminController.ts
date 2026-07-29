@@ -476,43 +476,47 @@ export const getNotificationCampaign = catchAsync(async (req, res, next) => {
 });
 
 export const getNotificationStats = catchAsync(async (req, res) => {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
-  const [totalCampaigns, broadcastCampaigns, selectedCampaigns, sentToday] =
-    await Promise.all([
-      NotificationCampaign.countDocuments(),
-
-      NotificationCampaign.countDocuments({
-        type: "broadcast",
-      }),
-
-      NotificationCampaign.countDocuments({
-        type: "selected",
-      }),
-
-      NotificationCampaign.countDocuments({
-        createdAt: {
-          $gte: startOfToday,
+  // Run independent DB queries in parallel for better performance
+  const [
+    totalCampaigns,
+    totalNotifications,
+    readNotifications,
+    recipientsAggregate,
+  ] = await Promise.all([
+    NotificationCampaign.countDocuments(),
+    Notification.countDocuments(),
+    Notification.countDocuments({ isRead: true }),
+    NotificationCampaign.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$recipientsCount" },
         },
-      }),
-    ]);
+      },
+    ]),
+  ]);
+
+  // Calculate read rate percentage
+  const readRate =
+    totalNotifications === 0
+      ? 0
+      : Math.round((readNotifications / totalNotifications) * 100).toFixed(1);
+
+  // Safely extract aggregated recipient sum
+  const totalRecipients = recipientsAggregate[0]?.total || 0;
 
   resHandler(res, 200, "stats", {
     totalCampaigns: {
       value: totalCampaigns,
     },
-
-    broadcastCampaigns: {
-      value: broadcastCampaigns,
+    readNotifications: {
+      value: readNotifications,
     },
-
-    selectedCampaigns: {
-      value: selectedCampaigns,
+    readRate: {
+      value: readRate,
     },
-
-    sentToday: {
-      value: sentToday,
+    totalRecipients: {
+      value: totalRecipients,
     },
   });
 });
