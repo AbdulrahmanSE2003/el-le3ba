@@ -28,31 +28,46 @@ export const sendNotifications = catchAsync(async (req, res, next) => {
       isBroadcast: true,
     }));
 
-    const insertedNotifications = await Notification.insertMany(notificationDocs);
+    const insertedNotifications =
+      await Notification.insertMany(notificationDocs);
 
     await logAudit({
       actor: req.user._id,
       action: "notification.broadcast",
-      target: insertedNotifications[0]?._id,
-      targetModel: "Notification",
+      metadata: {
+        usersCount: notificationDocs.length,
+        title: req.body.title,
+      },
     });
   } else {
+    const { userIds, title, message } = req.body;
     if (!req.body.userIds)
       return next(
         new AppError("Invalid operation, please provide userIds.", 400),
       );
+
+    if (!title || !message)
+      return next(
+        new AppError(
+          "Invalid operation, please provide message and its title.",
+          400,
+        ),
+      );
     // targeted — req.body.userIds is an array
     const notificationDocs = req.body.userIds.map((id: string) => ({
       userId: id,
-      title: req.body.title,
-      message: req.body.message,
+      title,
+      message,
     }));
-    const insertedNotifications = await Notification.insertMany(notificationDocs);
+    const insertedNotifications =
+      await Notification.insertMany(notificationDocs);
     await logAudit({
       actor: req.user._id,
-      action: "notification.targeted",
-      target: insertedNotifications[0]?._id,
-      targetModel: "Notification",
+      action: "notification.bulk_sent",
+      metadata: {
+        usersCount: userIds.length,
+        title,
+      },
     });
   }
 

@@ -1,6 +1,8 @@
 import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
 import {
+  adminResetPassword,
+  bulkDeactivateUsers,
   createAdmin,
   createUser,
   deleteUser,
@@ -10,6 +12,7 @@ import {
   getUserStats,
   updateUser,
 } from "../controllers/adminController";
+import { sendNotifications } from "../controllers/notificationController";
 
 const adminRoutes = express.Router();
 
@@ -26,6 +29,9 @@ adminRoutes.route("/dashboard/recent-sessions").get(getRecentSessions);
 
 adminRoutes.route("/users").get(getAllUsers).post(createUser);
 adminRoutes.route("/users/stats").get(getUserStats);
+adminRoutes.route("/users/notifications").post(sendNotifications);
+adminRoutes.route("/users/deactivate").patch(bulkDeactivateUsers);
 adminRoutes.route("/users/:id").patch(updateUser).delete(deleteUser);
+adminRoutes.route("/users/:id/reset-password").patch(adminResetPassword);
 
 export default adminRoutes;

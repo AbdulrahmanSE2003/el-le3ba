@@ -49,6 +49,11 @@ export async function authenticate(
   return {
     success: true,
     message: result.message,
-    redirectPath: role === "admin" ? "/admin/" : "/dashboard",
+    redirectPath:
+      role === "admin"
+        ? "/admin/"
+        : role === "superAdmin"
+          ? "/super-admin"
+          : "/dashboard",
   };
 }

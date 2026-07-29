@@ -57,7 +57,7 @@ export const signUp = catchAsync(
     });
 
     await logAudit({
-      actor: req.user._id,
+      actor: newUser._id,
       action: "user.signup",
       target: newUser._id,
       targetModel: "User",
@@ -94,7 +94,7 @@ export const login = catchAsync(
     }
 
     await logAudit({
-      actor: req.user._id,
+      actor: user._id,
       action: "user.login",
       target: user._id,
       targetModel: "User",
