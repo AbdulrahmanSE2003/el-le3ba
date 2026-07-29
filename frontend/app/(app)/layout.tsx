@@ -19,14 +19,27 @@ async function getProfile() {
 
   const result = await getCurrentUser();
 
-  if (!result.success) return null;
+  if (!result.success) redirect("/login");
   return result.data.userData;
 }
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await getProfile();
+  console.log(user);
+
+  if (!user) redirect("/login");
 
   if (user && !user.avatar) {
     redirect("/select-avatar");
+  }
+
+  const role = user?.role;
+
+  if (role === "superAdmin") {
+    redirect("/super-admin");
+  }
+
+  if (role !== "admin") {
+    redirect("/dashboard");
   }
 
   return (

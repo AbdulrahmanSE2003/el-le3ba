@@ -17,6 +17,7 @@ import { sanitizeInput } from "./middleware/sanitize";
 import path from "path";
 import notificationRoutes from "./routes/notificationRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import superAdminRoutes from "./routes/superAdminRoutes";
 
 const app = express();
 
@@ -73,6 +74,7 @@ app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/questions", questionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/super-admin", superAdminRoutes);
 
 // ── Global error handler ───────────────────────────────────
 app.use(globalErrorHandler);

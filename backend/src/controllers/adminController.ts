@@ -1,5 +1,4 @@
 import Event from "../models/eventModel";
-import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";

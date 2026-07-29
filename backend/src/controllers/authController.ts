@@ -71,26 +71,23 @@ export const login = catchAsync(
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return next(new AppError("برجاء إدخال الإيميل والباسوورد", 400));
+      return next(new AppError(".برجاء إدخال الإيميل والباسوورد", 400));
     }
 
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+      return next(new AppError(".برجاء إدخال بيانات صحيحة", 401));
     }
 
     if (!user.isActive) {
       return next(
-        new AppError(
-          "Your account has been deactivated. Please contact an administrator.",
-          403,
-        ),
+        new AppError("تم إيقاف حسابك ، برجاء التواصل مع الدعم الفني.", 403),
       );
     }
 
     if (!(await user.correctPassword(password))) {
-      return next(new AppError("برجاء إدخال بيانات صحيحة", 401));
+      return next(new AppError(".برجاء إدخال بيانات صحيحة", 401));
     }
 
     await logAudit({
