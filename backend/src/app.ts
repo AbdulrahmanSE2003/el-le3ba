@@ -18,6 +18,7 @@ import path from "path";
 import notificationRoutes from "./routes/notificationRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import superAdminRoutes from "./routes/superAdminRoutes";
+import { AppError } from "./utils/appError";
 
 const app = express();
 
@@ -77,6 +78,10 @@ app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/super-admin", superAdminRoutes);
 
 // ── Global error handler ───────────────────────────────────
+app.all("*path", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server.`, 404));
+});
+
 app.use(globalErrorHandler);
 
 export default app;

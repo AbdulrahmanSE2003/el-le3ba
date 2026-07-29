@@ -3,6 +3,8 @@ import PageHeader from "@/features/admin/components/profile/PageHeader";
 import ProfileOverview from "@/features/admin/components/profile/ProfileOverview";
 import AccountStats from "@/features/admin/components/profile/AccountStats";
 import RecentActivity from "@/features/admin/components/profile/RecentActivity";
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const metadata: Metadata = {
   title: "الملف الشخصي | الإدارة",
@@ -19,6 +21,7 @@ export default function ProfilePage() {
       <PageHeader />
 
       {/* Profile Overview (Password & Details) */}
+
       <ProfileOverview />
 
       {/* Account Statistics */}
