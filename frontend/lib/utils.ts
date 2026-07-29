@@ -40,17 +40,19 @@ export const formatPoints = (
 export const formatCreatedAt = (
   dateInput: string | Date | number,
   locale: "ar-EG" | "en-US" = "ar-EG",
+  useLatinNumbers: boolean = true,
 ): string => {
   if (!dateInput) return "";
 
   const date = new Date(dateInput);
-  // Check for invalid dates
   if (isNaN(date.getTime())) return "";
 
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  // If the date is in the future or less than 5 seconds ago, treat as "Just now"
+  const activeLocale =
+    locale === "ar-EG" && useLatinNumbers ? "ar-EG-u-nu-latn" : locale;
+
   if (diffInSeconds < 5) {
     return locale.startsWith("ar") ? "الآن" : "Just now";
   }
@@ -59,9 +61,8 @@ export const formatCreatedAt = (
   const diffInHours = Math.floor(diffInMinutes / 60);
   const diffInDays = Math.floor(diffInHours / 24);
 
-  // Use relative time formatting for anything newer than 7 days
   if (diffInDays < 7) {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+    const rtf = new Intl.RelativeTimeFormat(activeLocale, { numeric: "auto" });
 
     if (diffInMinutes < 60) {
       return rtf.format(-diffInMinutes, "minute");
@@ -72,8 +73,7 @@ export const formatCreatedAt = (
     return rtf.format(-diffInDays, "day");
   }
 
-  // Fallback to absolute calendar date formatting for older items
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(activeLocale, {
     day: "numeric",
     month: "long",
     year: "numeric",

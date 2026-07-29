@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { GenericFilterBarProps } from "../../types/users";
+import { GenericFilterBarProps } from "../../types/shared";
 
 export function GenericFilterBar({
   searchPlaceholder = "بحث...",
@@ -58,6 +58,7 @@ export function GenericFilterBar({
       router.push(pathname);
     });
   };
+  const currentSortValue = searchParams.get("sortBy") || sortOptions[0]?.value;
 
   return (
     <div className="bg-card border border-border p-4 rounded-xl shadow-sm">
@@ -100,7 +101,7 @@ export function GenericFilterBar({
           {/* Sort (opt)*/}
           {sortOptions.length > 0 && (
             <Select
-              value={searchParams.get("sortBy") || "default"}
+              value={currentSortValue}
               onValueChange={(val) => updateUrl("sortBy", val)}
             >
               <SelectTrigger className="w-[140px] bg-background">
