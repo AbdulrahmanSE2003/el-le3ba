@@ -10,6 +10,7 @@ export interface StatCardItem {
   id?: string | number;
   title: string;
   value: string | number | React.ReactNode;
+  change?: number;
   icon: LucideIcon;
   iconClassName?: string;
   bgClassName?: string;

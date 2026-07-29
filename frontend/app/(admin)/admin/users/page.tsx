@@ -6,14 +6,20 @@ import { DataTablePagination } from "@/features/admin/components/shared/DataTabl
 import { GenericFilterBar } from "@/features/admin/components/shared/GenericFilterBar";
 import { ServerTable } from "@/features/admin/components/shared/ServerTable";
 import { UserActionsMenu } from "@/features/admin/components/users/UserActionsMenu";
-import { Column, FilterConfig, User } from "@/features/admin/types/users";
-import { getUsersData } from "@/features/admin/api/shared";
+import { Column, FilterConfig } from "@/features/admin/types/shared";
+import { User } from "@/features/admin/types/users";
+import { getAllUsers } from "@/features/admin/api/shared";
 import {
   HeaderCheckbox,
   RowCheckbox,
   TableSelectionProvider,
 } from "@/features/admin/components/shared/TableCheckbox";
 import PageHeader from "@/features/admin/components/shared/PageHeader";
+import { Suspense } from "react";
+import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
+import Error from "@/app/error";
+import { formatCreatedAt } from "@/lib/utils";
+import UsersTableSkeleton from "@/features/admin/components/users/UsersTableSkeleton";
 
 // Filters & Sorting
 const userFilters: FilterConfig[] = [
@@ -22,25 +28,25 @@ const userFilters: FilterConfig[] = [
     placeholder: "فلتر حسب الدور",
     options: [
       { value: "all", label: "كل الأدوار" },
-      { value: "Admin", label: "Admin" },
-      { value: "Player", label: "Player" },
+      { value: "admin", label: "Admin" },
+      { value: "student", label: "Player" },
     ],
   },
   {
-    key: "status",
-    placeholder: "فلتر حسب الحالة",
+    key: "hasTeam",
+    placeholder: "فلتر حسب الفريق",
     options: [
-      { value: "all", label: "كل الحالات" },
-      { value: "Active", label: "نشط (Active)" },
-      { value: "Banned", label: "محظور (Banned)" },
+      { value: "all", label: "الكل" },
+      { value: "true", label: "في فريق" },
+      { value: "false", label: "بدون فريق" },
     ],
   },
 ];
 
 const userSortOptions = [
-  { value: "default", label: "الافتراضي" },
-  { value: "alphabetical", label: "ترتيب أبجدي" },
-  { value: "points", label: "ترتيب بالنقط" },
+  { value: "-createdAt", label: "الأحدث" },
+  { value: "createdAt", label: "الأقدم" },
+  { value: "name", label: "الاسم (أبجدي)" },
 ];
 
 export default async function UsersPage({
@@ -53,43 +59,37 @@ export default async function UsersPage({
     limit = "10",
     search = "",
     role = "all",
-    status = "all",
-    sortBy = "default",
+    hasTeam = "all",
+    sortBy = "-createdAt",
   } = await searchParams;
 
-  // const allUsers = await getUsersData();
-  const allUsers = getUsersData;
+  // Fetch API Data directly from backend
+  const usersRes = await getAllUsers({
+    page: Number(page),
+    limit: Number(limit),
+    search,
+    role,
+    hasTeam,
+    sort: sortBy,
+  });
 
-  const filteredUsers = allUsers
-    .filter((user) => {
-      const matchesSearch =
-        user.name.toLowerCase().includes(search.toLowerCase()) ||
-        user.email.toLowerCase().includes(search.toLowerCase());
-      const matchesRole = role === "all" || user.role === role;
-      const matchesStatus = status === "all" || user.status === status;
-      return matchesSearch && matchesRole && matchesStatus;
-    })
-    .sort((a, b) => {
-      if (sortBy === "alphabetical") return a.name.localeCompare(b.name);
-      if (sortBy === "points") return b.points - a.points;
-      return 0;
-    });
+  if (!usersRes.success) return <Error />;
 
-  const currentPage = Number(page);
-  const currentLimit = Number(limit);
-  const totalResults = filteredUsers.length;
-  const totalPages = Math.ceil(totalResults / currentLimit) || 1;
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * currentLimit,
-    currentPage * currentLimit,
-  );
-  const allUserIds = paginatedUsers.map((u) => u.id);
+  const {
+    users = [],
+    totalPages = 1,
+    totalResults = 0,
+    page: currentPage = 1,
+    limit: currentLimit = 10,
+  } = usersRes.data.users;
+
+  const allUserIds = users.map((u) => u._id);
 
   const columns: Column<User>[] = [
     {
       header: <HeaderCheckbox allIds={allUserIds} />,
       className: "w-12 text-center",
-      cell: (user) => <RowCheckbox id={user.id} />,
+      cell: (user) => <RowCheckbox id={user._id} />,
     },
     {
       header: "بيانات المستخدم",
@@ -106,12 +106,12 @@ export default async function UsersPage({
         <Badge
           variant="outline"
           className={
-            user.role === "Admin"
+            user.role === "admin"
               ? "bg-destructive/10 text-destructive border-destructive/20"
               : "bg-primary/10 text-primary border-primary/20"
           }
         >
-          {user.role === "Admin" ? "أدمن" : "لاعب"}
+          {user.role === "admin" ? "أدمن" : "لاعب"}
         </Badge>
       ),
     },
@@ -120,26 +120,29 @@ export default async function UsersPage({
       cell: (user) => (
         <Badge
           className={
-            user.status === "Active"
+            user.isActive
               ? "bg-brand-success/15 text-brand-success border-none flex items-center w-max gap-1.5"
               : "bg-destructive/15 text-destructive border-none flex items-center w-max gap-1.5"
           }
         >
           <span
-            className={`w-1.5 h-1.5 rounded-full ${user.status === "Active" ? "bg-brand-success" : "bg-destructive"}`}
+            className={`w-1.5 h-1.5 rounded-full ${user.isActive ? "bg-brand-success" : "bg-destructive"}`}
           />
-          {user.status === "Active" ? "نشط" : "محظور"}
+          {user.isActive ? "نشط" : "محظور"}
         </Badge>
       ),
     },
+
     {
       header: "بيانات التيم",
       cell: (user) =>
-        user.teamName !== "-" ? (
+        user.team ? (
           <div className="text-xs">
-            <span className="font-medium text-foreground">{user.teamName}</span>
-            <span className="text-muted-foreground block text-[11px]">
-              {user.teamCode}
+            <span className="font-medium text-foreground">
+              {user.team.teamName}
+            </span>
+            <span dir="rtl" className="text-muted-foreground block text-[11px]">
+              #{user.team.teamCode}
             </span>
           </div>
         ) : (
@@ -147,24 +150,26 @@ export default async function UsersPage({
         ),
     },
     {
-      header: "النقاط",
-      cell: (user) => (
-        <div className="flex items-center gap-1 text-xs font-semibold text-foreground">
-          <Trophy className="w-4 h-4 text-accent" />
-          <span>{user.points}</span>
-        </div>
-      ),
+      header: "تاريخ الاضافة",
+      cell: (user) =>
+        user.createdAt ? (
+          <div className="text-xs font-medium text-foreground">
+            {formatCreatedAt(user.createdAt, "ar-EG")}
+          </div>
+        ) : (
+          <span className="text-muted-foreground text-xs">-</span>
+        ),
     },
     {
       header: "الإجراءات",
       className: "text-center",
-      cell: (user) => <UserActionsMenu userId={user.id} />,
+      cell: (user) => <UserActionsMenu userId={user._id} />,
     },
   ];
 
   return (
     <div className="p-6 space-y-8 dir-rtl text-right font-body">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-3">
         <PageHeader
           title="إدارة المستخدمين"
           description="قم بإدارة المستخدمين بطريقة فعالة"
@@ -173,8 +178,9 @@ export default async function UsersPage({
           <UserPlus className="w-4 h-4" /> إضافة مستخدم جديد +
         </Button>
       </div>
-
-      <UsersKpiCards />
+      <Suspense fallback={<StatsCardsSkeleton />}>
+        <UsersKpiCards />
+      </Suspense>
       <div className="space-y-4">
         {/* filters & Sorting */}
         <GenericFilterBar
@@ -184,13 +190,15 @@ export default async function UsersPage({
         />
 
         {/* Table */}
-        <TableSelectionProvider>
-          <ServerTable
-            columns={columns}
-            data={paginatedUsers}
-            emptyMessage="لا يوجد مستخدمين..."
-          />
-        </TableSelectionProvider>
+        <Suspense fallback={<UsersTableSkeleton />}>
+          <TableSelectionProvider>
+            <ServerTable
+              columns={columns}
+              data={users}
+              emptyMessage="لا يوجد مستخدمين..."
+            />
+          </TableSelectionProvider>
+        </Suspense>
 
         {/* Pagination */}
         <DataTablePagination

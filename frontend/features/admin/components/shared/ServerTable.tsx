@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/table";
 import { ServerTableProps } from "../../types/shared";
 
-export function ServerTable<T extends { id: string }>({
+export function ServerTable<T extends { _id: string }>({
   columns,
   data,
   emptyMessage = "لا توجد بيانات متاحة.",
@@ -42,7 +42,7 @@ export function ServerTable<T extends { id: string }>({
           ) : (
             data.map((item) => (
               <TableRow
-                key={item.id}
+                key={item._id}
                 className="border-border hover:bg-muted/30 transition-colors"
               >
                 {columns.map((col, idx) => (
