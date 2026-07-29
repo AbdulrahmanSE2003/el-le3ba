@@ -408,36 +408,42 @@ export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
   const {
     search,
     type,
-    sort = "-createdAt",
+    sort = "default",
   } = req.query as Record<string, string>;
 
-  const filter: any = {};
+  const filter: Record<string, any> = {};
 
-  if (type) {
-    filter.type = type;
+  // Handle Type Filter (matches notificationTypes: 'broadcast' | 'selected')
+  if (type && type !== "all") {
+    filter.targetType = type; // or `filter.type = type` depending on your schema field name
   }
 
+  // Handle Search Filter
   if (search) {
     filter.$or = [
-      {
-        title: {
-          $regex: search,
-          $options: "i",
-        },
-      },
-      {
-        message: {
-          $regex: search,
-          $options: "i",
-        },
-      },
+      { title: { $regex: search, $options: "i" } },
+      { message: { $regex: search, $options: "i" } },
     ];
+  }
+
+  // Handle Sort Mapping (matches notificationsSortBy)
+  let sortOption: Record<string, 1 | -1> = { createdAt: -1 }; // Default: 'default' & 'recent'
+
+  if (sort === "recipients") {
+    sortOption = { recipientsCount: -1 };
+  } else if (sort === "recent" || sort === "default") {
+    sortOption = { createdAt: -1 };
+  } else {
+    // Fallback for custom sort strings passed directly (e.g. "-createdAt")
+    const isDesc = sort.startsWith("-");
+    const field = isDesc ? sort.slice(1) : sort;
+    sortOption = { [field]: isDesc ? -1 : 1 };
   }
 
   const [campaigns, totalResults] = await Promise.all([
     NotificationCampaign.find(filter)
       .populate("createdBy", "name")
-      .sort(sort)
+      .sort(sortOption)
       .skip(skip)
       .limit(limit)
       .lean(),
@@ -454,26 +460,27 @@ export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
   });
 });
 
-export const getNotificationCampaign = catchAsync(async (req, res, next) => {
-  const campaign = await NotificationCampaign.findById(req.params.id)
-    .populate("createdBy", "name email")
-    .lean();
+// TODO TOggle this if needed
+// export const getNotificationCampaign = catchAsync(async (req, res, next) => {
+//   const campaign = await NotificationCampaign.findById(req.params.id)
+//     .populate("createdBy", "name email")
+//     .lean();
 
-  if (!campaign) {
-    return next(new AppError("Campaign not found.", 404));
-  }
+//   if (!campaign) {
+//     return next(new AppError("Campaign not found.", 404));
+//   }
 
-  const recipients = await Notification.find({
-    campaignId: campaign._id,
-  })
-    .populate("userId", "name email")
-    .lean();
+//   const recipients = await Notification.find({
+//     campaignId: campaign._id,
+//   })
+//     .populate("userId", "name email")
+//     .lean();
 
-  resHandler(res, 200, "campaign", {
-    campaign,
-    recipients,
-  });
-});
+//   resHandler(res, 200, "campaign", {
+//     campaign,
+//     recipients,
+//   });
+// });
 
 export const getNotificationStats = catchAsync(async (req, res) => {
   // Run independent DB queries in parallel for better performance

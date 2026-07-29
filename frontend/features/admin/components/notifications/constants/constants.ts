@@ -64,10 +64,13 @@ export const notificationsKpis = [
 
 export const notificationTypes = [
   { label: "كل الأنواع", value: "all" },
-  { label: "تنبيه عام", value: "announcement" },
-  { label: "تذكير بمباراة", value: "match_reminder" },
-  { label: "تحذير / حظر", value: "warning" },
-  { label: "إنجاز", value: "achievement" },
+  { label: "برودكاست", value: "broadcast" },
+  { label: "أشخاص محددين", value: "selected" },
+];
+export const notificationsSortBy = [
+  { value: "default", label: "افتراضي" },
+  { value: "recent", label: "الأحدث" },
+  { value: "recipients", label: "الأكثر مستلمين" },
 ];
 
 export const notificationAudiences = [
@@ -83,12 +86,6 @@ export const notificationStatuses = [
   { label: "اترسل", value: "sent" },
   { label: "مجدول", value: "scheduled" },
   { label: "فشل", value: "failed" },
-];
-
-export const notificationsSortBy = [
-  { value: "recent", label: "الأحدث" },
-  { value: "readRate", label: "الأعلى قراءة" },
-  { value: "recipients", label: "الأكثر مستلمين" },
 ];
 
 export const notificationsTable = {

@@ -4,7 +4,6 @@ import { NotificationsPagination } from "@/features/admin/components/notificatio
 import NotificationFilter from "./notification-filter/NotificationFilter";
 import NotificationsTable from "./notification-table/NotificationsTable";
 
-import { notificationsTable } from "./constants/constants";
 import { Suspense } from "react";
 import StatsCardsSkeleton from "../StatsCardsSkeleton";
 

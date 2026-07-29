@@ -10,7 +10,6 @@ import {
   getAllNotificationCampaigns,
   getAllUsers,
   getDashboardStats,
-  getNotificationCampaign,
   getNotificationStats,
   getRecentSessions,
   getUserStats,
@@ -33,7 +32,7 @@ adminRoutes
 adminRoutes.route("/notifications/stats").get(getNotificationStats);
 adminRoutes
   .route("/notifications/:id")
-  .get(getNotificationCampaign)
+  // .get(getNotificationCampaign) // TODO Toggle this if needed
   .delete(deleteNotificationCampaign);
 
 // ==================================================
