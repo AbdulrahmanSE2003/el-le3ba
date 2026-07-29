@@ -5,9 +5,12 @@ import {
   bulkDeactivateUsers,
   createAdmin,
   createUser,
+  deleteNotificationCampaign,
   deleteUser,
+  getAllNotificationCampaigns,
   getAllUsers,
   getDashboardStats,
+  getNotificationStats,
   getRecentSessions,
   getUserStats,
   updateUser,
@@ -22,6 +25,15 @@ adminRoutes.use(restrictTo("admin", "superAdmin"));
 adminRoutes.route("/").post(createAdmin);
 adminRoutes.route("/dashboard/stats").get(getDashboardStats);
 adminRoutes.route("/dashboard/recent-sessions").get(getRecentSessions);
+adminRoutes
+  .route("/notifications")
+  .get(getAllNotificationCampaigns)
+  .post(sendNotifications);
+adminRoutes.route("/notifications/stats").get(getNotificationStats);
+adminRoutes
+  .route("/notifications/:id")
+  // .get(getNotificationCampaign) // TODO Toggle this if needed
+  .delete(deleteNotificationCampaign);
 
 // ==================================================
 // ================= User Dashboard =================

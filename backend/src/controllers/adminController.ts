@@ -1,4 +1,6 @@
 import Event from "../models/eventModel";
+import NotificationCampaign from "../models/NotificationCampaignModel";
+import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
@@ -392,4 +394,159 @@ export const bulkDeactivateUsers = catchAsync(async (req, res, next) => {
   resHandler(res, 200, "bulkDeactivate", {
     modifiedCount: result.modifiedCount,
   });
+});
+
+// ==================================================
+// ============= Notification Dashboard =============
+// ==================================================
+
+export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const limit = Math.max(Number(req.query.limit) || 10, 1);
+  const skip = (page - 1) * limit;
+
+  const {
+    search,
+    type,
+    sort = "default",
+  } = req.query as Record<string, string>;
+
+  const filter: Record<string, any> = {};
+
+  // Handle Type Filter (matches notificationTypes: 'broadcast' | 'selected')
+  if (type && type !== "all") {
+    filter.targetType = type; // or `filter.type = type` depending on your schema field name
+  }
+
+  // Handle Search Filter
+  if (search) {
+    filter.$or = [
+      { title: { $regex: search, $options: "i" } },
+      { message: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  // Handle Sort Mapping (matches notificationsSortBy)
+  let sortOption: Record<string, 1 | -1> = { createdAt: -1 }; // Default: 'default' & 'recent'
+
+  if (sort === "recipients") {
+    sortOption = { recipientsCount: -1 };
+  } else if (sort === "recent" || sort === "default") {
+    sortOption = { createdAt: -1 };
+  } else {
+    // Fallback for custom sort strings passed directly (e.g. "-createdAt")
+    const isDesc = sort.startsWith("-");
+    const field = isDesc ? sort.slice(1) : sort;
+    sortOption = { [field]: isDesc ? -1 : 1 };
+  }
+
+  const [campaigns, totalResults] = await Promise.all([
+    NotificationCampaign.find(filter)
+      .populate("createdBy", "name")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+
+    NotificationCampaign.countDocuments(filter),
+  ]);
+
+  resHandler(res, 200, "campaigns", {
+    campaigns,
+    page,
+    limit,
+    totalPages: Math.ceil(totalResults / limit),
+    totalResults,
+  });
+});
+
+// TODO TOggle this if needed
+// export const getNotificationCampaign = catchAsync(async (req, res, next) => {
+//   const campaign = await NotificationCampaign.findById(req.params.id)
+//     .populate("createdBy", "name email")
+//     .lean();
+
+//   if (!campaign) {
+//     return next(new AppError("Campaign not found.", 404));
+//   }
+
+//   const recipients = await Notification.find({
+//     campaignId: campaign._id,
+//   })
+//     .populate("userId", "name email")
+//     .lean();
+
+//   resHandler(res, 200, "campaign", {
+//     campaign,
+//     recipients,
+//   });
+// });
+
+export const getNotificationStats = catchAsync(async (req, res) => {
+  // Run independent DB queries in parallel for better performance
+  const [
+    totalCampaigns,
+    totalNotifications,
+    readNotifications,
+    recipientsAggregate,
+  ] = await Promise.all([
+    NotificationCampaign.countDocuments(),
+    Notification.countDocuments(),
+    Notification.countDocuments({ isRead: true }),
+    NotificationCampaign.aggregate([
+      {
+        $group: {
+          _id: null,
+          total: { $sum: "$recipientsCount" },
+        },
+      },
+    ]),
+  ]);
+
+  // Calculate read rate percentage
+  const readRate =
+    totalNotifications === 0
+      ? 0
+      : Math.round((readNotifications / totalNotifications) * 100).toFixed(1);
+
+  // Safely extract aggregated recipient sum
+  const totalRecipients = recipientsAggregate[0]?.total || 0;
+
+  resHandler(res, 200, "stats", {
+    totalCampaigns: {
+      value: totalCampaigns,
+    },
+    readNotifications: {
+      value: readNotifications,
+    },
+    readRate: {
+      value: readRate,
+    },
+    totalRecipients: {
+      value: totalRecipients,
+    },
+  });
+});
+
+export const deleteNotificationCampaign = catchAsync(async (req, res, next) => {
+  const campaign = await NotificationCampaign.findById(req.params.id);
+
+  if (!campaign) {
+    return next(new AppError("Campaign not found.", 404));
+  }
+
+  await Notification.deleteMany({
+    campaignId: campaign._id,
+  });
+
+  await campaign.deleteOne();
+
+  await logAudit({
+    actor: req.user._id,
+    action: "notification.deleted",
+    target: campaign._id,
+    targetModel: "NotificationCampaign",
+  });
+
+  res.status(204).send();
 });

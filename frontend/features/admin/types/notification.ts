@@ -25,3 +25,38 @@ export interface AdminNotification {
   scheduledFor: string | null;
   createdAt: string;
 }
+
+export interface NotificationsStatsRes {
+  status: boolean;
+  stats: {
+    totalCampaigns: { value: number };
+    readNotifications: { value: number };
+    readRate: { value: number };
+    totalRecipients: { value: number };
+  };
+}
+
+export interface NotificationCampaign {
+  _id: string;
+  title: string;
+  message: string;
+  type: string;
+  recipientsCount: number;
+  createdBy: {
+    _id: string;
+    name: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface NotificationCampaignsRes {
+  campaigns: {
+    campaigns: NotificationCampaign[];
+    page: number;
+    limit: number;
+    totalPages: number;
+    totalResults: number;
+  };
+}

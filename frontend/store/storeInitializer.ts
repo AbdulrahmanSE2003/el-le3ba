@@ -6,6 +6,7 @@ import { useUserStore, User } from "./userStore";
 
 export default function StoreInitializer({ user }: { user: User | null }) {
   const initialized = useRef(false);
+  console.log(user);
 
   useEffect(() => {
     if (!initialized.current && user) {

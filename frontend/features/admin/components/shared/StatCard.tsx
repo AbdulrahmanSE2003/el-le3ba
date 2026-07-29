@@ -37,7 +37,7 @@ const StatCard = ({
       </div>
 
       <span className="mt-2 block text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
-        {value}
+        {value || 0}
       </span>
 
       <div className="mt-3 flex items-center justify-between">

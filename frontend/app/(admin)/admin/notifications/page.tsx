@@ -7,7 +7,11 @@ export const metadata: Metadata = {
 };
 
 const page = () => {
-  return <NotificationsContainer />;
+  return (
+    <section>
+      <NotificationsContainer />
+    </section>
+  );
 };
 
 export default page;

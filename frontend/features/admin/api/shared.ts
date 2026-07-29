@@ -2,6 +2,10 @@ import { RecentSession } from "@/shared/api/helpers";
 import { serverFetch } from "@/shared/api/server";
 import { cache } from "react";
 import { Team } from "../types/teams";
+import {
+  NotificationCampaignsRes,
+  NotificationsStatsRes,
+} from "../types/notification";
 
 // Interfaces
 interface DashboardStatsRes {
@@ -36,6 +40,14 @@ export const getDashboardRecentSessions = cache(async () =>
   serverFetch<DashboardRecentSessions>({
     url: "admin/dashboard/recent-sessions",
   }),
+);
+
+export const getNotificationsStats = cache(async () =>
+  serverFetch<NotificationsStatsRes>({ url: "admin/notifications/stats" }),
+);
+
+export const getAllNotifications = cache(async () =>
+  serverFetch<NotificationCampaignsRes>({ url: "admin/notifications" }),
 );
 
 // Dummy Users Data

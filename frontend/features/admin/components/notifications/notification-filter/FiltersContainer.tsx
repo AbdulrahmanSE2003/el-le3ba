@@ -16,7 +16,7 @@ export default function FiltersContainer() {
     <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
       <CustomSelect placeholder="فلتر حسب النوع" items={notificationTypes} />
 
-      <CustomSelect
+      {/* <CustomSelect
         placeholder="فلتر حسب الجمهور"
         items={notificationAudiences}
       />
@@ -24,7 +24,7 @@ export default function FiltersContainer() {
       <CustomSelect
         placeholder="فلتر حسب الحالة"
         items={notificationStatuses}
-      />
+      /> */}
 
       <CustomSelect placeholder="الترتيب" items={notificationsSortBy} />
 
