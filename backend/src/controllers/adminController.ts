@@ -1,3 +1,4 @@
+import AuditLog from "../models/AuditLogModel";
 import Event from "../models/eventModel";
 import NotificationCampaign from "../models/NotificationCampaignModel";
 import Notification from "../models/notificationModel";
@@ -8,7 +9,6 @@ import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
-import { getAll, updateOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 import { getGrowthStats } from "../utils/utils";
 
@@ -549,4 +549,38 @@ export const deleteNotificationCampaign = catchAsync(async (req, res, next) => {
   });
 
   res.status(204).send();
+});
+
+// ==================================================
+// ================ Profile Account =================
+// ==================================================
+
+export const getProfileStats = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+
+  const [user, totalActions, totalNotifications, totalQuestions] =
+    await Promise.all([
+      User.findById(userId),
+
+      AuditLog.countDocuments({
+        actor: userId,
+      }),
+
+      AuditLog.countDocuments({
+        actor: userId,
+        targetModel: "NotificationCampaign",
+      }),
+
+      AuditLog.countDocuments({
+        actor: userId,
+        targetModel: "Question",
+      }),
+    ]);
+
+  resHandler(res, 200, "profileStats", {
+    lastLogin: user?.lastLoginAt ?? null,
+    totalActions,
+    totalNotifications,
+    totalQuestions,
+  });
 });

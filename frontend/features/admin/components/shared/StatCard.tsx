@@ -2,7 +2,7 @@ import { LucideIcon, TrendingDown, TrendingUp } from "lucide-react";
 
 interface Stat {
   title: string;
-  Icon: LucideIcon;
+  Icon?: LucideIcon;
   value: string | number;
   description?: string;
   change?: number;
@@ -28,12 +28,13 @@ const StatCard = ({
     >
       <div className="flex items-center justify-between">
         <h4 className="text-md font-medium text-foreground">{title}</h4>
-
-        <div
-          className={`rounded-lg bg-muted p-2 text-foreground transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground ${iconClassName}`}
-        >
-          <Icon className="h-4 w-4" />
-        </div>
+        {Icon && (
+          <div
+            className={`rounded-lg bg-muted p-2 text-foreground transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground ${iconClassName}`}
+          >
+            <Icon className="h-4 w-4" />
+          </div>
+        )}
       </div>
 
       <span className="mt-2 block text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
