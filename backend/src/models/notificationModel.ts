@@ -4,17 +4,20 @@ export interface INotification extends Document {
   title: string;
   message: string;
   userId: Types.ObjectId;
+  campaignId: Types.ObjectId;
   isRead: boolean;
   isBroadcast: boolean;
 }
 
 const notificationSchema = new Schema<INotification>(
   {
-    title: { type: String, required: true },
-    message: { type: String, required: true },
     userId: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+    campaignId: {
+      type: Schema.ObjectId,
+      ref: "NotificationCampaign",
+      required: true,
+    },
     isRead: { type: Boolean, default: false },
-    isBroadcast: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

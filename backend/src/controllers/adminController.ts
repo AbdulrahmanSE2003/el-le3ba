@@ -1,4 +1,5 @@
 import Event from "../models/eventModel";
+import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
@@ -391,5 +392,30 @@ export const bulkDeactivateUsers = catchAsync(async (req, res, next) => {
 
   resHandler(res, 200, "bulkDeactivate", {
     modifiedCount: result.modifiedCount,
+  });
+});
+
+// ==================================================
+// ============= Notification Dashboard =============
+// ==================================================
+
+export const getNotificationStats = catchAsync(async (req, res) => {
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  const [total, unread, broadcast, today] = await Promise.all([
+    Notification.countDocuments(),
+    Notification.countDocuments({ isRead: false }),
+    Notification.countDocuments({ isBroadcast: true }),
+    Notification.countDocuments({
+      createdAt: { $gte: startOfToday },
+    }),
+  ]);
+
+  resHandler(res, 200, "stats", {
+    totalNotifications: total,
+    unreadNotifications: unread,
+    broadcastNotifications: broadcast,
+    notificationsToday: today,
   });
 });

@@ -8,6 +8,7 @@ import {
   deleteUser,
   getAllUsers,
   getDashboardStats,
+  getNotificationStats,
   getRecentSessions,
   getUserStats,
   updateUser,
@@ -22,6 +23,7 @@ adminRoutes.use(restrictTo("admin", "superAdmin"));
 adminRoutes.route("/").post(createAdmin);
 adminRoutes.route("/dashboard/stats").get(getDashboardStats);
 adminRoutes.route("/dashboard/recent-sessions").get(getRecentSessions);
+adminRoutes.route("/notifications/stats").get(getNotificationStats);
 
 // ==================================================
 // ================= User Dashboard =================
