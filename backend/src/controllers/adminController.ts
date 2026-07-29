@@ -1,4 +1,5 @@
 import Event from "../models/eventModel";
+import NotificationCampaign from "../models/NotificationCampaignModel";
 import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
@@ -399,23 +400,142 @@ export const bulkDeactivateUsers = catchAsync(async (req, res, next) => {
 // ============= Notification Dashboard =============
 // ==================================================
 
+export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const limit = Math.max(Number(req.query.limit) || 10, 1);
+  const skip = (page - 1) * limit;
+
+  const {
+    search,
+    type,
+    sort = "-createdAt",
+  } = req.query as Record<string, string>;
+
+  const filter: any = {};
+
+  if (type) {
+    filter.type = type;
+  }
+
+  if (search) {
+    filter.$or = [
+      {
+        title: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        message: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+    ];
+  }
+
+  const [campaigns, totalResults] = await Promise.all([
+    NotificationCampaign.find(filter)
+      .populate("createdBy", "name")
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+
+    NotificationCampaign.countDocuments(filter),
+  ]);
+
+  resHandler(res, 200, "campaigns", {
+    campaigns,
+    page,
+    limit,
+    totalPages: Math.ceil(totalResults / limit),
+    totalResults,
+  });
+});
+
+export const getNotificationCampaign = catchAsync(async (req, res, next) => {
+  const campaign = await NotificationCampaign.findById(req.params.id)
+    .populate("createdBy", "name email")
+    .lean();
+
+  if (!campaign) {
+    return next(new AppError("Campaign not found.", 404));
+  }
+
+  const recipients = await Notification.find({
+    campaignId: campaign._id,
+  })
+    .populate("userId", "name email")
+    .lean();
+
+  resHandler(res, 200, "campaign", {
+    campaign,
+    recipients,
+  });
+});
+
 export const getNotificationStats = catchAsync(async (req, res) => {
   const startOfToday = new Date();
   startOfToday.setHours(0, 0, 0, 0);
 
-  const [total, unread, broadcast, today] = await Promise.all([
-    Notification.countDocuments(),
-    Notification.countDocuments({ isRead: false }),
-    Notification.countDocuments({ isBroadcast: true }),
-    Notification.countDocuments({
-      createdAt: { $gte: startOfToday },
-    }),
-  ]);
+  const [totalCampaigns, broadcastCampaigns, selectedCampaigns, sentToday] =
+    await Promise.all([
+      NotificationCampaign.countDocuments(),
+
+      NotificationCampaign.countDocuments({
+        type: "broadcast",
+      }),
+
+      NotificationCampaign.countDocuments({
+        type: "selected",
+      }),
+
+      NotificationCampaign.countDocuments({
+        createdAt: {
+          $gte: startOfToday,
+        },
+      }),
+    ]);
 
   resHandler(res, 200, "stats", {
-    totalNotifications: total,
-    unreadNotifications: unread,
-    broadcastNotifications: broadcast,
-    notificationsToday: today,
+    totalCampaigns: {
+      value: totalCampaigns,
+    },
+
+    broadcastCampaigns: {
+      value: broadcastCampaigns,
+    },
+
+    selectedCampaigns: {
+      value: selectedCampaigns,
+    },
+
+    sentToday: {
+      value: sentToday,
+    },
   });
+});
+
+export const deleteNotificationCampaign = catchAsync(async (req, res, next) => {
+  const campaign = await NotificationCampaign.findById(req.params.id);
+
+  if (!campaign) {
+    return next(new AppError("Campaign not found.", 404));
+  }
+
+  await Notification.deleteMany({
+    campaignId: campaign._id,
+  });
+
+  await campaign.deleteOne();
+
+  await logAudit({
+    actor: req.user._id,
+    action: "notification.deleted",
+    target: campaign._id,
+    targetModel: "NotificationCampaign",
+  });
+
+  res.status(204).send();
 });
