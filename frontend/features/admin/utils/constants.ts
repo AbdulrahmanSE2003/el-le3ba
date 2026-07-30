@@ -21,6 +21,7 @@ import {
   Users,
   LucideIcon,
   UserX,
+  LogsIcon,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -62,6 +63,11 @@ export const adminNavItems: NavItem[] = [
     title: "المباريات",
     href: "/admin/sessions",
     icon: Play,
+  },
+  {
+    title: "الإجراءات",
+    href: "/admin/logs",
+    icon: LogsIcon,
   },
   {
     title: "الإعدادات",
