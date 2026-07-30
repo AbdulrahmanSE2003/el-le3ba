@@ -1,45 +1,82 @@
-// STATIC DATA
-
 import { Separator } from "@/components/ui/separator";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Shield } from "lucide-react";
+import { getRecentAdmins } from "../api/shared";
+import Error from "@/app/error";
+import { formatCreatedAt } from "@/lib/utils";
 
-const NEWEST_ADMINS = [
-  { id: "1", name: "عبدو", role: "مسؤول", created: "اليوم" },
-  { id: "2", name: "أحمد", role: "مسؤول", created: "أمس" },
-];
+const NewAdmins = async () => {
+  const recentAdminsRes = await getRecentAdmins();
+  if (!recentAdminsRes.success) return <Error />;
 
-const NewAdmins = () => {
+  const recentAdmins = recentAdminsRes.data.recentAdmins;
+
   return (
-    <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
-      <h2 className="text-base font-semibold">أحدث المسؤولين</h2>
+    <div className="rounded-xl border border-border bg-card p-5 md:p-6 shadow-sm flex flex-col gap-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-base font-semibold">أحدث المسؤولين</h2>
+      </div>
+
       <Separator className="bg-border" />
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm text-right">
-          <thead>
-            <tr className="border-b border-border text-xs text-muted-foreground">
-              <th className="pb-3 font-medium">الاسم</th>
-              <th className="pb-3 font-medium">الدور</th>
-              <th className="pb-3 font-medium">تاريخ الإنشاء</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border">
-            {NEWEST_ADMINS.map((admin) => (
-              <tr key={admin.id} className="group">
-                <td className="py-3 font-medium text-foreground">
+      <div className="overflow-x-auto -mx-2 px-2">
+        <Table className={`p-2`}>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead className="text-center py-3 text-xs font-semibold text-muted-foreground">
+                الاسم
+              </TableHead>
+              <TableHead className="text-center py-3 text-xs font-semibold text-muted-foreground">
+                الإيميل
+              </TableHead>
+              <TableHead className="text-center py-3 text-xs font-semibold text-muted-foreground">
+                الدور
+              </TableHead>
+              <TableHead className="text-center py-3 text-xs font-semibold text-muted-foreground">
+                تاريخ الإنضمام
+              </TableHead>
+              <TableHead className="text-center py-3 text-xs font-semibold text-muted-foreground">
+                آخر تسجيل دخول
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {recentAdmins.map((admin) => (
+              <TableRow
+                key={admin._id}
+                className="transition-colors hover:bg-muted/30 text-center"
+              >
+                <TableCell className="font-medium text-foreground py-3.5 px-3 text-sm">
                   {admin.name}
-                </td>
-                <td className="py-3">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                </TableCell>
+                <TableCell className="font-medium text-foreground py-3.5 px-3 text-sm">
+                  {admin.email}
+                </TableCell>
+                <TableCell className="py-3.5 px-3">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary capitalize">
                     <Shield className="h-3 w-3" />
                     {admin.role}
                   </span>
-                </td>
-                <td className="py-3 text-muted-foreground">{admin.created}</td>
-              </tr>
+                </TableCell>
+                <TableCell className="text-muted-foreground py-3.5 px-3 text-xs">
+                  {formatCreatedAt(admin.createdAt)}
+                </TableCell>
+                <TableCell className="text-muted-foreground py-3.5 px-3 text-xs">
+                  {admin?.lastLoginAt
+                    ? formatCreatedAt(admin.lastLoginAt)
+                    : "--"}
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

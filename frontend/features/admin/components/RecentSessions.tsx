@@ -45,7 +45,7 @@ export default async function RecentSessions() {
 
   return (
     <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
-      <div className="flex items-center justify-between border-b p-6">
+      <div className="flex items-center justify-between border-b mb-2 p-6">
         <div className={`space-y-1`}>
           <h2 className="text-lg font-semibold">المباريات الأخيرة</h2>
           <p className="text-xs text-muted-foreground">
@@ -62,9 +62,9 @@ export default async function RecentSessions() {
       </div>
 
       <ScrollArea dir="rtl" className="h-104 p-0 border-0 rounded-md ">
-        <Table className={`overflow-x-scroll`}>
+        <Table className={`overflow-x-scroll rounded-t-0`}>
           <TableHeader>
-            <TableRow>
+            <TableRow className={`bg-muted`}>
               <TableHead className="text-center">الفريق</TableHead>
               <TableHead className="text-center">الموسم</TableHead>
               <TableHead className="text-center">النقاط</TableHead>

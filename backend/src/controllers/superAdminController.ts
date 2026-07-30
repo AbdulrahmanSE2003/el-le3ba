@@ -38,15 +38,15 @@ export const createSuperAdmin = catchAsync(async (req, res, next) => {
 
 export const getAppStats = catchAsync(async (req, res, next) => {
   const [totalAdmins, totalLogs, totalLogins, totalUsers] = await Promise.all([
-    await User.countDocuments({ role: "admin" }),
+    User.countDocuments({ role: "admin" }),
 
-    await AuditLog.countDocuments(),
+    AuditLog.countDocuments(),
 
-    await AuditLog.countDocuments({
+    AuditLog.countDocuments({
       action: "user.login",
     }),
 
-    await User.countDocuments(),
+    User.countDocuments(),
   ]);
 
   resHandler(res, 200, "appStats", {
@@ -71,4 +71,14 @@ export const getRecentAdminLogs = catchAsync(async (req, res, next) => {
     .populate("actor", "name email avatar role");
 
   resHandler(res, 200, "recentLogs", recentLogs);
+});
+
+export const getRecentAdmins = catchAsync(async (req, res, next) => {
+  const recentAdmins = await User.find({
+    role: "admin",
+  })
+    .sort("-createdAt")
+    .limit(5);
+
+  resHandler(res, 200, "recentAdmins", recentAdmins);
 });

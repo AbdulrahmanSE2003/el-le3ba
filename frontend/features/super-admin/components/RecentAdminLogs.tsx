@@ -1,39 +1,7 @@
-import { LogIn, UserPlus, BellRing, UserX } from "lucide-react";
 import { getRecentAdminsLogs } from "../api/shared";
 import Error from "@/app/error";
 import { formatCreatedAt, getLogActionDetails } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const RECENT_ACTIVITIES = [
-  {
-    id: "1",
-    text: "سجل عبدو دخوله إلى النظام",
-    time: "اليوم",
-    icon: LogIn,
-    color: "text-emerald-500 bg-emerald-500/10",
-  },
-  {
-    id: "2",
-    text: "أرسل أحمد إشعارًا عامًا",
-    time: "اليوم",
-    icon: BellRing,
-    color: "text-purple-500 bg-purple-500/10",
-  },
-  {
-    id: "3",
-    text: "أنشأ عمر حساب مسؤول جديد",
-    time: "أمس",
-    icon: UserPlus,
-    color: "text-blue-500 bg-blue-500/10",
-  },
-  {
-    id: "4",
-    text: "قام أحمد بتعطيل حساب مستخدم",
-    time: "منذ يومين",
-    icon: UserX,
-    color: "text-rose-500 bg-rose-500/10",
-  },
-];
 
 const RecentAdminLogs = async () => {
   const recentLogsRes = await getRecentAdminsLogs();

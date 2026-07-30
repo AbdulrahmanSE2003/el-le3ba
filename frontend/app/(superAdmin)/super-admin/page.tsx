@@ -28,7 +28,9 @@ export default function SuperAdminDashboard() {
       <MainContent />
 
       {/* Newest Admins Table */}
-      <NewAdmins />
+      <Suspense fallback={<div className={``}>ss</div>}>
+        <NewAdmins />
+      </Suspense>
     </div>
   );
 }

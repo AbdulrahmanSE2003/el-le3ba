@@ -26,3 +26,24 @@ export interface RecentLog {
 export interface RecentAdminLogsRes {
   recentLogs: RecentLog[];
 }
+
+export interface RecentAdmin {
+  lastLoginAt: string | null;
+  _id: string;
+  name: string;
+  email: string;
+  avatar: string | null;
+  role: string;
+  isActive: true;
+  currentStreak: 0;
+  bestStreak: 0;
+  totalScore: 0;
+  gamesPlayed: 0;
+  createdAt: string;
+  updatedAt: string;
+  __v: 0;
+}
+
+export interface RecentAdminsRes {
+  recentAdmins: RecentAdmin[];
+}
