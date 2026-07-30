@@ -2,23 +2,26 @@ import { NavItem } from "@/components/sidebar/types";
 import {
   BadgeQuestionMark,
   Bell,
-  CalendarCheck2,
   CalendarCog,
   CalendarDaysIcon,
   FileText,
   LayoutDashboard,
   Medal,
   Play,
-  Radio,
   Settings,
   Settings2Icon,
   ShieldAlert,
-  Timer,
   UserCog,
+  BellDot,
+  BellRing,
+  FileQuestion,
+  LogIn,
+  Pencil,
   UserPlus,
   Users,
+  LucideIcon,
+  UserX,
 } from "lucide-react";
-
 export const adminNavItems: NavItem[] = [
   {
     title: "لوحة الإدارة",
@@ -112,3 +115,51 @@ export const quickActions = [
   },
 ];
 
+export interface ActionConfig {
+  icon: LucideIcon;
+  title: string;
+  color: string;
+}
+
+export const ACTIONS: Record<string, ActionConfig> = {
+  "user.login": {
+    icon: LogIn,
+    title: "تسجيل دخول",
+    color: "text-blue-500 bg-blue-500/10",
+  },
+  "notification.broadcast": {
+    icon: BellRing,
+    title: "إشعار عام",
+    color: "text-purple-500 bg-purple-500/10",
+  },
+  "notification.bulk_sent": {
+    icon: BellDot,
+    title: "إشعار لمستخدمين محددين",
+    color: "text-indigo-500 bg-indigo-500/10",
+  },
+  "question.bulk_created": {
+    icon: FileQuestion,
+    title: "إضافة أسئلة",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
+  "user.created": {
+    icon: UserPlus,
+    title: "إضافة مستخدم",
+    color: "text-green-500 bg-green-500/10",
+  },
+  "user.updated": {
+    icon: Pencil,
+    title: "تعديل مستخدم",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "user.deactivated": {
+    icon: UserX,
+    title: "تعطيل مستخدم",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "team.created": {
+    icon: Users,
+    title: "إنشاء فريق",
+    color: "text-cyan-500 bg-cyan-500/10",
+  },
+};

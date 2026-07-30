@@ -460,7 +460,7 @@ export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
   });
 });
 
-// TODO TOggle this if needed
+// TODO Toggle this if needed
 // export const getNotificationCampaign = catchAsync(async (req, res, next) => {
 //   const campaign = await NotificationCampaign.findById(req.params.id)
 //     .populate("createdBy", "name email")
@@ -555,7 +555,7 @@ export const deleteNotificationCampaign = catchAsync(async (req, res, next) => {
 // ================ Profile Account =================
 // ==================================================
 
-export const getProfileStats = catchAsync(async (req, res) => {
+export const getProfileStats = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
   const [user, totalActions, totalNotifications, totalQuestions] =
@@ -583,4 +583,16 @@ export const getProfileStats = catchAsync(async (req, res) => {
     totalNotifications,
     totalQuestions,
   });
+});
+
+export const getProfileRecentLogs = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  const recentLogs = await AuditLog.find({
+    actor: userId,
+  })
+    .limit(5)
+    .sort("-createdAt");
+
+  resHandler(res, 200, "recentLogs", recentLogs);
 });

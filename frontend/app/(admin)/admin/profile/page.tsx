@@ -5,6 +5,7 @@ import AccountStats from "@/features/admin/components/profile/AccountStats";
 import RecentActivity from "@/features/admin/components/profile/RecentActivity";
 import { Suspense } from "react";
 import AccountStatsSkeleton from "@/features/admin/components/profile/AccountStatsSkeleton";
+import RecentActivitySkeleton from "@/features/admin/components/profile/RecentActivitySkeleton";
 
 export const metadata: Metadata = {
   title: "الملف الشخصي | الإدارة",
@@ -13,23 +14,19 @@ export const metadata: Metadata = {
 
 export default function ProfilePage() {
   return (
-    <section
-      className="flex flex-col gap-y-6 text-foreground bg-background dir-rtl"
-      dir="rtl"
-    >
+    <section className="flex flex-col gap-y-6 text-foreground bg-background dir-rtl">
       {/* Page Header */}
       <PageHeader />
-
       {/* Profile Overview (Password & Details) */}
       <ProfileOverview />
-
       {/* Account Statistics */}
       <Suspense fallback={<AccountStatsSkeleton />}>
         <AccountStats />
       </Suspense>
-
       {/* Recent Activity */}
-      <RecentActivity />
+      <Suspense fallback={<RecentActivitySkeleton />}>
+        <RecentActivity />
+      </Suspense>{" "}
     </section>
   );
 }

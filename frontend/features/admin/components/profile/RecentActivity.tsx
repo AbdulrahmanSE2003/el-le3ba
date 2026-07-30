@@ -1,14 +1,14 @@
 import { Separator } from "@/components/ui/separator";
 import { Activity } from "lucide-react";
+import { getRecentLogs } from "../../api/shared";
+import Error from "@/app/error";
+import { formatCreatedAt, getLogActionDetails } from "@/lib/utils";
 
-const recentActivities = [
-  { action: "تسجيل دخول للنظام", time: "منذ 5 دقائق" },
-  { action: "إنشاء حدث جديد", time: "أمس" },
-  { action: "تعديل بيانات المستخدم أحمد", time: "منذ يومين" },
-  { action: "إرسال إشعار عام", time: "منذ 3 أيام" },
-];
+const RecentActivity = async () => {
+  const recentLogsRes = await getRecentLogs();
+  if (!recentLogsRes.success) return <Error />;
 
-const RecentActivity = () => {
+  const recentLogs = recentLogsRes.data.recentLogs;
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
       <div className="flex items-center gap-2">
@@ -18,18 +18,34 @@ const RecentActivity = () => {
       <Separator className="bg-border" />
 
       <div className="divide-y divide-border">
-        {recentActivities.map((act, idx) => (
-          <div
-            key={idx}
-            className="flex items-center justify-between py-3 text-sm first:pt-0 last:pb-0"
-          >
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-primary" />
-              <span className="font-medium text-foreground">{act.action}</span>
+        {recentLogs.map((log) => {
+          const { icon: Icon, title, color } = getLogActionDetails(log.action);
+
+          return (
+            <div
+              key={log._id}
+              className="flex items-center justify-between py-3 text-sm first:pt-0 last:pb-0 transition-colors hover:bg-muted/30 px-2 rounded-lg"
+            >
+              <div className="flex items-center gap-3">
+                <div className={`p-2 rounded-lg ${color}`}>
+                  <Icon className="h-4 w-4" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-medium text-foreground">{title}</span>
+                  {log.action && (
+                    <span className="text-xs text-muted-foreground">
+                      {log.action}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {formatCreatedAt(log.createdAt)}
+              </span>
             </div>
-            <span className="text-xs text-muted-foreground">{act.time}</span>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

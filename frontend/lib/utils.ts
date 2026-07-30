@@ -1,4 +1,6 @@
+import { ActionConfig, ACTIONS } from "@/features/admin/utils/constants";
 import { clsx, type ClassValue } from "clsx";
+import { HelpCircle } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -78,4 +80,14 @@ export const formatCreatedAt = (
     month: "long",
     year: "numeric",
   }).format(date);
+};
+
+export const getLogActionDetails = (action: string): ActionConfig => {
+  return (
+    ACTIONS[action] || {
+      icon: HelpCircle,
+      title: action,
+      color: "text-muted-foreground bg-muted",
+    }
+  );
 };

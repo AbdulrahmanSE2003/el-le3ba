@@ -11,6 +11,7 @@ import {
   getAllUsers,
   getDashboardStats,
   getNotificationStats,
+  getProfileRecentLogs,
   getProfileStats,
   getRecentSessions,
   getUserStats,
@@ -44,6 +45,11 @@ adminRoutes.route("/users/deactivate").patch(bulkDeactivateUsers);
 adminRoutes.route("/users/:id").patch(updateUser).delete(deleteUser);
 adminRoutes.route("/users/:id/reset-password").patch(adminResetPassword);
 
+// ==================================================
+// ================ Profile Account =================
+// ==================================================
+
 adminRoutes.route("/profile/stats").get(getProfileStats);
+adminRoutes.route("/profile/recent-logs").get(getProfileRecentLogs);
 
 export default adminRoutes;

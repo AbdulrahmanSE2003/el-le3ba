@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
 import ChangePasswordForm from "./ChangePasswordForm";
 import DetailsCard from "./DetailsCard";
+import DetailsCardSkeleton from "./DetailsCardSkeleton";
 
 const ProfileOverview = () => {
   return (
@@ -10,7 +10,7 @@ const ProfileOverview = () => {
       <ChangePasswordForm />
 
       {/* Details Card */}
-      <Suspense fallback={<Skeleton className={`h-104 w-full`} />}>
+      <Suspense fallback={<DetailsCardSkeleton />}>
         <DetailsCard />
       </Suspense>
     </div>

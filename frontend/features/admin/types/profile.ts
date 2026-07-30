@@ -1,3 +1,5 @@
+import { RecentLog } from "./shared";
+
 export interface ProfileStatsRes {
   profileStats: {
     lastLogin: Date;
@@ -5,4 +7,7 @@ export interface ProfileStatsRes {
     totalNotifications: number;
     totalQuestions: number;
   };
+}
+export interface ProfileRecentLogs {
+  recentLogs: RecentLog[];
 }

@@ -6,7 +6,7 @@ import {
   NotificationCampaignsRes,
   NotificationsStatsRes,
 } from "../types/notification";
-import { ProfileStatsRes } from "../types/profile";
+import { ProfileRecentLogs, ProfileStatsRes } from "../types/profile";
 
 // Interfaces
 interface DashboardStatsRes {
@@ -54,6 +54,11 @@ export const getAllNotifications = cache(async () =>
 export const getProfileStats = cache(async () =>
   serverFetch<ProfileStatsRes>({ url: "admin/profile/stats" }),
 );
+
+export const getRecentLogs = cache(async () =>
+  serverFetch<ProfileRecentLogs>({ url: "/admin/profile/recent-logs" }),
+);
+
 // Dummy Users Data
 export const getUsersData = [
   {
