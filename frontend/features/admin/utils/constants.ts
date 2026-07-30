@@ -21,7 +21,6 @@ import {
   Users,
   LucideIcon,
   UserX,
-  LogsIcon,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -63,11 +62,6 @@ export const adminNavItems: NavItem[] = [
     title: "المباريات",
     href: "/admin/sessions",
     icon: Play,
-  },
-  {
-    title: "الإجراءات",
-    href: "/admin/logs",
-    icon: LogsIcon,
   },
   {
     title: "الإعدادات",
@@ -169,3 +163,28 @@ export const ACTIONS: Record<string, ActionConfig> = {
     color: "text-cyan-500 bg-cyan-500/10",
   },
 };
+
+import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
+
+export const superAdminNav = [
+  {
+    title: "اللوحة الرئيسية",
+    href: "/super-admin",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "المشرفون",
+    href: "/super-admin/admins",
+    icon: UserRoundCog,
+  },
+  {
+    title: "سجل الإجراءات",
+    href: "/super-admin/logs",
+    icon: ClipboardList,
+  },
+  // {
+  //   title: "Profile",
+  //   href: "/super-admin/profile",
+  //   icon: Shield,
+  // },
+];
