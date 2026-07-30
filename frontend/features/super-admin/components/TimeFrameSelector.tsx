@@ -27,7 +27,7 @@ const TimeFrameSelector = () => {
         <Button
           variant="outline"
           size="sm"
-          className="h-9 gap-2 border-border bg-background px-3 text-xs font-medium"
+          className="h-9 gap-2 border-border bg-background px-3 text-xs font-medium border border-accent"
         >
           <Calendar className="h-3.5 w-3.5 text-primary" />
           <span>{selectedTimeframe}</span>

@@ -14,7 +14,7 @@ export default function SuperAdminDashboard() {
             لوحة تحكم المسؤول الرئيسي
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            نظرة عامة على نشاط النظام والإحصائيات الحالية
+            نظرة عامة على نشاط النظام والإحصائيات الحالية داخل اللعبة
           </p>
         </div>
       </div>

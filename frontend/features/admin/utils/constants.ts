@@ -21,6 +21,7 @@ import {
   Users,
   LucideIcon,
   UserX,
+  KeyRound,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -161,6 +162,11 @@ export const ACTIONS: Record<string, ActionConfig> = {
     icon: Users,
     title: "إنشاء فريق",
     color: "text-cyan-500 bg-cyan-500/10",
+  },
+  "user.password_changed": {
+    icon: KeyRound,
+    title: "تغيير كلمة المرور",
+    color: "text-amber-500 bg-amber-500/10",
   },
 };
 

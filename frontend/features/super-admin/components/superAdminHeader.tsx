@@ -19,7 +19,7 @@ export function SuperAdminHeader({ name }: { name: string }) {
       </div>
 
       {/* Left Side: Timeframe Selector & Actions */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 ">
         {/* Timeframe Filter Dropdown */}
         <TimeFrameSelector />
 
@@ -27,7 +27,7 @@ export function SuperAdminHeader({ name }: { name: string }) {
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 text-muted-foreground hover:text-foreground"
+          className="h-9 w-9 text-muted-foreground hover:text-foreground border border-accent"
         >
           <Bell className="h-4 w-4" />
         </Button>

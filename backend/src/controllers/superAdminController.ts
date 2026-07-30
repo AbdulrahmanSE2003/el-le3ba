@@ -56,3 +56,19 @@ export const getAppStats = catchAsync(async (req, res, next) => {
     totalUsers,
   });
 });
+
+export const getRecentAdminLogs = catchAsync(async (req, res, next) => {
+  const adminIds = await User.find(
+    { role: { $in: ["admin", "superAdmin"] } },
+    "_id",
+  );
+
+  const recentLogs = await AuditLog.find({
+    actor: { $in: adminIds.map((u) => u._id) },
+  })
+    .sort({ createdAt: -1 })
+    .limit(20)
+    .populate("actor", "name email avatar role");
+
+  resHandler(res, 200, "recentLogs", recentLogs);
+});

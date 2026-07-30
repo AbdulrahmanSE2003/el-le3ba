@@ -13,7 +13,7 @@ const AdminProfile = ({ name }: { name: string }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-9 gap-2 px-2">
+        <Button variant="ghost" className="h-9 gap-2 px-2 border border-accent">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-muted font-bold text-xs text-foreground uppercase">
             {name.slice(0, 2)}
           </div>
