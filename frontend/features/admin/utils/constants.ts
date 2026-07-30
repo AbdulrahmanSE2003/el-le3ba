@@ -182,9 +182,9 @@ export const superAdminNav = [
     href: "/super-admin/logs",
     icon: ClipboardList,
   },
-  // {
-  //   title: "Profile",
-  //   href: "/super-admin/profile",
-  //   icon: Shield,
-  // },
+  {
+    title: "الملف الشخصي",
+    href: "/super-admin/profile",
+    icon: Shield,
+  },
 ];

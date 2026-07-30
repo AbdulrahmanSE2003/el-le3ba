@@ -1,3 +1,4 @@
+import AuditLog from "../models/AuditLogModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
@@ -33,4 +34,25 @@ export const createSuperAdmin = catchAsync(async (req, res, next) => {
   });
 
   resHandler(res, 201, "superAdmin", superAdmin);
+});
+
+export const getAppStats = catchAsync(async (req, res, next) => {
+  const [totalAdmins, totalLogs, totalLogins, totalUsers] = await Promise.all([
+    await User.countDocuments({ role: "admin" }),
+
+    await AuditLog.countDocuments(),
+
+    await AuditLog.countDocuments({
+      action: "user.login",
+    }),
+
+    await User.countDocuments(),
+  ]);
+
+  resHandler(res, 200, "appStats", {
+    totalAdmins,
+    totalLogs,
+    totalLogins,
+    totalUsers,
+  });
 });

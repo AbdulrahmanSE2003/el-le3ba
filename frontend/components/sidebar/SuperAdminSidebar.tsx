@@ -4,9 +4,9 @@ import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 
 import { SidebarBrand } from "./SidebarBrand";
 import { SidebarFooterActions } from "./SidebarFooterActions";
-import { SidebarNav } from "./SidebarNav";
 import SidebarWrapper from "./SidebarWrapper";
 import { superAdminNav } from "@/features/admin/utils/constants";
+import { SuperAdminSidebarNav } from "./SuperAdminSideNav";
 
 export function SuperAdminSidebar() {
   return (
@@ -15,7 +15,7 @@ export function SuperAdminSidebar() {
         <SidebarBrand variant="admin" />
 
         <SidebarContent className="min-h-0 flex-1 overflow-hidden">
-          <SidebarNav items={superAdminNav} />
+          <SuperAdminSidebarNav items={superAdminNav} />
         </SidebarContent>
 
         <SidebarFooterActions className="mt-auto" />
