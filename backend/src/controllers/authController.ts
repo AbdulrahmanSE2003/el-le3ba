@@ -90,6 +90,9 @@ export const login = catchAsync(
       return next(new AppError(".برجاء إدخال بيانات صحيحة", 401));
     }
 
+    user.lastLoginAt = new Date();
+    await user.save({ validateBeforeSave: false });
+
     await logAudit({
       actor: user._id,
       action: "user.login",

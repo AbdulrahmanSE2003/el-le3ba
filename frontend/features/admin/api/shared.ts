@@ -6,6 +6,7 @@ import {
   NotificationCampaignsRes,
   NotificationsStatsRes,
 } from "../types/notification";
+import { ProfileRecentLogs, ProfileStatsRes } from "../types/profile";
 import {
   GetUsersQueryParams,
   GetUsersResponse,
@@ -55,6 +56,13 @@ export const getAllNotifications = cache(async () =>
   serverFetch<NotificationCampaignsRes>({ url: "admin/notifications" }),
 );
 
+export const getProfileStats = cache(async () =>
+  serverFetch<ProfileStatsRes>({ url: "admin/profile/stats" }),
+);
+
+export const getRecentLogs = cache(async () =>
+  serverFetch<ProfileRecentLogs>({ url: "/admin/profile/recent-logs" }),
+);
 // =====================================================================================
 export const getUsersStats = cache(async () =>
   serverFetch<GetUserStatsRes>({ url: "admin/users/stats" }),
@@ -78,6 +86,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 
   return serverFetch<GetUsersResponse>({ url });
 });
+
 
 // Dummy Users Data
 // export const getUsersData = [

@@ -41,16 +41,19 @@ export default async function AdminLayout({
           <span className="font-display text-sm text-foreground">
             لوحة المشرف
           </span>
-          <Avatar asChild className={`mr-auto group hover:border-border`}>
-            <Link href={"/admin/profile"} className={`cursor-pointer`}>
-              <AvatarImage src={user.avatar || ""} />
-              <AvatarFallback
-                className={`text-muted-foreground group-hover:text-foreground transition-colors duration-300`}
-              >
-                {user.name.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Link>
-          </Avatar>
+          <div className={`mr-auto flex items-center gap-3`}>
+            <span className={`text-xs `}> الملف الشخصي</span>{" "}
+            <Avatar asChild className={` group hover:border-border`}>
+              <Link href={"/admin/profile"} className={`cursor-pointer`}>
+                <AvatarImage src={user.avatar || ""} />
+                <AvatarFallback
+                  className={`text-muted-foreground group-hover:text-foreground transition-colors duration-300`}
+                >
+                  {user.name.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Link>
+            </Avatar>
+          </div>
         </header>
         <section className="flex-1 overflow-auto p-4 md:p-6">
           {children}

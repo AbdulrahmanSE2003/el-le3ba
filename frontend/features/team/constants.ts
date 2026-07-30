@@ -1,15 +1,19 @@
 import {
-  Trophy,
-  Flame,
-  Gamepad2,
-  Star,
+  BellDot,
+  BellRing,
+  FileQuestion,
+  LogIn,
+  Pencil,
+  UserPlus,
+  Users,
+  UserX,
   CheckCircle,
   Clock,
   AlertTriangle,
   XCircle,
+  LucideIcon,
 } from "lucide-react";
-import { sessionsType, StatItem } from "./types";
-import { formatNumber } from "@/components/shared/numbers-format";
+import { sessionsType } from "./types";
 
 export const ACHIEVEMENTS_POOL = [
   {
@@ -49,7 +53,6 @@ export const ACHIEVEMENTS_POOL = [
     rarity: "rare",
   },
 ];
-
 
 export const sessions: sessionsType[] = [
   {

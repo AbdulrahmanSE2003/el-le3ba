@@ -11,6 +11,8 @@ import {
   getAllUsers,
   getDashboardStats,
   getNotificationStats,
+  getProfileRecentLogs,
+  getProfileStats,
   getRecentSessions,
   getUserStats,
   updateUser,
@@ -30,10 +32,7 @@ adminRoutes
   .get(getAllNotificationCampaigns)
   .post(sendNotifications);
 adminRoutes.route("/notifications/stats").get(getNotificationStats);
-adminRoutes
-  .route("/notifications/:id")
-  // .get(getNotificationCampaign) // TODO Toggle this if needed
-  .delete(deleteNotificationCampaign);
+adminRoutes.route("/notifications/:id").delete(deleteNotificationCampaign);
 
 // ==================================================
 // ================= User Dashboard =================
@@ -45,5 +44,12 @@ adminRoutes.route("/users/notifications").post(sendNotifications);
 adminRoutes.route("/users/deactivate").patch(bulkDeactivateUsers);
 adminRoutes.route("/users/:id").patch(updateUser).delete(deleteUser);
 adminRoutes.route("/users/:id/reset-password").patch(adminResetPassword);
+
+// ==================================================
+// ================ Profile Account =================
+// ==================================================
+
+adminRoutes.route("/profile/stats").get(getProfileStats);
+adminRoutes.route("/profile/recent-logs").get(getProfileRecentLogs);
 
 export default adminRoutes;

@@ -60,3 +60,13 @@ export interface TableSelectionContextType {
   toggleRow: (id: string) => void;
   isAllSelected: (allIds: string[]) => boolean;
 }
+
+export interface RecentLog {
+  _id: string;
+  actor: string;
+  action: string;
+  target: string;
+  targetModel: string;
+  createdAt: string;
+  __v: number;
+}

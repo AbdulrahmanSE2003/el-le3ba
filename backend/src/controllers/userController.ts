@@ -122,7 +122,7 @@ export const changePassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Invalid operation, no such a user found.", 400));
 
   if (!(await user.correctPassword(oldPassword)))
-    return next(new AppError("Invalid operation, password is incorrect.", 400));
+    return next(new AppError("برجاء ادخال باسوورد صحيح.", 400));
 
   user.password = newPassword;
   user.passwordConfirm = newPasswordConfirm;

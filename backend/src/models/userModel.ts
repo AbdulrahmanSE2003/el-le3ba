@@ -12,6 +12,7 @@ export interface IUser extends Document {
   avatar?: string;
   role: "student" | "admin" | "superAdmin";
   isActive: boolean;
+  lastLoginAt: Date | null;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   passwordChangedAt?: Date;
@@ -79,6 +80,8 @@ const userSchema = new mongoose.Schema<IUser>(
       type: Boolean,
       default: true,
     },
+
+    lastLoginAt: { type: Date, default: null },
 
     currentStreak: { type: Number, default: 0 },
     bestStreak: { type: Number, default: 0 },

@@ -1,7 +1,12 @@
 import axios from "axios";
 import { toast } from "sonner";
 
-import { isAuthError, isForbiddenError, isServerError, extractErrorMessage } from "./errors";
+import {
+  isAuthError,
+  isForbiddenError,
+  isServerError,
+  extractErrorMessage,
+} from "./errors";
 
 const api = axios.create({
   baseURL: "/api/proxy",
@@ -37,5 +42,19 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export function getErrorMessage(error: unknown): string {
+  if (axios.isAxiosError(error)) {
+    return (
+      error.response?.data?.message ?? error.message ?? "Something went wrong."
+    );
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return "Something went wrong.";
+}
 
 export default api;
