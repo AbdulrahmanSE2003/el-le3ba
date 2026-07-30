@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export type NotificationType =
   | "announcement"
   | "match_reminder"
@@ -59,4 +61,10 @@ export interface NotificationCampaignsRes {
     totalPages: number;
     totalResults: number;
   };
+}
+
+export type PaginationBtn = {
+  title: string;
+  icon?: LucideIcon;
+  disabled?: boolean;
 }

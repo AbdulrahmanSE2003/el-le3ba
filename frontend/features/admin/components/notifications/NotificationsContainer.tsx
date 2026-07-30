@@ -6,6 +6,7 @@ import NotificationsTable from "./notification-table/NotificationsTable";
 
 import { Suspense } from "react";
 import StatsCardsSkeleton from "../StatsCardsSkeleton";
+import NotificationsContentContainer from "./NotificationsContentContainer";
 
 export default async function NotificationsContainer() {
   return (
@@ -21,13 +22,7 @@ export default async function NotificationsContainer() {
 
       {/* TODO handle skeleton loading */}
       <Suspense fallback={<div className={``}>ss</div>}>
-        <div className="space-y-4">
-          <NotificationFilter />
-
-          <NotificationsTable />
-
-          <NotificationsPagination />
-        </div>
+        <NotificationsContentContainer />
       </Suspense>
     </div>
   );
