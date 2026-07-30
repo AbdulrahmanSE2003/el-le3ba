@@ -1,3 +1,4 @@
+import AuditLog from "../models/AuditLogModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
@@ -33,4 +34,51 @@ export const createSuperAdmin = catchAsync(async (req, res, next) => {
   });
 
   resHandler(res, 201, "superAdmin", superAdmin);
+});
+
+export const getAppStats = catchAsync(async (req, res, next) => {
+  const [totalAdmins, totalLogs, totalLogins, totalUsers] = await Promise.all([
+    User.countDocuments({ role: "admin" }),
+
+    AuditLog.countDocuments(),
+
+    AuditLog.countDocuments({
+      action: "user.login",
+    }),
+
+    User.countDocuments(),
+  ]);
+
+  resHandler(res, 200, "appStats", {
+    totalAdmins,
+    totalLogs,
+    totalLogins,
+    totalUsers,
+  });
+});
+
+export const getRecentAdminLogs = catchAsync(async (req, res, next) => {
+  const adminIds = await User.find(
+    { role: { $in: ["admin", "superAdmin"] } },
+    "_id",
+  );
+
+  const recentLogs = await AuditLog.find({
+    actor: { $in: adminIds.map((u) => u._id) },
+  })
+    .sort({ createdAt: -1 })
+    .limit(20)
+    .populate("actor", "name email avatar role");
+
+  resHandler(res, 200, "recentLogs", recentLogs);
+});
+
+export const getRecentAdmins = catchAsync(async (req, res, next) => {
+  const recentAdmins = await User.find({
+    role: "admin",
+  })
+    .sort("-createdAt")
+    .limit(5);
+
+  resHandler(res, 200, "recentAdmins", recentAdmins);
 });

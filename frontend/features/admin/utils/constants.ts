@@ -21,7 +21,7 @@ import {
   Users,
   LucideIcon,
   UserX,
-  LogsIcon,
+  KeyRound,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -63,11 +63,6 @@ export const adminNavItems: NavItem[] = [
     title: "المباريات",
     href: "/admin/sessions",
     icon: Play,
-  },
-  {
-    title: "الإجراءات",
-    href: "/admin/logs",
-    icon: LogsIcon,
   },
   {
     title: "الإعدادات",
@@ -168,4 +163,34 @@ export const ACTIONS: Record<string, ActionConfig> = {
     title: "إنشاء فريق",
     color: "text-cyan-500 bg-cyan-500/10",
   },
+  "user.password_changed": {
+    icon: KeyRound,
+    title: "تغيير كلمة المرور",
+    color: "text-amber-500 bg-amber-500/10",
+  },
 };
+
+import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
+
+export const superAdminNav = [
+  {
+    title: "اللوحة الرئيسية",
+    href: "/super-admin",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "المشرفون",
+    href: "/super-admin/admins",
+    icon: UserRoundCog,
+  },
+  {
+    title: "سجل الإجراءات",
+    href: "/super-admin/logs",
+    icon: ClipboardList,
+  },
+  {
+    title: "الملف الشخصي",
+    href: "/super-admin/profile",
+    icon: Shield,
+  },
+];
