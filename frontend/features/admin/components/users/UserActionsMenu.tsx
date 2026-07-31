@@ -10,8 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { EditUserModal, EditUserModalProps } from "./EditUserModal";
 
-export function UserActionsMenu({ userId }: { userId: string }) {
+export function UserActionsMenu({ user }: EditUserModalProps) {
   return (
     <DropdownMenu dir="rtl">
       <DropdownMenuTrigger asChild>
@@ -22,12 +23,7 @@ export function UserActionsMenu({ userId }: { userId: string }) {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuLabel>إجراءات المستخدم</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          className="gap-2 cursor-pointer"
-          onClick={() => console.log("Edit", userId)}
-        >
-          <Edit className="w-4 h-4 text-primary" /> تعديل البيانات
-        </DropdownMenuItem>
+        <EditUserModal user={user} />
         <DropdownMenuItem className="gap-2 cursor-pointer">
           <KeyRound className="w-4 h-4 text-primary" /> إعادة ضبط كلمة السر
         </DropdownMenuItem>

@@ -164,7 +164,7 @@ export default async function UsersPage({
     {
       header: "الإجراءات",
       className: "text-center",
-      cell: (user) => <UserActionsMenu userId={user._id} />,
+      cell: (user) => <UserActionsMenu user={user} />,
     },
   ];
 
