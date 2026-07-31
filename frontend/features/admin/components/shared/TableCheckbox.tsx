@@ -2,14 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { TableSelectionContextType } from "../../types/users";
-
-export interface TableSelectionContextType {
-  selectedIds: string[];
-  toggleAll: (allIds: string[]) => void;
-  toggleRow: (id: string) => void;
-  isAllSelected: (allIds: string[]) => boolean;
-}
+import { TableSelectionContextType } from "../../types/shared";
 
 const TableSelectionContext = createContext<TableSelectionContextType | null>(
   null,
