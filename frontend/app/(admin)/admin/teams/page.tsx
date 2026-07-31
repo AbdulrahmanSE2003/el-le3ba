@@ -168,7 +168,6 @@ export default async function TeamsPage({
         <TeamActionsMenu
           teamId={team._id}
           // onViewMembers={(id) => {
-          //   // هنا تقدر تفتح الـ Modal/Sheet بتاعة الأعضاء مستقبلاً
           //   console.log("Viewing members for team:", id);
           // }}
         />
@@ -177,7 +176,7 @@ export default async function TeamsPage({
   ];
 
   return (
-    <div className="p-6 space-y-8 dir-rtl text-right font-body">
+    <div className=" space-y-8 dir-rtl text-right font-body">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4">
         <PageHeader
           title="إدارة الفرق"

@@ -20,6 +20,7 @@ import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 import Error from "@/app/error";
 import { formatCreatedAt } from "@/lib/utils";
 import UsersTableSkeleton from "@/features/admin/components/users/UsersTableSkeleton";
+import { AddUserModal } from "@/features/admin/components/users/AddUserModal";
 
 // Filters & Sorting
 const userFilters: FilterConfig[] = [
@@ -168,15 +169,13 @@ export default async function UsersPage({
   ];
 
   return (
-    <div className="p-6 space-y-8 dir-rtl text-right font-body">
+    <div className=" space-y-8 dir-rtl text-right font-body">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-3">
         <PageHeader
           title="إدارة المستخدمين"
           description="قم بإدارة المستخدمين بطريقة فعالة"
         />
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-md">
-          <UserPlus className="w-4 h-4" /> إضافة مستخدم جديد +
-        </Button>
+        <AddUserModal />
       </div>
       <Suspense fallback={<StatsCardsSkeleton />}>
         <UsersKpiCards />
