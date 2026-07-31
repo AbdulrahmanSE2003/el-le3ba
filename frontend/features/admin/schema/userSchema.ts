@@ -15,4 +15,11 @@ export const createUserSchema = z
     path: ["passwordConfirm"],
   });
 
+export const updateUserSchema = z.object({
+  name: z.string().min(3, "الاسم يجب أن يكون ثلالة أحرف على الأقل"),
+  email: z.email("البريد الإلكتروني غير صحيح"),
+  isActive: z.boolean(),
+});
+
 export type CreateUserFormValues = z.infer<typeof createUserSchema>;
+export type UpdateUserFormValues = z.infer<typeof updateUserSchema>;
