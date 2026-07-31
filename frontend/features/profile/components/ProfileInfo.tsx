@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { fadeInDown } from "@/components/shared/animations";
 import StyleContainer from "../../../components/shared/StyleContainer";
 import { UserProfileProps } from "../types";

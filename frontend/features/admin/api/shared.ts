@@ -1,6 +1,6 @@
 import { RecentSession } from "@/shared/api/helpers";
 import { serverFetch } from "@/shared/api/server";
-import React, { cache } from "react";
+import { cache } from "react";
 import { Team } from "../types/teams";
 import {
   NotificationCampaignsRes,

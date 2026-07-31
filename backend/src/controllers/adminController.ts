@@ -216,9 +216,9 @@ export const getUserStats = catchAsync(async (req, res) => {
 });
 
 export const createUser = catchAsync(async (req, res, next) => {
-  const { name, email, role, password, passwordConfirm } = req.body;
+  const { name, email, password, passwordConfirm } = req.body;
 
-  if (!name || !email || !role || !password || !passwordConfirm)
+  if (!name || !email || !password || !passwordConfirm)
     return next(
       new AppError("Invalid operation, please provide needed fields", 400),
     );
@@ -229,14 +229,10 @@ export const createUser = catchAsync(async (req, res, next) => {
     return next(new AppError("Email already exists.", 400));
   }
 
-  if (role === "superAdmin") {
-    return next(new AppError("Invalid operation, this is not allowed.", 400));
-  }
-
   const newUser = await User.create({
     name,
     email,
-    role,
+    role: "student",
     password,
     passwordConfirm,
   });
@@ -253,7 +249,7 @@ export const createUser = catchAsync(async (req, res, next) => {
 export const updateUser = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const allowedFields = ["name", "email", "role", "avatar", "isActive"];
+  const allowedFields = ["name", "email", "avatar", "isActive"];
 
   const updates = Object.fromEntries(
     Object.entries(req.body).filter(([key]) => allowedFields.includes(key)),
