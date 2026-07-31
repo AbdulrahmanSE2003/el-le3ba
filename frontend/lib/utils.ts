@@ -91,3 +91,15 @@ export const getLogActionDetails = (action: string): ActionConfig => {
     }
   );
 };
+
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ??
+  "http://localhost:5000";
+
+export function getAvatarUrl(avatar?: string | null) {
+  if (!avatar) return "/images/default-avatar.png";
+
+  if (avatar.startsWith("http")) return avatar;
+
+  return `${BACKEND_URL}/avatars/${avatar}`;
+}

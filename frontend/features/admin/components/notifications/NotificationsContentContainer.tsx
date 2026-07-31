@@ -1,4 +1,3 @@
-
 import NotificationFilter from "./notification-filter/NotificationFilter";
 import NotificationsTable from "./notification-table/NotificationsTable";
 
