@@ -22,9 +22,9 @@ export type User = {
     avatar: string | null;
     totalScore: number;
     gamesPlayed: number;
-    highestScore: number;
+    highestScore?: number;
     bestStreak: number;
-    lastSessions: LastSession[];
+    lastSessions?: LastSession[];
   };
 };
 

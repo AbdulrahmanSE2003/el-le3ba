@@ -11,6 +11,8 @@ import StoreInitializer from "@/store/storeInitializer";
 import { cookies } from "next/headers";
 import { getCurrentUser } from "@/shared/api/helpers";
 
+export const dynamic = "force-dynamic";
+
 async function getProfile() {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt")?.value;

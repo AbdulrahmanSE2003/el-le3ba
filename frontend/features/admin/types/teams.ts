@@ -1,7 +1,7 @@
 export type TeamStatus = "Full" | "Open" | "Inactive";
 
 export interface Team {
-  id: string;
+  _id: string;
   name: string;
   code: string;
   leaderName: string;

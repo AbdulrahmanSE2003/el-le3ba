@@ -87,11 +87,10 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
   return serverFetch<GetUsersResponse>({ url });
 });
 
-
 // Dummy Users Data
 // export const getUsersData = [
 //   {
-//     id: "1",
+//     _id: "1",
 //     name: "محمد أحمد علي",
 //     email: "mohamed@gmail.com",
 //     role: "Player",
@@ -101,7 +100,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1450,
 //   },
 //   {
-//     id: "2",
+//     _id: "2",
 //     name: "أحمد عبد العظيم",
 //     email: "ahmed@example.com",
 //     role: "Admin",
@@ -111,7 +110,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 0,
 //   },
 //   {
-//     id: "3",
+//     _id: "3",
 //     name: "محمود فتحي",
 //     email: "mahmoud@gmail.com",
 //     role: "Player",
@@ -121,7 +120,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 320,
 //   },
 //   {
-//     id: "4",
+//     _id: "4",
 //     name: "طه جابر",
 //     email: "taha.gaber@gmail.com",
 //     role: "Admin",
@@ -131,7 +130,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 0,
 //   },
 //   {
-//     id: "5",
+//     _id: "5",
 //     name: "عبد الله فتح الله",
 //     email: "abdullah.f@gmail.com",
 //     role: "Player",
@@ -141,7 +140,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 2100,
 //   },
 //   {
-//     id: "6",
+//     _id: "6",
 //     name: "يوسف حسن",
 //     email: "youssef.hassen@yahoo.com",
 //     role: "Player",
@@ -151,7 +150,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 980,
 //   },
 //   {
-//     id: "7",
+//     _id: "7",
 //     name: "عمر خالد",
 //     email: "omar.khaled@outlook.com",
 //     role: "Player",
@@ -161,7 +160,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 50,
 //   },
 //   {
-//     id: "8",
+//     _id: "8",
 //     name: "مصطفى إبراهيم",
 //     email: "mostafa.ibrahim@gmail.com",
 //     role: "Player",
@@ -171,7 +170,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1320,
 //   },
 //   {
-//     id: "9",
+//     _id: "9",
 //     name: "كريم سامي",
 //     email: "kareem.samy@gmail.com",
 //     role: "Player",
@@ -181,7 +180,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1750,
 //   },
 //   {
-//     id: "10",
+//     _id: "10",
 //     name: "عبد الصمد مصطفى",
 //     email: "abdusad@gmail.com",
 //     role: "Admin",
@@ -191,7 +190,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 0,
 //   },
 //   {
-//     id: "11",
+//     _id: "11",
 //     name: "علي حسين",
 //     email: "ali.hussein@gmail.com",
 //     role: "Player",
@@ -201,7 +200,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 640,
 //   },
 //   {
-//     id: "12",
+//     _id: "12",
 //     name: "زياد طارق",
 //     email: "zeyad.tarek@yahoo.com",
 //     role: "Player",
@@ -211,7 +210,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 110,
 //   },
 //   {
-//     id: "13",
+//     _id: "13",
 //     name: "حسام سعيد",
 //     email: "hossam.saeed@gmail.com",
 //     role: "Player",
@@ -221,7 +220,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1890,
 //   },
 //   {
-//     id: "14",
+//     _id: "14",
 //     name: "إسلام مجدي",
 //     email: "eslam.majdi@hotmail.com",
 //     role: "Player",
@@ -231,7 +230,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 420,
 //   },
 //   {
-//     id: "15",
+//     _id: "15",
 //     name: "أسامة ناصر",
 //     email: "osama.nasser@gmail.com",
 //     role: "Player",
@@ -241,7 +240,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1600,
 //   },
 //   {
-//     id: "16",
+//     _id: "16",
 //     name: "بلال ياسر",
 //     email: "belal.yasser@gmail.com",
 //     role: "Player",
@@ -251,7 +250,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 870,
 //   },
 //   {
-//     id: "17",
+//     _id: "17",
 //     name: "حازم إيهاب",
 //     email: "hazem.ehab@gmail.com",
 //     role: "Player",
@@ -261,7 +260,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 0,
 //   },
 //   {
-//     id: "18",
+//     _id: "18",
 //     name: "مازن شريف",
 //     email: "mazen.sherif@yahoo.com",
 //     role: "Player",
@@ -271,7 +270,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1250,
 //   },
 //   {
-//     id: "19",
+//     _id: "19",
 //     name: "تامر فؤاد",
 //     email: "tamer.fouad@gmail.com",
 //     role: "Player",
@@ -281,7 +280,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 //     points: 1100,
 //   },
 //   {
-//     id: "20",
+//     _id: "20",
 //     name: "نور الدين عصام",
 //     email: "nour.essam@gmail.com",
 //     role: "Player",
@@ -295,7 +294,7 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
 // Dummy Teams Data
 export const getTeamsData: Team[] = [
   {
-    id: "1",
+    _id: "1",
     name: "الفرسان",
     code: "FR-990",
     leaderName: "محمد أحمد علي",
@@ -307,7 +306,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-15",
   },
   {
-    id: "2",
+    _id: "2",
     name: "النسور",
     code: "NS-102",
     leaderName: "محمود فتحي",
@@ -319,7 +318,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-01",
   },
   {
-    id: "3",
+    _id: "3",
     name: "الجبابرة",
     code: "JB-770",
     leaderName: "عبد الله فتح الله",
@@ -331,7 +330,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-10",
   },
   {
-    id: "4",
+    _id: "4",
     name: "الأسود",
     code: "AS-301",
     leaderName: "يوسف حسن",
@@ -343,7 +342,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-12",
   },
   {
-    id: "5",
+    _id: "5",
     name: "الصقور",
     code: "SQ-504",
     leaderName: "كريم سامي",
@@ -355,7 +354,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-20",
   },
   {
-    id: "6",
+    _id: "6",
     name: "الأبطال",
     code: "AB-881",
     leaderName: "مازن شريف",
@@ -367,7 +366,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-03-01",
   },
   {
-    id: "7",
+    _id: "7",
     name: "المقاتلون",
     code: "MK-112",
     leaderName: "رامز خالد",
@@ -379,7 +378,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-05",
   },
   {
-    id: "8",
+    _id: "8",
     name: "الوحوش",
     code: "WH-404",
     leaderName: "طارق سعيد",
@@ -391,7 +390,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-03-10",
   },
   {
-    id: "9",
+    _id: "9",
     name: "العاصفة",
     code: "AS-909",
     leaderName: "سيف الدين مراد",
@@ -403,7 +402,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-18",
   },
   {
-    id: "10",
+    _id: "10",
     name: "الملوك",
     code: "ML-333",
     leaderName: "إسلام مجدي",
@@ -415,7 +414,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-28",
   },
   {
-    id: "11",
+    _id: "11",
     name: "الفرعونية",
     code: "FR-202",
     leaderName: "مصطفى إبراهيم",
@@ -427,7 +426,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-25",
   },
   {
-    id: "12",
+    _id: "12",
     name: "الشياهين",
     code: "SH-711",
     leaderName: "علي حسين",
@@ -439,7 +438,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-05",
   },
   {
-    id: "13",
+    _id: "13",
     name: "الذئاب",
     code: "ZB-550",
     leaderName: "بلال ياسر",
@@ -451,7 +450,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-03-02",
   },
   {
-    id: "14",
+    _id: "14",
     name: "النجوم",
     code: "NJ-808",
     leaderName: "حسام سعيد",
@@ -463,7 +462,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-18",
   },
   {
-    id: "15",
+    _id: "15",
     name: "الأساطير",
     code: "ST-001",
     leaderName: "نور الدين عصام",
@@ -475,7 +474,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-02",
   },
   {
-    id: "16",
+    _id: "16",
     name: "التنانين",
     code: "TN-606",
     leaderName: "أسامة ناصر",
@@ -487,7 +486,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-03-12",
   },
   {
-    id: "17",
+    _id: "17",
     name: "البركان",
     code: "BR-414",
     leaderName: "تامر فؤاد",
@@ -499,7 +498,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-03-15",
   },
   {
-    id: "18",
+    _id: "18",
     name: "الرجال",
     code: "RJ-303",
     leaderName: "زياد طارق",
@@ -511,7 +510,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-02-20",
   },
   {
-    id: "19",
+    _id: "19",
     name: "الرعد",
     code: "RD-123",
     leaderName: "أحمد عبد العظيم",
@@ -523,7 +522,7 @@ export const getTeamsData: Team[] = [
     createdAt: "2026-01-22",
   },
   {
-    id: "20",
+    _id: "20",
     name: "السهام",
     code: "SH-900",
     leaderName: "طه جابر",

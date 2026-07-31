@@ -4,6 +4,8 @@ import SelectAvatarContainer from "@/features/select-avatar/components/SelectAva
 
 import { redirect } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function SelectAvatarPage() {
   const { userData } = await fetchUserData();
   const avatar = userData.avatar;
