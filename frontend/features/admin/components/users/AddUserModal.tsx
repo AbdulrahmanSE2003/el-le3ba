@@ -46,7 +46,11 @@ export function AddUserModal() {
         title="إضافة مستخدم جديد"
         description="أدخل بيانات المستخدم لتسجيله في النظام."
       >
-        <UserForm onSubmit={handleCreateUser} isLoading={isLoading} />
+        <UserForm
+          mode="create"
+          onSubmit={handleCreateUser}
+          isLoading={isLoading}
+        />
       </BaseModal>
     </>
   );

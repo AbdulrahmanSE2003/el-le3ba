@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical, Edit, KeyRound, Bell, Ban } from "lucide-react";
+import { MoreVertical, KeyRound, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { EditUserModal, EditUserModalProps } from "./EditUserModal";
+import { BlockUserModal } from "./BlockUserModal";
 
 export function UserActionsMenu({ user }: EditUserModalProps) {
   return (
@@ -30,10 +31,12 @@ export function UserActionsMenu({ user }: EditUserModalProps) {
         <DropdownMenuItem className="gap-2 cursor-pointer">
           <Bell className="w-4 h-4 text-chart-5" /> إرسال إشعار
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2 cursor-pointer text-destructive">
-          <Ban className="w-4 h-4" /> حظر
-        </DropdownMenuItem>
+        {user.isActive && (
+          <>
+            <DropdownMenuSeparator />
+            <BlockUserModal userId={user._id} userName={user.name} />
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
