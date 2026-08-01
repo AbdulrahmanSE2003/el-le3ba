@@ -6,12 +6,6 @@ import {
   UpdateUserFormValues,
 } from "../schema/userSchema";
 
-interface User {
-  name: string;
-  email: string;
-  password: string;
-  passwordConfirm: string;
-}
 interface UpdatedUser {
   name: string;
   email: string;
@@ -52,6 +46,24 @@ export async function updateUserAction(id: string, data: UpdateUserFormValues) {
     return {
       success: false as const,
       error: "حدث خطأ غير متوقع أثناء تحديث بيانات المستخدم",
+    };
+  }
+}
+
+export async function blockUserAction(id: string) {
+  try {
+    const res = await serverFetch({
+      url: `admin/users/${id}`,
+      method: "DELETE",
+    });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false as const,
+      error: "حدث خطأ غير متوقع أثناء حظر المستخدم",
     };
   }
 }
