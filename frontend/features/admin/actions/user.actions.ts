@@ -67,3 +67,21 @@ export async function blockUserAction(id: string) {
     };
   }
 }
+
+export async function resetUserPasswordAction(id: string) {
+  try {
+    const res = await serverFetch({
+      url: `admin/users/${id}/reset-password`,
+      method: "PATCH",
+    });
+
+    return res;
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false as const,
+      error: "حدث خطأ غير متوقع أثناء إعادة تعيين كلمة السر للمستخدم",
+    };
+  }
+}

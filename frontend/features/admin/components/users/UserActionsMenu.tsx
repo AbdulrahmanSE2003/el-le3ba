@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EditUserModal, EditUserModalProps } from "./EditUserModal";
 import { BlockUserModal } from "./BlockUserModal";
+import { ResetPasswordModal } from "./ResetPasswordModal";
 
 export function UserActionsMenu({ user }: EditUserModalProps) {
   return (
@@ -25,14 +26,13 @@ export function UserActionsMenu({ user }: EditUserModalProps) {
         <DropdownMenuLabel>إجراءات المستخدم</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <EditUserModal user={user} />
-        <DropdownMenuItem className="gap-2 cursor-pointer">
-          <KeyRound className="w-4 h-4 text-primary" /> إعادة ضبط كلمة السر
-        </DropdownMenuItem>
-        <DropdownMenuItem className="gap-2 cursor-pointer">
-          <Bell className="w-4 h-4 text-chart-5" /> إرسال إشعار
-        </DropdownMenuItem>
+
         {user.isActive && (
           <>
+            <DropdownMenuItem className="gap-2 cursor-pointer pr-2.5">
+              <Bell className="w-4 h-4 text-chart-5" /> إرسال إشعار
+            </DropdownMenuItem>
+            <ResetPasswordModal userId={user._id} userName={user.name} />
             <DropdownMenuSeparator />
             <BlockUserModal userId={user._id} userName={user.name} />
           </>
