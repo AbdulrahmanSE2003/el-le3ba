@@ -1,12 +1,9 @@
-import { UserPlus, Trophy } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UsersKpiCards } from "@/features/admin/components/users/UsersKpiCards";
 import { DataTablePagination } from "@/features/admin/components/shared/DataTablePagination";
-import { GenericFilterBar } from "@/features/admin/components/shared/GenericFilterBar";
 import { ServerTable } from "@/features/admin/components/shared/ServerTable";
 import { UserActionsMenu } from "@/features/admin/components/users/UserActionsMenu";
-import { Column, FilterConfig } from "@/features/admin/types/shared";
+import { Column } from "@/features/admin/types/shared";
 import { User } from "@/features/admin/types/users";
 import { getAllUsers } from "@/features/admin/api/shared";
 import {
@@ -21,34 +18,7 @@ import Error from "@/app/error";
 import { formatCreatedAt } from "@/lib/utils";
 import UsersTableSkeleton from "@/features/admin/components/users/UsersTableSkeleton";
 import { AddUserModal } from "@/features/admin/components/users/AddUserModal";
-
-// Filters & Sorting
-const userFilters: FilterConfig[] = [
-  {
-    key: "role",
-    placeholder: "فلتر حسب الدور",
-    options: [
-      { value: "all", label: "كل الأدوار" },
-      { value: "admin", label: "Admin" },
-      { value: "student", label: "Player" },
-    ],
-  },
-  {
-    key: "hasTeam",
-    placeholder: "فلتر حسب الفريق",
-    options: [
-      { value: "all", label: "الكل" },
-      { value: "true", label: "في فريق" },
-      { value: "false", label: "بدون فريق" },
-    ],
-  },
-];
-
-const userSortOptions = [
-  { value: "-createdAt", label: "الأحدث" },
-  { value: "createdAt", label: "الأقدم" },
-  { value: "name", label: "الاسم (أبجدي)" },
-];
+import { UsersTableToolbar } from "@/features/admin/components/users/UsersTableToolbar";
 
 export default async function UsersPage({
   searchParams,
@@ -181,16 +151,12 @@ export default async function UsersPage({
         <UsersKpiCards />
       </Suspense>
       <div className="space-y-4">
-        {/* filters & Sorting */}
-        <GenericFilterBar
-          searchPlaceholder="أبحث عن مستخدم..."
-          filters={userFilters}
-          sortOptions={userSortOptions}
-        />
-
         {/* Table */}
         <Suspense fallback={<UsersTableSkeleton />}>
           <TableSelectionProvider>
+            {/* Filter & Sort & Bulk Deactivate  */}
+            <UsersTableToolbar />
+
             <ServerTable
               columns={columns}
               data={users}
