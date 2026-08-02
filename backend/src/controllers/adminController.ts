@@ -350,7 +350,7 @@ export const adminResetPassword = catchAsync(async (req, res, next) => {
 export const bulkDeactivateUsers = catchAsync(async (req, res, next) => {
   const userIds: string[] = req.body.userIds;
 
-  if (!Array.isArray(userIds) || userIds.length === 0) {
+  if (!Array.isArray(userIds) || !userIds.length) {
     return next(
       new AppError("Invalid operation, please provide at least one user.", 400),
     );

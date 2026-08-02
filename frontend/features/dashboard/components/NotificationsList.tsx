@@ -14,6 +14,8 @@ import NotificationItem from "./NotificationItem";
 import EmptyNotifications from "./EmptyNotifications";
 import { INotificationItem } from "@/shared/api/helpers";
 import { markAllNotificationsAsRead } from "../api/notifications";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/shared/api/client";
 
 interface Props {
   notifications: INotificationItem[];
@@ -22,7 +24,12 @@ interface Props {
 
 const NotificationsList = ({ notifications, unreadCount }: Props) => {
   const handleRead = () => {
-    markAllNotificationsAsRead();
+    try {
+      markAllNotificationsAsRead();
+      toast.success("تم تعليم جميع الإشعارات كمقروءة.");
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
   };
   return (
     <DrawerContent>

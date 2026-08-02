@@ -140,11 +140,15 @@ export interface SessionDetailsResponse {
 
 export interface INotificationItem {
   _id: string;
-  title: string;
-  message: string;
+  campaignId: {
+    _id: string;
+    title: string;
+    message: string;
+    type: "broadcast" | "selected";
+    createdAt: string;
+  };
   userId: string;
   isRead: boolean;
-  isBroadcast: boolean;
   __v: number;
   createdAt: string;
   updatedAt: string;

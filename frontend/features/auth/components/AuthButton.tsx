@@ -8,10 +8,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
 }
 
-export default function Button({
-  isLoading,
-  title,
-}: ButtonProps) {
+export default function Button({ isLoading, title }: ButtonProps) {
   return (
     <button
       className={`bg-primary py-2 text-white hover:bg-primary/90 duration-300 w-full rounded-lg cursor-pointer disabled:cursor-not-allowed disabled:bg-muted-foreground`}
@@ -20,7 +17,7 @@ export default function Button({
       {isLoading ? (
         <div className="flex items-center justify-center gap-2">
           <Loader2 className="animate-spin" />
-          <span>جاري التحميل...</span>
+          <span>جاري الدخول...</span>
         </div>
       ) : (
         title
