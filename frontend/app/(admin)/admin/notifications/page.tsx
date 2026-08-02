@@ -6,12 +6,10 @@ export const metadata: Metadata = {
   description: "إدارة الإشعارات المرسلة للمستخدمين",
 };
 
-const page = () => {
-  return (
-    <section>
-      <NotificationsContainer />
-    </section>
-  );
-};
+interface PageProps {
+  searchParams: Promise<URLSearchParams>;
+}
 
-export default page;
+export default async function Page({ searchParams }: PageProps) {
+  return <NotificationsContainer searchParams={searchParams} />;
+}

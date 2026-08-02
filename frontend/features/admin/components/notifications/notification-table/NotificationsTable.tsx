@@ -9,27 +9,31 @@ import {
 
 import TableActions from "./TableActions";
 
-import { getAllNotifications } from "@/features/admin/api/shared";
-
-import Error from "@/app/error";
-
 import { formatCreatedAt } from "@/lib/utils";
 
 import { NotificationsPagination } from "../pagination/NotificationsPagination";
+import { NotificationCampaignsRes } from "@/features/admin/types/notification";
+import NoPage from "../NoPage";
 
 interface Props {
   tableHeaders: string[];
+  campaigns: NotificationCampaignsRes;
 }
 
-export default async function NotificationsTable({ tableHeaders }: Props) {
-  const notificationsTableRes = await getAllNotifications();
-  if (!notificationsTableRes.success) return <Error />;
+export default async function NotificationsTable({
+  tableHeaders,
+  campaigns,
+}: Props) {
+  // Notifications table data
+  const notifications = campaigns.campaigns;
 
-  const notifications = notificationsTableRes.data.campaigns.campaigns;
-  console.log(notifications);
+  // Pagination data
+  const page = campaigns.page || 1;
+  const totalPages = campaigns.totalPages || 1;
 
-  const campaigns = notificationsTableRes.data.campaigns;
-  console.log(campaigns);
+  if (page > totalPages) {
+    return <NoPage requestedPage={page} totalPages={totalPages} />;
+  }
 
   return (
     <div className="rounded-lg space-y-4">
@@ -110,7 +114,7 @@ export default async function NotificationsTable({ tableHeaders }: Props) {
       </Table>
 
       {/* Pagination */}
-      <NotificationsPagination campaigns={campaigns} />
+      <NotificationsPagination page={page} totalPages={totalPages} />
     </div>
   );
 }

@@ -53,18 +53,30 @@ export interface NotificationCampaign {
   __v: number;
 }
 
-export interface NotificationCampaignsRes {
-  campaigns: {
+export type NotificationCampaignsRes = {
+  campaigns: NotificationCampaign[];
+  page: number;
+  limit: number;
+  totalPages: number;
+  totalResults: number;
+}
+
+
+export type PaginationBtn = {
+  title: string;
+  icon?: LucideIcon;
+  disabled?: boolean;
+  url?: string;
+};
+
+export type NotificationsRes = {
+  status: boolean;
+  error?: string;
+  campaigns?: {
     campaigns: NotificationCampaign[];
     page: number;
     limit: number;
     totalPages: number;
     totalResults: number;
   };
-}
-
-export type PaginationBtn = {
-  title: string;
-  icon?: LucideIcon;
-  disabled?: boolean;
-}
+};

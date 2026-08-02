@@ -1,3 +1,5 @@
+"use client";
+
 import {
   ChevronLeft,
   ChevronRight,
@@ -7,26 +9,35 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import {
-  NotificationCampaignsRes,
-  PaginationBtn,
-} from "@/features/admin/types/notification";
+import { PaginationBtn } from "@/features/admin/types/notification";
+import createPageUrl from "../../shared/utils/createPageUrl";
+import Link from "next/link";
 
-export function NotificationsPagination({
-  campaigns,
-}: NotificationCampaignsRes) {
-  const { page, totalPages } = campaigns;
+interface Props {
+  page: number;
+  totalPages: number;
+}
 
+export function NotificationsPagination({ page, totalPages }: Props) {
+  // Create pagination links
+  const prevUrl = createPageUrl("page", page - 1, "");
+  const nextUrl = createPageUrl("page", page + 1, "");
+  const firstPageUrl = createPageUrl("page", 1, "");
+  const lastPageUrl = createPageUrl("page", totalPages, "");
+
+  // Pagination buttons
   const paginationBtns: PaginationBtn[] = [
     {
       title: "الصفحة الأولى",
       icon: ChevronsRight,
       disabled: page === 1,
+      url: firstPageUrl,
     },
     {
       title: "الصفحة السابقة",
       icon: ChevronRight,
       disabled: page === 1,
+      url: prevUrl,
     },
     {
       title: "رقم الصفحة",
@@ -34,12 +45,14 @@ export function NotificationsPagination({
     {
       title: "الصفحة التالية",
       icon: ChevronLeft,
-      disabled: page === totalPages,
+      disabled: page >= totalPages,
+      url: nextUrl,
     },
     {
       title: "الصفحة الأخيرة",
       icon: ChevronsLeft,
-      disabled: page === totalPages,
+      disabled: page >= totalPages,
+      url: lastPageUrl,
     },
   ];
 
@@ -54,7 +67,9 @@ export function NotificationsPagination({
           title={btn.title}
           disabled={btn.disabled}
         >
-          {btn.icon ? <btn.icon className="w-4 h-4" /> : <span>{page}</span>}
+          <Link href={btn.disabled ? "" : btn.url || ""}>
+            {btn.icon ? <btn.icon className="w-4 h-4" /> : <span>{page}</span>}
+          </Link>
         </Button>
       ))}
     </div>
