@@ -6,7 +6,13 @@ import { AnimatePresence } from "framer-motion";
 
 import { showSuccess, showError } from "@/components/shared/notifications";
 
-import { ActionResponse } from "../../types";
+// import { ActionResponse } from "../../types";
+
+export interface ActionResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
 
 import IsEditing from "./IsEditing";
 import UserName from "./change-name/UserName";

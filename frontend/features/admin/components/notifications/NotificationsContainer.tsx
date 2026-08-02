@@ -2,6 +2,7 @@ import PageHeader from "@/features/admin/components/shared/PageHeader";
 import { NotificationsKpiCards } from "@/features/admin/components/notifications/NotificationsKpiCards";
 import NotificationFilter from "./notification-filter/NotificationFilter";
 import NotificationsTable from "./notification-table/NotificationsTable";
+import SendNotification from "./SendNotification";
 
 import { Suspense } from "react";
 
@@ -26,10 +27,13 @@ export default async function NotificationsContainer({ searchParams }: Props) {
 
   return (
     <div dir="rtl" className="p-3 space-y-6 text-right font-body">
-      <PageHeader
-        title="الإشعارات"
-        description="سجل كل الإشعارات اللي اتبعتت للمستخدمين، الفرق، والمواسم."
-      />
+      <div className="flex items-center justify-between">
+        <PageHeader
+          title="الإشعارات"
+          description="سجل كل الإشعارات اللي اتبعتت للمستخدمين، الفرق، والمواسم."
+        />
+        <SendNotification />
+      </div>
 
       <Suspense fallback={<StatsCardsSkeleton />}>
         <NotificationsKpiCards />

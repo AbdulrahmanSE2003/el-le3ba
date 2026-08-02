@@ -1,13 +1,18 @@
 import type { NextConfig } from "next";
 
+const backend =
+  process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ??
+  "http://localhost:5000";
+
+const url = new URL(backend);
+
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["192.168.1.8"],
   images: {
     remotePatterns: [
       {
-        protocol: "http",
-        hostname: "localhost",
-        port: "5000",
+        protocol: url.protocol.replace(":", "") as "http" | "https",
+        hostname: url.hostname,
+        port: url.port,
         pathname: "/avatars/**",
       },
     ],

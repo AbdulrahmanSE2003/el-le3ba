@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DataTablePaginationProps } from "../../types/users";
+import { DataTablePaginationProps } from "../../types/shared";
 
 export function DataTablePagination({
   page,

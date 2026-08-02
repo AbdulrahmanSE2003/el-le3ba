@@ -4,7 +4,7 @@ import Image from "next/image";
 import { memo } from "react";
 import { useUserStore } from "@/store/userStore";
 import type { PresenceMember } from "@/features/match/lib/socket";
-import { cn } from "@/lib/utils";
+import { cn, getAvatarUrl } from "@/lib/utils";
 
 interface MemberCardProps {
   member: PresenceMember;
@@ -31,7 +31,7 @@ const MemberCard = memo(function MemberCard({ member }: MemberCardProps) {
         {member.avatar ? (
           <Image
             unoptimized
-            src={`http://localhost:5000/avatars/${member.avatar}`}
+            src={getAvatarUrl(member.avatar)}
             alt={`${member.name} avatar`}
             fill
             className="rounded-full object-cover"

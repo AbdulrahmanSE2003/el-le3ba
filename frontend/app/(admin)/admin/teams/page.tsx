@@ -76,13 +76,13 @@ export default async function TeamsPage({
     (currentPage - 1) * currentLimit,
     currentPage * currentLimit,
   );
-  const allTeamIds = paginatedTeams.map((t) => t.id);
+  const allTeamIds = paginatedTeams.map((t) => t._id);
 
   const columns: Column<Team>[] = [
     {
       header: <HeaderCheckbox allIds={allTeamIds} />,
       className: "w-12 text-center",
-      cell: (team) => <RowCheckbox id={team.id} />,
+      cell: (team) => <RowCheckbox id={team._id} />,
     },
     {
       header: "بيانات الفريق",
@@ -166,9 +166,8 @@ export default async function TeamsPage({
       className: "text-center",
       cell: (team) => (
         <TeamActionsMenu
-          teamId={team.id}
+          teamId={team._id}
           // onViewMembers={(id) => {
-          //   // هنا تقدر تفتح الـ Modal/Sheet بتاعة الأعضاء مستقبلاً
           //   console.log("Viewing members for team:", id);
           // }}
         />
@@ -177,7 +176,7 @@ export default async function TeamsPage({
   ];
 
   return (
-    <div className="p-6 space-y-8 dir-rtl text-right font-body">
+    <div className=" space-y-8 dir-rtl text-right font-body">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4">
         <PageHeader
           title="إدارة الفرق"

@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TableSelectionContextType } from "../../types/users";
+import { TableSelectionContextType } from "../../types/shared";
 
 const TableSelectionContext = createContext<TableSelectionContextType | null>(
   null,
@@ -33,10 +33,17 @@ export function TableSelectionProvider({
   const isAllSelected = (allIds: string[]) => {
     return allIds.length > 0 && selectedIds.length === allIds.length;
   };
+  const clearSelection = () => setSelectedIds([]);
 
   return (
     <TableSelectionContext.Provider
-      value={{ selectedIds, toggleAll, toggleRow, isAllSelected }}
+      value={{
+        selectedIds,
+        toggleAll,
+        toggleRow,
+        isAllSelected,
+        clearSelection,
+      }}
     >
       {children}
     </TableSelectionContext.Provider>
