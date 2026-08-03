@@ -87,10 +87,9 @@ export async function resetUserPasswordAction(id: string) {
 }
 
 export async function bulkDeactivateUsersAction(userIds: string[]) {
-  console.log("Payload being sent:", JSON.stringify({ userIds }));
   try {
     const res = await serverFetch({
-      url: "admin/users/bulk-deactivate",
+      url: "admin/users/deactivate",
       method: "PATCH",
       body: { userIds },
     });
