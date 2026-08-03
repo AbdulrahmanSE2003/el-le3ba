@@ -91,14 +91,6 @@ export default async function NotificationsTable({
 
                 {/* Type */}
                 <TableCell>
-                  <Badge
-                    variant={
-                      notification.type === "selected" ? "secondary" : "default"
-                    }
-                    className={`${notification.type === "selected" ? "bg-accent/25 text-amber-500" : "bg-primary/15 text-primary"} capitalize font-semibold`}
-                  >
-                    {notification.type}
-                  </Badge>
                   <NotificationTypeBadge type={notification.type} />
                 </TableCell>
 
