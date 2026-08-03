@@ -34,7 +34,7 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
   }, [searchParams]);
 
   return (
-    <div className="relative w-full lg:w-96 flex-1">
+    <form action={handleSearch} className="relative w-full lg:w-96 flex-1">
       <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
       <Input
         placeholder={placeholder}
@@ -46,6 +46,6 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
       <Button onClick={handleSearch} className="absolute left-0">
         <SearchIcon />
       </Button>
-    </div>
+    </form>
   );
 }

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/table";
 
 import TableActions from "./TableActions";
+import { NotificationTypeBadge } from "./NotificationTypeBadge";
 
 import { formatCreatedAt } from "@/lib/utils";
 
@@ -37,10 +38,11 @@ export default async function NotificationsTable({
 
   return (
     <div className="rounded-lg space-y-4">
+      <div className="p-5 bg-white dark:bg-card rounded-lg">
       <Table className="text-center">
         {/* Table Headers */}
-        <TableHeader className=" rounded-2xl">
-          <TableRow className="bg-background">
+        <TableHeader className="bg-muted/50">
+          <TableRow className="border-border">
             {tableHeaders.map((header) => (
               <TableHead
                 key={header}
@@ -53,10 +55,10 @@ export default async function NotificationsTable({
         </TableHeader>
 
         {/* Table Body */}
-        <TableBody className={`bg-card`}>
+        <TableBody>
           {/* No notifications to display */}
           {notifications.length === 0 && (
-            <TableRow className={``}>
+            <TableRow>
               <TableCell
                 colSpan={7}
                 className="text-center py-8 text-muted-foreground"
@@ -73,21 +75,23 @@ export default async function NotificationsTable({
               className="border-border font-normal hover:bg-muted/30 text-center transition-colors"
             >
               {/* Title  */}
-              <TableCell className=" max-w-60">
-                <p className="text-xs font-semibold text-foreground truncate">
+              <TableCell className="text-right max-w-[260px]">
+                <p className="text-xs font-medium text-foreground truncate">
                   {notification.title}
                 </p>
               </TableCell>
 
               {/* Message preview */}
-              <TableCell className=" max-w-60">
+              <TableCell className="text-right max-w-[260px]">
                 <p className="text-xs text-muted-foreground truncate">
                   {notification.message}
                 </p>
               </TableCell>
 
               {/* Type */}
-              <TableCell>{notification.type}</TableCell>
+              <TableCell>
+                <NotificationTypeBadge type={notification.type} />
+              </TableCell>
 
               {/* Recipients count */}
               <TableCell className="text-xs font-semibold text-foreground">
@@ -95,12 +99,12 @@ export default async function NotificationsTable({
               </TableCell>
 
               {/* Created By */}
-              <TableCell className={`capitalize`}>
+              <TableCell className="capitalize text-xs text-foreground">
                 {notification.createdBy.name}
               </TableCell>
 
               {/* Created At */}
-              <TableCell className={`capitalize`}>
+              <TableCell className="capitalize text-xs text-muted-foreground">
                 {formatCreatedAt(notification.createdAt)}
               </TableCell>
 
@@ -112,6 +116,7 @@ export default async function NotificationsTable({
           ))}
         </TableBody>
       </Table>
+      </div>
 
       {/* Pagination */}
       <NotificationsPagination page={page} totalPages={totalPages} />
