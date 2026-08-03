@@ -1,41 +1,24 @@
-import { ShieldPlus, Trophy, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Trophy, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TeamsKpiCards } from "@/features/admin/components/teams/TeamsKpiCards";
 import { DataTablePagination } from "@/features/admin/components/shared/DataTablePagination";
-import { GenericFilterBar } from "@/features/admin/components/shared/GenericFilterBar";
 import { ServerTable } from "@/features/admin/components/shared/ServerTable";
 import { TeamActionsMenu } from "@/features/admin/components/teams/TeamActionsMenu";
-import { FilterConfig, Column } from "@/features/admin/types/shared";
+import { Column } from "@/features/admin/types/shared";
 import { Team } from "@/features/admin/types/teams";
-import { getTeamsData } from "@/features/admin/api/shared";
+import { getAllTeams } from "@/features/admin/api/shared";
 import {
   HeaderCheckbox,
   RowCheckbox,
   TableSelectionProvider,
 } from "@/features/admin/components/shared/TableCheckbox";
 import PageHeader from "@/features/admin/components/shared/PageHeader";
-
-// Filters & Sorting
-const teamFilters: FilterConfig[] = [
-  {
-    key: "status",
-    placeholder: "فلتر حسب الحالة",
-    options: [
-      { value: "all", label: "كل الحالات" },
-      { value: "Full", label: "مكتمل (Full)" },
-      { value: "Open", label: "شاغر (Open)" },
-      { value: "Inactive", label: "معطل (Inactive)" },
-    ],
-  },
-];
-
-const teamSortOptions = [
-  { value: "default", label: "الافتراضي" },
-  { value: "alphabetical", label: "ترتيب أبجدي" },
-  { value: "points", label: "ترتيب بالنقط" },
-  { value: "members", label: "الأكثر أعضاءً" },
-];
+import Error from "@/app/error";
+import { formatCreatedAt } from "@/lib/utils";
+import { TeamsTableToolbar } from "@/features/admin/components/teams/TeamsTableToolbar";
+import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
+import { Suspense } from "react";
+import TeamsTableSkeleton from "@/features/admin/components/teams/TeamsTableSkeleton";
 
 export default async function TeamsPage({
   searchParams,
@@ -47,36 +30,41 @@ export default async function TeamsPage({
     limit = "10",
     search = "",
     status = "all",
-    sortBy = "default",
+    sortBy = "newest",
   } = await searchParams;
 
-  const allTeams = getTeamsData;
+  const teamsRes = await getAllTeams({
+    page: Number(page),
+    limit: Number(limit),
+    search,
 
-  const filteredTeams = allTeams
-    .filter((team) => {
-      const matchesSearch =
-        team.name.toLowerCase().includes(search.toLowerCase()) ||
-        team.code.toLowerCase().includes(search.toLowerCase()) ||
-        team.leaderName.toLowerCase().includes(search.toLowerCase());
-      const matchesStatus = status === "all" || team.status === status;
-      return matchesSearch && matchesStatus;
-    })
-    .sort((a, b) => {
-      if (sortBy === "alphabetical") return a.name.localeCompare(b.name);
-      if (sortBy === "points") return b.points - a.points;
-      if (sortBy === "members") return b.membersCount - a.membersCount;
-      return 0;
-    });
+    sort: sortBy,
+  });
 
-  const currentPage = Number(page);
-  const currentLimit = Number(limit);
-  const totalResults = filteredTeams.length;
-  const totalPages = Math.ceil(totalResults / currentLimit) || 1;
-  const paginatedTeams = filteredTeams.slice(
-    (currentPage - 1) * currentLimit,
-    currentPage * currentLimit,
-  );
-  const allTeamIds = paginatedTeams.map((t) => t._id);
+  if (!teamsRes.success) return <Error />;
+
+  const {
+    teams = [],
+    totalPages = 1,
+    totalResults = 0,
+    page: currentPage = Number(page),
+    limit: currentLimit = Number(limit),
+  } = teamsRes.data.teams;
+  const filteredTeams = teams.filter((team) => {
+    if (status === "all") return true;
+
+    // حسبة حالة الفريق
+    const computedStatus =
+      team.membersCount === 0
+        ? "inactive"
+        : team.membersCount >= 5
+          ? "full"
+          : "open";
+
+    return computedStatus === status;
+  });
+
+  const allTeamIds = filteredTeams.map((team) => team._id);
 
   const columns: Column<Team>[] = [
     {
@@ -88,8 +76,10 @@ export default async function TeamsPage({
       header: "بيانات الفريق",
       cell: (team) => (
         <div>
-          <p className="font-semibold text-xs text-foreground">{team.name}</p>
-          <p className="text-xs text-muted-foreground">{team.code}</p>
+          <p className="font-semibold text-xs text-foreground">
+            {team.teamName}
+          </p>
+          <p className="text-xs text-muted-foreground">{team.teamCode}</p>
         </div>
       ),
     },
@@ -98,10 +88,10 @@ export default async function TeamsPage({
       cell: (team) => (
         <div>
           <p className="font-medium text-xs text-foreground">
-            {team.leaderName}
+            {team.teamLeader?.name}
           </p>
           <p className="text-[11px] text-muted-foreground">
-            {team.leaderEmail}
+            {team.teamLeader?.email}
           </p>
         </div>
       ),
@@ -111,40 +101,47 @@ export default async function TeamsPage({
       cell: (team) => (
         <div className="flex items-center gap-1.5 text-xs text-foreground font-medium">
           <Users className="w-3.5 h-3.5 text-muted-foreground" />
-          <span>
-            {team.membersCount} / {team.maxMembers}
-          </span>
+          <span>5 / {team.membersCount}</span>
         </div>
       ),
     },
     {
       header: "الحالة",
-      cell: (team) => (
-        <Badge
-          className={
-            team.status === "Full"
-              ? "bg-brand-success/15 text-brand-success border-none flex items-center w-max gap-1.5"
-              : team.status === "Open"
-                ? "bg-primary/15 text-primary border-none flex items-center w-max gap-1.5"
-                : "bg-destructive/15 text-destructive border-none flex items-center w-max gap-1.5"
-          }
-        >
-          <span
-            className={`w-1.5 h-1.5 rounded-full ${
-              team.status === "Full"
-                ? "bg-brand-success"
-                : team.status === "Open"
-                  ? "bg-primary"
-                  : "bg-destructive"
-            }`}
-          />
-          {team.status === "Full"
-            ? "مكتمل"
-            : team.status === "Open"
-              ? "شاغر"
-              : "معطل"}
-        </Badge>
-      ),
+      cell: (team) => {
+        const teamStatus =
+          team.membersCount === 0
+            ? "Inactive"
+            : team.membersCount >= 5
+              ? "Full"
+              : "Open";
+
+        return (
+          <Badge
+            className={
+              teamStatus === "Full"
+                ? "bg-brand-success/15 text-brand-success border-none flex items-center w-max gap-1.5"
+                : teamStatus === "Open"
+                  ? "bg-primary/15 text-primary border-none flex items-center w-max gap-1.5"
+                  : "bg-destructive/15 text-destructive border-none flex items-center w-max gap-1.5"
+            }
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                teamStatus === "Full"
+                  ? "bg-brand-success"
+                  : teamStatus === "Open"
+                    ? "bg-primary"
+                    : "bg-destructive"
+              }`}
+            />
+            {teamStatus === "Full"
+              ? "مكتمل"
+              : teamStatus === "Open"
+                ? "شاغر"
+                : "معطل"}
+          </Badge>
+        );
+      },
     },
     {
       header: "النقاط",
@@ -158,20 +155,15 @@ export default async function TeamsPage({
     {
       header: "تاريخ الإنشاء",
       cell: (team) => (
-        <span className="text-xs text-muted-foreground">{team.createdAt}</span>
+        <span className="text-xs text-muted-foreground">
+          {formatCreatedAt(team.createdAt, "ar-EG")}
+        </span>
       ),
     },
     {
       header: "الإجراءات",
       className: "text-center",
-      cell: (team) => (
-        <TeamActionsMenu
-          teamId={team._id}
-          // onViewMembers={(id) => {
-          //   console.log("Viewing members for team:", id);
-          // }}
-        />
-      ),
+      cell: (team) => <TeamActionsMenu teamId={team._id} />,
     },
   ];
 
@@ -182,31 +174,23 @@ export default async function TeamsPage({
           title="إدارة الفرق"
           description="قم بإدارة الفرق ومتابعة أعضائها وحالاتها بفعالية"
         />
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground gap-2 shadow-md">
-          <ShieldPlus className="w-4 h-4" /> إنشاء فريق جديد +
-        </Button>
       </div>
-
-      <TeamsKpiCards />
-
+      <Suspense fallback={<StatsCardsSkeleton />}>
+        <TeamsKpiCards />
+      </Suspense>
       <div className="space-y-4">
-        {/* Filters & Sorting */}
-        <GenericFilterBar
-          searchPlaceholder="بحث باسم الفريق، الكود، أو القائد..."
-          filters={teamFilters}
-          sortOptions={teamSortOptions}
-        />
+        <Suspense fallback={<TeamsTableSkeleton />}>
+          <TableSelectionProvider>
+            <TeamsTableToolbar />
 
-        {/* Table */}
-        <TableSelectionProvider>
-          <ServerTable
-            columns={columns}
-            data={paginatedTeams}
-            emptyMessage="لا توجد فرق مطابقة للبحث..."
-          />
-        </TableSelectionProvider>
+            <ServerTable
+              columns={columns}
+              data={filteredTeams}
+              emptyMessage="لا توجد فرق مطابقة للبحث..."
+            />
+          </TableSelectionProvider>
+        </Suspense>
 
-        {/* Pagination */}
         <DataTablePagination
           page={currentPage}
           totalPages={totalPages}

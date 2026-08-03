@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function UsersTableSkeleton() {
+export default function TeamsTableSkeleton() {
   return (
     <div className="rounded-md border bg-card">
       <Table>
@@ -17,10 +17,11 @@ export default function UsersTableSkeleton() {
             <TableHead className="w-12 text-right">
               <Skeleton className="h-4 w-4 mx-auto rounded" />
             </TableHead>
-            <TableHead>بيانات المستخدم</TableHead>
-            <TableHead>الدور</TableHead>
+            <TableHead>بيانات الفريق</TableHead>
+            <TableHead>الكابتن</TableHead>
+            <TableHead>عدد الاعضاء</TableHead>
             <TableHead>الحالة</TableHead>
-            <TableHead>بيانات التيم</TableHead>
+            <TableHead>النقاط</TableHead>
             <TableHead>تاريخ الإنشاء</TableHead>
             <TableHead className="text-center">الإجراءات</TableHead>
           </TableRow>
@@ -41,6 +42,13 @@ export default function UsersTableSkeleton() {
               </TableCell>
 
               <TableCell>
+                <div className="space-y-1.5">
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-3 w-40" />
+                </div>
+              </TableCell>
+
+              <TableCell>
                 <Skeleton className="h-5 w-14 rounded-md" />
               </TableCell>
 
@@ -49,10 +57,7 @@ export default function UsersTableSkeleton() {
               </TableCell>
 
               <TableCell>
-                <div className="space-y-1.5">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-3 w-16" />
-                </div>
+                <Skeleton className="h-4 w-24" />
               </TableCell>
 
               <TableCell>
