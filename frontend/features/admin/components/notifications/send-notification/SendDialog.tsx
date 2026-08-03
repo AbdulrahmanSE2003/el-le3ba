@@ -26,8 +26,8 @@ import { toast } from "sonner";
 import {
   notificationSchema,
   NotificationValues,
-} from "../../schema/NotificationSchema";
-import { createNotification } from "../../api/notifications";
+} from "../../../schema/NotificationSchema";
+import { createNotification } from "../../../api/notifications";
 import { useRouter } from "next/navigation";
 
 const SendDialog = ({ onClose }: { onClose: () => void }) => {

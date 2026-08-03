@@ -2,14 +2,16 @@ import PageHeader from "@/features/admin/components/shared/PageHeader";
 import { NotificationsKpiCards } from "@/features/admin/components/notifications/NotificationsKpiCards";
 import NotificationFilter from "./notification-filter/NotificationFilter";
 import NotificationsTable from "./notification-table/NotificationsTable";
-import SendNotification from "./SendNotification";
+import SendNotification from "./send-notification/SendNotification";
 
 import { Suspense } from "react";
 
 import StatsCardsSkeleton from "../StatsCardsSkeleton";
 
 import { fetchNotifications } from "../../actions/notifications";
+
 import { tableHeaders } from "./constants/constants";
+
 import Error from "@/app/error";
 
 interface Props {

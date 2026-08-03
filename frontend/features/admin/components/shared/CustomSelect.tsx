@@ -12,11 +12,18 @@ interface Props {
     label: string;
     value: string;
   }[];
+  onValueChange?: (value: string) => void;
+  value?: string;
 }
 
-export default function CustomSelect({ items, placeholder }: Props) {
+export default function CustomSelect({
+  items,
+  placeholder,
+  onValueChange,
+  value,
+}: Props) {
   return (
-    <Select>
+    <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className="bg-background  dark:text-white cursor-pointer">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

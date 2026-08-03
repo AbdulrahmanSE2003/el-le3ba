@@ -6,12 +6,19 @@ export default function createPageUrl(
   // Copy current URL params to preserve existing filters (search, limit, etc.)
   const params = new URLSearchParams(searchParams);
 
-  if (value) {
-    params.set(key, value as string);
-  } else params.delete(key);
+  if (value !== undefined && value !== "") {
+    params.set(key, String(value));
+  } else {
+    params.delete(key);
+  }
 
   if (key !== "page") {
     params.set("page", "1");
+  }
+
+  // Reset url to default when page = 1
+  if (params.get("page") === "1") {
+    params.delete("page");
   }
 
   return `?${params.toString()}`;

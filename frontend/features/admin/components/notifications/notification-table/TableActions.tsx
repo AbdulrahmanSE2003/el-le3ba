@@ -1,7 +1,8 @@
+"use client";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -9,9 +10,13 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import { CalendarX2, Eye, MoreVertical, RotateCw, Trash2 } from "lucide-react";
+import { MoreVertical } from "lucide-react";
 
 import { NotificationCampaign } from "@/features/admin/types/notification";
+
+import { ViewNotificationModal } from "../notification-modals/show-details-modal/ViewNotificationModal";
+
+import { DeleteNotificationModal } from "../notification-modals/delete-modal/DeleteNotificationModal";
 
 export default function TableActions({
   notification,
@@ -36,30 +41,12 @@ export default function TableActions({
         <DropdownMenuSeparator />
 
         {/* View notification details */}
-        <DropdownMenuItem className="gap-2 cursor-pointer">
-          <Eye className="w-4 h-4 text-primary" /> عرض التفاصيل
-        </DropdownMenuItem>
-
-        {/* Resend if it failed */}
-        {/* {notification.status === "failed" && (
-          <DropdownMenuItem className="gap-2 cursor-pointer text-sky-500 dark:text-sky-500">
-            <RotateCw className="w-4 h-4" /> إعادة الإرسال
-          </DropdownMenuItem>
-        )} */}
-
-        {/* Cancel schedule if it's scheduled */}
-        {/* {notification.status === "scheduled" && (
-          <DropdownMenuItem className="gap-2 cursor-pointer text-amber-500 dark:text-amber-500">
-            <CalendarX2 className="w-4 h-4" /> إلغاء الجدولة
-          </DropdownMenuItem>
-        )} */}
+        <ViewNotificationModal notification={notification} />
 
         <DropdownMenuSeparator />
 
         {/* Delete record */}
-        <DropdownMenuItem className="gap-2 cursor-pointer text-destructive dark:text-destructive hover:dark:text-accent-foreground">
-          <Trash2 className="w-4 h-4" /> حذف السجل
-        </DropdownMenuItem>
+        <DeleteNotificationModal notification={notification} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
