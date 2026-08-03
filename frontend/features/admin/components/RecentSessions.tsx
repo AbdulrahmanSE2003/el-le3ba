@@ -45,7 +45,7 @@ export default async function RecentSessions() {
 
   return (
     <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
-      <div className="flex items-center justify-between border-b mb-2 p-6">
+      <div className="flex items-center justify-between border-b mb-2 p-6 py-4">
         <div className={`space-y-1`}>
           <h2 className="text-lg font-semibold">المباريات الأخيرة</h2>
           <p className="text-xs text-muted-foreground">
@@ -123,7 +123,11 @@ export default async function RecentSessions() {
                   </TableCell>
 
                   <TableCell>
-                    <Button variant="ghost" size="icon">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className={`border border-accent`}
+                    >
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </TableCell>

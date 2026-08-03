@@ -84,14 +84,14 @@ export const quickActions = [
     title: "إعدادات النظام",
     icon: Settings,
     className:
-      "border border-accent bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
+      "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
     desc: "تعديل تفضيلات المنصة",
   },
   {
     title: "توليد تقرير",
     icon: FileText,
     className:
-      "border border-accent bg-emerald-500/20 text-emerald-500  group-hover:bg-emerald-500/75 group-hover:text-white",
+      "bg-emerald-500/20 text-emerald-500  group-hover:bg-emerald-500/75 group-hover:text-white",
     desc: "تصدير البيانات بصيغة PDF",
   },
   {
@@ -106,14 +106,14 @@ export const quickActions = [
     title: "سجل الأمان",
     icon: ShieldAlert,
     className:
-      "border border-accent bg-rose-500/20 text-rose-500 group-hover:bg-rose-500/80 group-hover:text-white",
+      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
     desc: "مراجعة محاولات الدخول",
   },
   {
     title: "جدولة حدث",
     icon: CalendarDaysIcon,
     className:
-      "border border-accent bg-purple-500/20 text-purple-500 group-hover:bg-purple-500/80 group-hover:text-white",
+      "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
     desc: "نظّم تقويم الأحداث",
   },
 ];
