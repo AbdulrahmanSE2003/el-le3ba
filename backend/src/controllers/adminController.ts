@@ -1,16 +1,17 @@
+import mongoose from "mongoose";
 import AuditLog from "../models/AuditLogModel";
 import Event from "../models/eventModel";
 import NotificationCampaign from "../models/NotificationCampaignModel";
 import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
-import Team from "../models/teamModel";
+import Team, { ITeam } from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
-import { getGrowthStats } from "../utils/utils";
+import { generateCode, getGrowthStats } from "../utils/utils";
 
 export const createAdmin = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
@@ -592,3 +593,385 @@ export const getProfileRecentLogs = catchAsync(async (req, res, next) => {
 
   resHandler(res, 200, "recentLogs", recentLogs);
 });
+
+// ==================================================
+// ================= Team Dashboard =================
+// ==================================================
+
+export const getAllTeams = catchAsync(async (req, res) => {
+  const page = Math.max(Number(req.query.page) || 1, 1);
+  const limit = Math.max(Number(req.query.limit) || 10, 1);
+  const skip = (page - 1) * limit;
+
+  const { search, sort = "newest" } = req.query as Record<string, string>;
+
+  const filter: any = {};
+
+  if (search) {
+    const leaders = await User.find({
+      name: {
+        $regex: search,
+        $options: "i",
+      },
+    }).select("_id");
+
+    filter.$or = [
+      {
+        teamName: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        teamCode: {
+          $regex: search,
+          $options: "i",
+        },
+      },
+      {
+        teamLeader: {
+          $in: leaders.map((leader) => leader._id),
+        },
+      },
+    ];
+  }
+
+  const sortMap: Record<string, string> = {
+    newest: "-createdAt",
+    oldest: "createdAt",
+    pointsDesc: "-points",
+    pointsAsc: "points",
+    gamesDesc: "-totalGames",
+    gamesAsc: "totalGames",
+    nameAsc: "teamName",
+    nameDesc: "-teamName",
+  };
+
+  const sortOption = sortMap[sort] || "-createdAt";
+
+  const [teams, totalResults] = await Promise.all([
+    Team.find(filter)
+      .populate("teamLeader", "name email")
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limit),
+
+    Team.countDocuments(filter),
+  ]);
+
+  const teamIds = teams.map((team) => team._id);
+
+  const memberships = await TeamMembership.find({
+    teamId: { $in: teamIds },
+  })
+    .populate("userId", "name email avatar")
+    .lean();
+
+  const membersMap = new Map<string, typeof memberships>();
+
+  for (const membership of memberships) {
+    const teamId = membership.teamId.toString();
+
+    if (!membersMap.has(teamId)) {
+      membersMap.set(teamId, []);
+    }
+
+    membersMap.get(teamId)!.push(membership);
+  }
+
+  const finalTeams = teams.map((team) => ({
+    ...team.toObject(),
+    members: membersMap.get(team._id.toString()) ?? [],
+    membersCount: membersMap.get(team._id.toString())?.length ?? 0,
+  }));
+
+  const totalPages = Math.ceil(totalResults / limit);
+
+  resHandler(res, 200, "teams", {
+    teams: finalTeams,
+    page,
+    totalPages,
+    limit,
+    totalResults,
+  });
+});
+
+export const getTeamsStats = catchAsync(async (req, res) => {
+  const teamStats = await Team.aggregate([
+    {
+      $group: {
+        _id: null,
+        totalTeams: { $sum: 1 },
+        totalGames: { $sum: "$totalGames" },
+        totalPoints: { $sum: "$points" },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        totalTeams: 1,
+        totalGames: 1,
+        totalPoints: 1,
+      },
+    },
+  ]);
+
+  const totalMembers = await TeamMembership.countDocuments();
+
+  const stats = teamStats[0] ?? {
+    totalTeams: 0,
+    totalGames: 0,
+    totalPoints: 0,
+  };
+
+  resHandler(res, 200, "teamStats", {
+    ...stats,
+    totalMembers,
+  });
+});
+
+// export const createTeam = catchAsync(async (req, res, next) => {
+//   const user = req.user;
+//   let codeIsUnique = false;
+//   let GCode: string = "";
+//   while (!codeIsUnique) {
+//     GCode = generateCode();
+//     const exists = await Team.exists({ teamCode: GCode });
+//     if (!exists) codeIsUnique = true;
+//   }
+
+//   const session = await mongoose.startSession();
+//   session.startTransaction();
+
+//   try {
+//     const [newTeam] = await Team.create(
+//       [{ teamName: req.body.teamName, teamLeader: user!._id, teamCode: GCode }],
+//       { session },
+//     );
+
+//     await TeamMembership.create(
+//       [{ userId: user!._id, teamId: newTeam._id, role: "captain" }],
+//       { session },
+//     );
+
+//     await session.commitTransaction();
+
+//     await logAudit({
+//       actor: req.user._id,
+//       action: "team.created",
+//       target: newTeam._id,
+//       targetModel: "Team",
+//     });
+
+//     resHandler(res, 201, "team", newTeam);
+//   } catch (error) {
+//     await session.abortTransaction();
+//     throw error;
+//   } finally {
+//     session.endSession();
+//   }
+// });
+
+export const editTeam = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const { teamName, teamLeader } = req.body;
+
+  const session = await mongoose.startSession();
+
+  try {
+    await session.startTransaction();
+
+    const team = await Team.findById({ _id: id }).session(session);
+
+    if (!team) {
+      throw new AppError("Invalid operation, team not found.", 404);
+    }
+
+    if (teamName) {
+      team.teamName = teamName;
+    }
+
+    if (teamLeader && team.teamLeader.toString() !== teamLeader) {
+      const oldCaptain = await TeamMembership.findOne({
+        teamId: id,
+        role: "captain",
+      }).session(session);
+
+      if (!oldCaptain) {
+        throw new AppError(
+          "Invalid operation, no captain found for this team.",
+          400,
+        );
+      }
+
+      const newCaptainMembership = await TeamMembership.findOne({
+        teamId: id,
+        userId: teamLeader,
+      }).session(session);
+
+      if (!newCaptainMembership) {
+        throw new AppError(
+          "Invalid operation, the selected user is not a member of this team.",
+          400,
+        );
+      }
+
+      oldCaptain.role = "member";
+      await oldCaptain.save({ session });
+
+      newCaptainMembership.role = "captain";
+      await newCaptainMembership.save({ session });
+
+      team.teamLeader = new mongoose.Types.ObjectId(teamLeader);
+    }
+
+    await team.save({ session });
+
+    await session.commitTransaction();
+
+    resHandler(res, 200, "team", team);
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+});
+
+export const deleteTeam = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const isTeamPlaying = await Session.findOne({
+    teamId: id,
+    status: "running",
+  });
+  if (!isTeamPlaying)
+    return next(
+      new AppError(
+        "Invalid operation, can't delete a team while there is a running session.",
+        400,
+      ),
+    );
+  const session = await mongoose.startSession();
+  try {
+    await session.startTransaction();
+
+    const members = await TeamMembership.find({ teamId: id }).session(session);
+
+    const team = await Team.findByIdAndDelete(id).session(session);
+
+    if (!team) {
+      throw new AppError("Invalid operation, team not found.", 404);
+    }
+
+    await TeamMembership.deleteMany({ teamId: id }).session(session);
+
+    const [campaign] = await NotificationCampaign.create(
+      [
+        {
+          title: "تم حذف الفريق الخاص بك",
+          message:
+            "تم حذف الفريق الخاص بك، يرجى التواصل مع الدعم إذا كان لديك أي استفسار.",
+          type: "selected",
+          recipientsCount: members.length,
+          createdBy: req.user._id,
+        },
+      ],
+      { session },
+    );
+
+    await Notification.insertMany(
+      members.map((m) => ({
+        campaignId: campaign._id,
+        userId: m.userId._id,
+      })),
+    );
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.deleted",
+      target: team._id,
+      targetModel: "Team",
+    });
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(204).send();
+});
+
+export const sendNotificationToTeamMembers = catchAsync(
+  async (req, res, next) => {
+    const { id } = req.params;
+    const { title, message } = req.body;
+
+    if (!title || !message) {
+      return next(
+        new AppError(
+          "Invalid operation, please provide title and message.",
+          400,
+        ),
+      );
+    }
+
+    const session = await mongoose.startSession();
+
+    try {
+      await session.startTransaction();
+
+      const members = await TeamMembership.find({ teamId: id }).session(
+        session,
+      );
+
+      console.log(members);
+
+      if (!members.length) {
+        throw new AppError(
+          "Invalid operation, no members found for this team.",
+          404,
+        );
+      }
+
+      const [campaign] = await NotificationCampaign.create(
+        [
+          {
+            title,
+            message,
+            type: "selected",
+            recipientsCount: members.length,
+            createdBy: req.user._id,
+          },
+        ],
+        { session },
+      );
+
+      await Notification.insertMany(
+        members.map((member) => ({
+          campaignId: campaign._id,
+          userId: member.userId,
+        })),
+        { session },
+      );
+
+      await logAudit({
+        actor: req.user._id,
+        action: "notification.sent_to_team",
+        target: campaign._id,
+        targetModel: "NotificationCampaign",
+      });
+      await session.commitTransaction();
+
+      resHandler(res, 201, "campaign", campaign);
+    } catch (error) {
+      await session.abortTransaction();
+      next(error);
+    } finally {
+      session.endSession();
+    }
+  },
+);
