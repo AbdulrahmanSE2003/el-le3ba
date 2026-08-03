@@ -6,6 +6,10 @@ export const notificationTypes = [
 export const notificationsSortBy = [
   { value: "default", label: "افتراضي" },
   { value: "recent", label: "الأحدث" },
+  {
+    value: "oldest",
+    label: "الأقدم",
+  },
   { value: "recipients", label: "الأكثر مستلمين" },
 ];
 
@@ -18,4 +22,3 @@ export const tableHeaders = [
   "وقت الإرسال",
   "الإجراءات",
 ];
-

@@ -32,10 +32,10 @@ export default function FiltersContainer() {
       <CustomSelect
         placeholder="فلتر حسب النوع"
         items={notificationTypes}
-        value={searchParams.get("type") || "all"}
+        value={searchParams.get("targetType") || "all"}
         onValueChange={(value) => {
           const url = createPageUrl(
-            "type",
+            "targetType",
             value === "all" ? undefined : value,
             searchParams.toString(),
           );
@@ -46,11 +46,11 @@ export default function FiltersContainer() {
       <CustomSelect
         placeholder="الترتيب"
         items={notificationsSortBy}
-        value={searchParams.get("sort") || "latest"}
+        value={searchParams.get("sort") || "default"}
         onValueChange={(value) => {
           const url = createPageUrl(
             "sort",
-            value === "latest" ? undefined : value,
+            value === "default" ? undefined : value,
             searchParams.toString(),
           );
           router.push(`${pathname}${url}`);

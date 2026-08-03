@@ -14,6 +14,7 @@ import { formatCreatedAt } from "@/lib/utils";
 import { NotificationsPagination } from "../pagination/NotificationsPagination";
 import { NotificationCampaignsRes } from "@/features/admin/types/notification";
 import NoPage from "../NoPage";
+import { Badge } from "@/components/ui/badge";
 
 interface Props {
   tableHeaders: string[];
@@ -87,7 +88,16 @@ export default async function NotificationsTable({
               </TableCell>
 
               {/* Type */}
-              <TableCell>{notification.type}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    notification.type === "selected" ? "secondary" : "default"
+                  }
+                  className={`${notification.type === "selected" ? "bg-accent/25 text-amber-500" : "bg-primary/15 text-primary"} capitalize font-semibold`}
+                >
+                  {notification.type}
+                </Badge>
+              </TableCell>
 
               {/* Recipients count */}
               <TableCell className="text-xs font-semibold text-foreground">

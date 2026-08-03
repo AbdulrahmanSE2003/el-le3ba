@@ -404,15 +404,15 @@ export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
 
   const {
     search,
-    type,
+    targetType,
     sort = "default",
   } = req.query as Record<string, string>;
 
   const filter: Record<string, any> = {};
 
   // Handle Type Filter (matches notificationTypes: 'broadcast' | 'selected')
-  if (type && type !== "all") {
-    filter.targetType = type; // or `filter.type = type` depending on your schema field name
+  if (targetType && targetType !== "all") {
+    filter.type = targetType; // or `filter.type = type` depending on your schema field name
   }
 
   // Handle Search Filter
@@ -430,11 +430,8 @@ export const getAllNotificationCampaigns = catchAsync(async (req, res) => {
     sortOption = { recipientsCount: -1 };
   } else if (sort === "recent" || sort === "default") {
     sortOption = { createdAt: -1 };
-  } else {
-    // Fallback for custom sort strings passed directly (e.g. "-createdAt")
-    const isDesc = sort.startsWith("-");
-    const field = isDesc ? sort.slice(1) : sort;
-    sortOption = { [field]: isDesc ? -1 : 1 };
+  } else if (sort === "oldest") {
+    sortOption = { createdAt: 1 };
   }
 
   const [campaigns, totalResults] = await Promise.all([
