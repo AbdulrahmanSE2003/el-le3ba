@@ -103,3 +103,37 @@ export function getAvatarUrl(avatar?: string | null) {
 
   return `${BACKEND_URL}/avatars/${avatar}`;
 }
+
+/**
+ * Formats large numbers into a compact human-readable string (e.g., 1.5K, 2.3M)
+ * @param number - The number to format
+ * @param options - Optional formatting options
+ */
+export function formatCompactNumber(
+  number: number,
+  options?: {
+    threshold?: number; // The minimum number before compact formatting is applied (default 10,000)
+    locale?: string; // The locale (default 'en-US' for K, M, B or 'ar-EG' for Arabic)
+    maxDecimals?: number; // The maximum number of decimal places (default 1)
+  },
+): string {
+  if (number === null || number === undefined || isNaN(number)) return "0";
+
+  const {
+    threshold = 10000,
+    locale = "en-US",
+    maxDecimals = 1,
+  } = options || {};
+
+  // If the number is smaller than the threshold, display it normally with thousands separators (1,250)
+  if (Math.abs(number) < threshold) {
+    return new Intl.NumberFormat(locale).format(number);
+  }
+
+  // If the number exceeds the threshold, convert it to the compact format (10K, 1.5M, etc.)
+  return new Intl.NumberFormat(locale, {
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: maxDecimals,
+  }).format(number);
+}
