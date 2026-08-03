@@ -15,7 +15,10 @@ export async function fetchNotifications(
   );
 
   if (!response.success) {
-    throw new Error(response.error as string);
+    return {
+      status: false,
+      error: response.error,
+    };
   }
 
   return {
