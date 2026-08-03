@@ -6,15 +6,20 @@ import {
   createAdmin,
   createUser,
   deleteNotificationCampaign,
+  deleteTeam,
   deleteUser,
+  editTeam,
   getAllNotificationCampaigns,
+  getAllTeams,
   getAllUsers,
   getDashboardStats,
   getNotificationStats,
   getProfileRecentLogs,
   getProfileStats,
   getRecentSessions,
+  getTeamsStats,
   getUserStats,
+  sendNotificationToTeamMembers,
   updateUser,
 } from "../controllers/adminController";
 import { sendNotifications } from "../controllers/notificationController";
@@ -51,5 +56,16 @@ adminRoutes.route("/users/:id/reset-password").patch(adminResetPassword);
 
 adminRoutes.route("/profile/stats").get(getProfileStats);
 adminRoutes.route("/profile/recent-logs").get(getProfileRecentLogs);
+
+// ==================================================
+// ================= Team Dashboard =================
+// ==================================================
+adminRoutes.route("/teams").get(getAllTeams);
+adminRoutes.route("/teams/stats").get(getTeamsStats);
+adminRoutes
+  .route("/teams/:id")
+  .post(sendNotificationToTeamMembers)
+  .patch(editTeam)
+  .delete(deleteTeam);
 
 export default adminRoutes;

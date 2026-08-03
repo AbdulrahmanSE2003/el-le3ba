@@ -11,51 +11,6 @@ import Leaderboard from "../models/leaderboardModel";
 import Event from "../models/eventModel";
 import { logAudit } from "../utils/AuditLog";
 
-export const createTeam = catchAsync(async (req, res, next) => {
-  const user = req.user;
-  const isInTeam = await TeamMembership.findOne({ userId: user!._id });
-  if (isInTeam) return next(new AppError("User is already in a team.", 400));
-
-  let codeIsUnique = false;
-  let GCode: string = "";
-  while (!codeIsUnique) {
-    GCode = generateCode();
-    const exists = await Team.exists({ teamCode: GCode });
-    if (!exists) codeIsUnique = true;
-  }
-
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
-  try {
-    const [newTeam] = await Team.create(
-      [{ teamName: req.body.teamName, teamLeader: user!._id, teamCode: GCode }],
-      { session },
-    );
-
-    await TeamMembership.create(
-      [{ userId: user!._id, teamId: newTeam._id, role: "captain" }],
-      { session },
-    );
-
-    await session.commitTransaction();
-
-    await logAudit({
-      actor: req.user._id,
-      action: "team.created",
-      target: newTeam._id,
-      targetModel: "Team",
-    });
-
-    resHandler(res, 201, "team", newTeam);
-  } catch (error) {
-    await session.abortTransaction();
-    throw error;
-  } finally {
-    session.endSession();
-  }
-});
-
 export const joinTeam = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
@@ -403,4 +358,3 @@ export const getTeamAttempts = catchAsync(async (req, res, next) => {
 // NOTE: Admins Only
 // ===================================
 export const getTeam = getOne(Team);
-export const getAllTeams = getAll(Team);
