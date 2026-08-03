@@ -121,7 +121,7 @@ export default async function UsersPage({
         ),
     },
     {
-      header: "تاريخ الاضافة",
+      header: "تاريخ الإنشاء",
       cell: (user) =>
         user.createdAt ? (
           <div className="text-xs font-medium text-foreground">

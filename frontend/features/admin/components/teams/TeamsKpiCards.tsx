@@ -15,8 +15,8 @@ export async function TeamsKpiCards() {
       title: "إجمالي الفرق",
       value: stats?.totalTeams ?? 0o0,
       icon: Shield,
-      iconClassName: "text-primary",
-      bgClassName: "bg-primary/10",
+      iconClassName: "text-cyan-650",
+      bgClassName: "bg-cyan-500/10",
     },
     {
       title: "إجمالي المباريات",
