@@ -78,6 +78,7 @@ export const quickActions = [
     className:
       "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500/30 group-hover:text-white",
     desc: "إنشاء حساب مستخدم جديد",
+    component: AddUserModal,
   },
   {
     title: "إعدادات النظام",
@@ -171,6 +172,7 @@ export const ACTIONS: Record<string, ActionConfig> = {
 };
 
 import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
+import { AddUserModal } from "../components/users/AddUserModal";
 
 export const superAdminNav = [
   {

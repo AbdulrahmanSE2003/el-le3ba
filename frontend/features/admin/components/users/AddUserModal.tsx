@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { BaseModal } from "@/features/admin/components/shared/BaseModal";
 import { UserForm } from "@/features/admin/components/users/UserForm";
@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { createUserAction } from "@/features/admin/actions/user.actions";
 import { toast } from "sonner";
 
-export function AddUserModal() {
+export function AddUserModal({ trigger }: { trigger?: ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -36,9 +36,13 @@ export function AddUserModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)}>
-        <UserPlus className="ml-2 h-4 w-4" /> إضافة مستخدم جديد
-      </Button>
+      {trigger ? (
+        <div onClick={() => setIsOpen(true)}>{trigger}</div>
+      ) : (
+        <Button onClick={() => setIsOpen(true)}>
+          <UserPlus className="ml-2 h-4 w-4" /> إضافة مستخدم جديد
+        </Button>
+      )}
 
       <BaseModal
         isOpen={isOpen}
