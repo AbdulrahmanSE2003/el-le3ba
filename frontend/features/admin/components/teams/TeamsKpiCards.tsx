@@ -1,34 +1,41 @@
-import { Shield, ShieldCheck, UserCheck, Clock } from "lucide-react";
+import { Shield, Swords, Trophy, UsersRound } from "lucide-react";
 import { GenericKpiGrid } from "@/features/admin/components/shared/GenericKpiGrid";
 import { StatCardItem } from "@/features/admin/types/shared";
+import { getTeamsStats } from "../../api/shared";
+import Error from "@/app/error";
+import { formatCompactNumber } from "@/lib/utils";
 
-export function TeamsKpiCards({ data }: { data?: Record<string, number> }) {
+export async function TeamsKpiCards() {
+  const teamsStatsRes = await getTeamsStats();
+  if (!teamsStatsRes.success) return <Error />;
+  const stats = teamsStatsRes.data?.teamStats;
+
   const teamStats: StatCardItem[] = [
     {
       title: "إجمالي الفرق",
-      value: data?.totalTeams ?? 20,
+      value: stats?.totalTeams ?? 0o0,
       icon: Shield,
       iconClassName: "text-primary",
       bgClassName: "bg-primary/10",
     },
     {
-      title: "الفرق النشطة",
-      value: data?.activeTeams ?? 16,
-      icon: ShieldCheck,
+      title: "إجمالي المباريات",
+      value: formatCompactNumber(stats?.totalGames ?? 0, { threshold: 1000 }),
+      icon: Swords,
       iconClassName: "text-brand-success",
       bgClassName: "bg-brand-success/10",
     },
     {
-      title: "الفرق المكتملة",
-      value: data?.fullTeams ?? 11,
-      icon: UserCheck,
+      title: "إجمالي النقاط",
+      value: formatCompactNumber(stats?.totalPoints ?? 0),
+      icon: Trophy,
       iconClassName: "text-accent",
       bgClassName: "bg-accent/20",
     },
     {
-      title: "فرق تطلب أعضاء",
-      value: data?.openTeams ?? 7,
-      icon: Clock,
+      title: "إجمالي الأعضاء",
+      value: formatCompactNumber(stats?.totalMembers ?? 0, { threshold: 1000 }),
+      icon: UsersRound,
       iconClassName: "text-chart-5",
       bgClassName: "bg-chart-5/10",
     },

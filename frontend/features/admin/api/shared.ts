@@ -1,7 +1,7 @@
 import { RecentSession } from "@/shared/api/helpers";
 import { serverFetch } from "@/shared/api/server";
 import { cache } from "react";
-import { Team } from "../types/teams";
+import { Team, GetTeamsStatsRes } from "../types/teams";
 import {
   NotificationCampaignsRes,
   NotificationsStatsRes,
@@ -10,7 +10,7 @@ import { ProfileRecentLogs, ProfileStatsRes } from "../types/profile";
 import {
   GetUsersQueryParams,
   GetUsersResponse,
-  GetUserStatsRes,
+  GetUsersStatsRes,
 } from "../types/users";
 
 // Interfaces
@@ -65,7 +65,7 @@ export const getRecentLogs = cache(async () =>
 );
 // =====================================================================================
 export const getUsersStats = cache(async () =>
-  serverFetch<GetUserStatsRes>({ url: "admin/users/stats" }),
+  serverFetch<GetUsersStatsRes>({ url: "admin/users/stats" }),
 );
 // =====================================================================================
 export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
@@ -86,6 +86,11 @@ export const getAllUsers = cache(async (params?: GetUsersQueryParams) => {
   return serverFetch<GetUsersResponse>({ url });
 });
 // =====================================================================================
+export const getTeamsStats = cache(async () =>
+  serverFetch<GetTeamsStatsRes>({ url: "admin/teams/stats" }),
+);
+// =====================================================================================
+
 // Dummy Teams Data
 export const getTeamsData: Team[] = [
   {

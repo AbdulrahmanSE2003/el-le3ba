@@ -7,17 +7,17 @@ export interface MetricValueOnly {
   value: number;
 }
 
-export interface UserStatsData {
+export interface UsersStatsData {
   totalUsers: MetricWithChange;
   newUsersThisMonth: MetricWithChange;
   usersInTeams: MetricValueOnly;
   students: MetricValueOnly;
 }
 
-export interface GetUserStatsRes {
+export interface GetUsersStatsRes {
   status: string;
 
-  stats: UserStatsData;
+  stats: UsersStatsData;
 }
 // ===============================================================
 
