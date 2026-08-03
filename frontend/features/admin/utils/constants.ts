@@ -64,11 +64,6 @@ export const adminNavItems: NavItem[] = [
     href: "/admin/sessions",
     icon: Play,
   },
-  {
-    title: "الإعدادات",
-    href: "/admin/settings",
-    icon: Settings2Icon,
-  },
 ];
 
 export const quickActions = [
@@ -191,6 +186,11 @@ export const superAdminNav = [
     title: "سجل الإجراءات",
     href: "/super-admin/logs",
     icon: ClipboardList,
+  },
+  {
+    title: "الإعدادات",
+    href: "/super-admin/settings",
+    icon: Settings2Icon,
   },
   {
     title: "الملف الشخصي",

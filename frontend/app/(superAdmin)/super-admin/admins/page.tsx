@@ -1,5 +1,29 @@
-const page = () => {
-  return <div>page</div>;
-};
+import PageHeader from "@/features/admin/components/shared/PageHeader";
+import AddAdmin from "@/features/super-admin/components/admins/AddAdmin";
+import Toolbar from "@/features/super-admin/components/admins/Toolbar";
+import AdminsTable from "@/features/super-admin/components/admins/AdminsTable";
+import AdminsStatsCards from "@/features/super-admin/components/admins/AdminsStatsCards";
 
-export default page;
+export default function AdminsManagementPage() {
+  return (
+    <section className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <PageHeader
+          title="إدارة المشرفين"
+          description="إضافة، تعديل، وإدارة صلاحيات المشرفين على المنصة"
+        />
+        <AddAdmin />
+      </div>
+
+      {/* Stats Cards */}
+      <AdminsStatsCards />
+
+      {/* Toolbar */}
+      <Toolbar />
+
+      {/* Table */}
+      <AdminsTable />
+    </section>
+  );
+}

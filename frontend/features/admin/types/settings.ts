@@ -23,12 +23,3 @@ export interface SecuritySettings {
 }
 
 export type AdminRole = "admin" | "superAdmin";
-
-export interface AdminAccount {
-  _id: string;
-  name: string;
-  email: string;
-  avatar: string | null;
-  role: AdminRole;
-  addedAt: string;
-}

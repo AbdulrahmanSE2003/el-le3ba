@@ -1,6 +1,5 @@
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import TimeFrameSelector from "./TimeFrameSelector";
 import AdminProfile from "./AdminProfile";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 
@@ -20,9 +19,6 @@ export function SuperAdminHeader({ name }: { name: string }) {
 
       {/* Left Side: Timeframe Selector & Actions */}
       <div className="flex items-center gap-3 ">
-        {/* Timeframe Filter Dropdown */}
-        <TimeFrameSelector />
-
         {/* Notifications Icon */}
         <Button
           variant="ghost"
