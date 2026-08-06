@@ -4,8 +4,7 @@ import { containerVariants, fadeInUp } from "@/components/shared/animations";
 import Motion from "@/components/shared/Motion";
 
 import UserAvatar from "@/components/shared/UserAvatar";
-
-const AVATARS_LIST = Array.from({ length: 15 }, (_, i) => `avatar${i + 1}.png`);
+import { AVATARS } from "@/lib/utils";
 
 interface Props {
   selectedAvatar: string | null;
@@ -21,7 +20,7 @@ export default function Avatars({ selectedAvatar, handleSelectAvatar }: Props) {
       animate="visible"
       className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 md:gap-6"
     >
-      {AVATARS_LIST.map((avatarName) => {
+      {AVATARS.map((avatarName) => {
         const isSelected = selectedAvatar === avatarName;
         return (
           <Motion

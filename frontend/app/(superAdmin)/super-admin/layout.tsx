@@ -21,9 +21,7 @@ const superAdminLayout = async ({ children }: { children: ReactNode }) => {
         <StoreInitializer user={user} />
 
         <SuperAdminHeader name={user.name} />
-        <section className="flex-1 overflow-auto p-4 md:p-6 h-screen">
-          {children}
-        </section>
+        <section className="flex-1 p-4 md:p-6 h-screen">{children}</section>
       </SidebarInset>
     </SidebarProvider>
   );

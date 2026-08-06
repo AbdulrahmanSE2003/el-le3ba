@@ -21,6 +21,7 @@ export interface UserData {
   email: string;
   role: "student" | "admin" | "superAdmin";
   avatar: string | null;
+  isActive: boolean;
   totalScore: number;
   gamesPlayed: number;
   gamesWon?: number;
