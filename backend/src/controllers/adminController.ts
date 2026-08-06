@@ -12,6 +12,7 @@ import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
 import { generateCode, getGrowthStats } from "../utils/utils";
+import Leaderboard from "../models/leaderboardModel";
 
 export const createAdmin = catchAsync(async (req, res, next) => {
   const { name, email, password, passwordConfirm } = req.body;
@@ -902,6 +903,95 @@ export const deleteTeam = catchAsync(async (req, res, next) => {
   res.status(204).send();
 });
 
+export const bulkDeleteTeams = catchAsync(async (req, res, next) => {
+  const { teamIds } = req.body;
+
+  if (!Array.isArray(teamIds) || teamIds.length === 0) {
+    return next(
+      new AppError("Invalid operation, please provide at least one team.", 400),
+    );
+  }
+
+  // ── 1. Check for running sessions ──
+  const runningSessions = await Session.countDocuments({
+    teamId: { $in: teamIds },
+    status: "running",
+  });
+
+  if (runningSessions > 0) {
+    return next(
+      new AppError(
+        "Cannot delete teams with active sessions. End sessions first.",
+        400,
+      ),
+    );
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    // ── 2. Get memberships BEFORE deleting ──
+    const memberships = await TeamMembership.find({
+      teamId: { $in: teamIds },
+    }).session(session);
+
+    const memberUserIds = memberships.map((m) => m.userId);
+
+    // ── 3. Delete related data ──
+    await Team.deleteMany({ _id: { $in: teamIds } }).session(session);
+    await TeamMembership.deleteMany({ teamId: { $in: teamIds } }).session(
+      session,
+    );
+    await Leaderboard.deleteMany({ teamId: { $in: teamIds } }).session(session);
+
+    // ── 4. Create notification campaign ──
+    if (memberships.length > 0) {
+      const [campaign] = await NotificationCampaign.create(
+        [
+          {
+            title: "تم حذف الفريق الخاص بك",
+            message:
+              "تم حذف الفريق الخاص بك، يرجى التواصل مع الدعم إذا كان لديك أي استفسار.",
+            type: "selected",
+            recipientsCount: memberships.length,
+            createdBy: req.user._id,
+          },
+        ],
+        { session },
+      );
+
+      await Notification.insertMany(
+        memberships.map((m) => ({
+          campaignId: campaign._id,
+          userId: m.userId,
+        })),
+        { session },
+      );
+    }
+
+    await session.commitTransaction();
+
+    // ── 5. Audit log (outside transaction — fire and forget) ──
+    await logAudit({
+      actor: req.user._id,
+      action: "team.bulk_deleted",
+      targetModel: "Team",
+      metadata: {
+        teamsCount: teamIds.length,
+        teamIds,
+        affectedUsers: memberUserIds.length,
+      },
+    });
+
+    res.status(204).send();
+  } catch (error) {
+    await session.abortTransaction();
+    throw error; // Let global error handler catch it
+  } finally {
+    session.endSession();
+  }
+});
 export const sendNotificationToTeamMembers = catchAsync(
   async (req, res, next) => {
     const { id } = req.params;

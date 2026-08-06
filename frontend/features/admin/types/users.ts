@@ -1,3 +1,5 @@
+import { AVATARS } from "@/lib/utils";
+
 export interface MetricWithChange {
   value: number;
   change: number;
@@ -31,10 +33,16 @@ export interface User {
   _id: string;
   name: string;
   email: string;
+  avatar: typeof AVATARS;
   role: "student" | "admin" | string;
   isActive: boolean;
   team?: UserTeam | null;
   createdAt: string;
+  currentStreak: number;
+  bestStreak: number;
+  totalScore: number;
+  gamesPlayed: number;
+  lastLoginAt: string;
 }
 
 export interface PaginatedUsersData {

@@ -267,3 +267,20 @@
     background-position: -100% 0;
   }
 }
+
+/* يمنع shadcn من قفل الـ body scroll */
+html body[data-scroll-locked] {
+  overflow: auto !important;
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Radix UI scroll lock */
+html body[style*="overflow: hidden"] {
+  overflow: auto !important;
+}
+
+/* لو بيستخدم class مش inline style */
+html body .radix-scroll-lock {
+  overflow: auto !important;
+}

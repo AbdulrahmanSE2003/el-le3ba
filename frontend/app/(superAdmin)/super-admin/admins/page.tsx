@@ -3,6 +3,8 @@ import AddAdmin from "@/features/super-admin/components/admins/AddAdmin";
 import Toolbar from "@/features/super-admin/components/admins/Toolbar";
 import AdminsTable from "@/features/super-admin/components/admins/AdminsTable";
 import AdminsStatsCards from "@/features/super-admin/components/admins/AdminsStatsCards";
+import { Suspense } from "react";
+import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 
 export default function AdminsManagementPage() {
   return (
@@ -17,7 +19,9 @@ export default function AdminsManagementPage() {
       </div>
 
       {/* Stats Cards */}
-      <AdminsStatsCards />
+      <Suspense fallback={<StatsCardsSkeleton />}>
+        <AdminsStatsCards />
+      </Suspense>
 
       {/* Toolbar */}
       <Toolbar />

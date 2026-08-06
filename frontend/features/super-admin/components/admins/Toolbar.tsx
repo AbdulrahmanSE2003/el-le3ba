@@ -18,21 +18,19 @@ const Toolbar = () => {
 
       {/* Filter by Role */}
       <div className={`flex items-center gap-3`}>
-        <div className="flex items-center gap-2">
-          <Select>
-            <SelectTrigger className={`bg-card`}>
-              <SelectValue placeholder="الصلاحية" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>الصلاحيات</SelectLabel>
-                <SelectItem value="all">الكل</SelectItem>
-                <SelectItem value="admin">مشرف</SelectItem>
-                <SelectItem value="superAdmin">سوبر أدمن</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        <Select>
+          <SelectTrigger className={`bg-card`}>
+            <SelectValue placeholder="الصلاحية" />
+          </SelectTrigger>
+          <SelectContent position="popper" align="start">
+            <SelectGroup>
+              <SelectLabel>الصلاحيات</SelectLabel>
+              <SelectItem value="all">الكل</SelectItem>
+              <SelectItem value="admin">مشرف</SelectItem>
+              <SelectItem value="superAdmin">سوبر أدمن</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
         {/* Reset Button */}
         <Button variant={"outline"} className={`bg-card/75 hover:bg-card`}>

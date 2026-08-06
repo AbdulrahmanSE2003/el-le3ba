@@ -1,3 +1,5 @@
+import { User } from "@/features/admin/types/users";
+
 export interface AppStats {
   appStats: {
     totalAdmins: number;
@@ -46,4 +48,23 @@ export interface RecentAdmin {
 
 export interface RecentAdminsRes {
   recentAdmins: RecentAdmin[];
+}
+
+export interface AdminStats {
+  adminStats: {
+    totalAdmins: number;
+    inactiveAdmins: number;
+    superAdmins: number;
+    recentLogins: number;
+  };
+}
+
+export interface AdminsRes {
+  admins: {
+    admins: User[];
+    page: 1;
+    limit: 10;
+    totalPages: 1;
+    totalResults: 4;
+  };
 }

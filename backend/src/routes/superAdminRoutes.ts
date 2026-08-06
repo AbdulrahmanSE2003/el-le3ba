@@ -2,6 +2,8 @@ import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
 import {
   createSuperAdmin,
+  getAdminsStats,
+  getAllAdmins,
   getAppStats,
   getRecentAdminLogs,
   getRecentAdmins,
@@ -16,5 +18,11 @@ superAdminRoutes.route("/").post(createSuperAdmin);
 superAdminRoutes.route("/stats").get(getAppStats);
 superAdminRoutes.route("/recent-admins").get(getRecentAdmins);
 superAdminRoutes.route("/recent-admin-logs").get(getRecentAdminLogs);
+
+// ===================================================
+// =================== Admins Page ===================
+// ===================================================
+superAdminRoutes.route("/admins").get(getAllAdmins);
+superAdminRoutes.route("/admins/stats").get(getAdminsStats);
 
 export default superAdminRoutes;

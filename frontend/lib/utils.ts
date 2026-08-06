@@ -7,6 +7,24 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const AVATARS = [
+  "avatar1.png",
+  "avatar2.png",
+  "avatar3.png",
+  "avatar4.png",
+  "avatar5.png",
+  "avatar6.png",
+  "avatar7.png",
+  "avatar8.png",
+  "avatar9.png",
+  "avatar10.png",
+  "avatar11.png",
+  "avatar12.png",
+  "avatar13.png",
+  "avatar14.png",
+  "avatar15.png",
+] as const;
+
 export const getRemainingDays = (endTimeStr: string): number => {
   const diffTime = new Date(endTimeStr).getTime() - Date.now();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
