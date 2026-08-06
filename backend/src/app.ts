@@ -19,6 +19,7 @@ import notificationRoutes from "./routes/notificationRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import superAdminRoutes from "./routes/superAdminRoutes";
 import { AppError } from "./utils/appError";
+import seasonRoutes from "./routes/seasonRoutes";
 
 const app = express();
 
@@ -69,6 +70,7 @@ app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
 // ── Routes ─────────────────────────────────────────────────
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/teams", teamRoutes);
+app.use("/api/v1/seasons", seasonRoutes);
 app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/leaderboard", leaderboardRoutes);
 app.use("/api/v1/sessions", sessionRoutes);

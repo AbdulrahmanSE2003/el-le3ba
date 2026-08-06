@@ -5,10 +5,10 @@ import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import resHandler from "../utils/resHandler";
 
-export const createSuperAdmin = catchAsync(async (req, res, next) => {
+export const createNewAdminOrSuperAdmin = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
-  const { name, email, password, passwordConfirm } = req.body;
+  const { name, email, password, passwordConfirm, role } = req.body;
 
   if (!name || !email || !password || !passwordConfirm)
     return next(
@@ -23,12 +23,15 @@ export const createSuperAdmin = catchAsync(async (req, res, next) => {
     email,
     password,
     passwordConfirm,
-    role: "superAdmin",
+    role: role || "admin",
   });
+
+  const action =
+    role && role === "admin" ? "admin.created" : "super_admin.created";
 
   await logAudit({
     actor: req.user._id,
-    action: "super_admin.created",
+    action: action,
     target: superAdmin._id,
     targetModel: "User",
   });

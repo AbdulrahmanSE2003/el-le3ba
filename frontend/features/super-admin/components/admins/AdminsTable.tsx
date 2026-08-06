@@ -14,6 +14,7 @@ import Error from "@/app/error";
 import { Crown, Shield } from "lucide-react";
 import TableActions from "./TableActions";
 import { formatCreatedAt } from "@/lib/utils";
+import { SearchParams } from "@/app/(superAdmin)/super-admin/admins/page";
 
 // ─── Role Badge ───
 const RoleBadge = ({ role }: { role: string }) => {
@@ -57,8 +58,8 @@ const StatusBadge = ({ isActive }: { isActive: boolean }) => {
   );
 };
 
-const AdminsTable = async () => {
-  const adminsRes = await getAllAdmins();
+const AdminsTable = async ({ params }: { params: SearchParams }) => {
+  const adminsRes = await getAllAdmins(params);
   if (!adminsRes.success) return <Error />;
 
   const admins = adminsRes.data.admins.admins;
@@ -82,7 +83,7 @@ const AdminsTable = async () => {
             {admins.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="h-32 text-center text-muted-foreground"
                 >
                   لا يوجد مشرفين حاليا...
@@ -114,10 +115,10 @@ const AdminsTable = async () => {
                     <StatusBadge isActive={admin.isActive} />
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatCreatedAt(admin.createdAt)}
+                    {formatCreatedAt(admin.createdAt) || "------"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formatCreatedAt(admin.lastLoginAt)}
+                    {formatCreatedAt(admin.lastLoginAt) || "------"}
                   </TableCell>
                   <TableCell className="text-left">
                     <TableActions isActive={admin.isActive} />

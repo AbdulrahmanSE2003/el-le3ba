@@ -36,6 +36,7 @@ export const createEvent = catchAsync(async (req, res, next) => {
   const newEvent = await Event.create({
     title: req.body.title,
     createdBy: req.user._id,
+    seasonId: req.body.seasonId,
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     maxAttempts: req.body.maxAttempts,

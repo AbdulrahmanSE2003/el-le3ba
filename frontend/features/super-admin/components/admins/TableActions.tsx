@@ -11,10 +11,14 @@ import { Pencil, Trash2, Ban, MoreVertical } from "lucide-react";
 
 const TableActions = ({ isActive }: { isActive: boolean }) => {
   return (
-    <div className="text-left">
+    <div className="text-center">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 border border-accent"
+          >
             <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>

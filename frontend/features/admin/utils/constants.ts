@@ -22,6 +22,7 @@ import {
   LucideIcon,
   UserX,
   KeyRound,
+  CalendarClock,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -41,8 +42,18 @@ export const adminNavItems: NavItem[] = [
   },
   {
     title: "المواسم",
-    href: "/admin/events",
+    href: "/admin/seasons",
     icon: CalendarCog,
+  },
+  {
+    title: "الأحداث",
+    href: "/admin/events",
+    icon: CalendarClock,
+  },
+  {
+    title: "المباريات",
+    href: "/admin/sessions",
+    icon: Play,
   },
   {
     title: "لوحة الصدارة",
@@ -58,11 +69,6 @@ export const adminNavItems: NavItem[] = [
     title: "الأسألة",
     href: "/admin/questions",
     icon: BadgeQuestionMark,
-  },
-  {
-    title: "المباريات",
-    href: "/admin/sessions",
-    icon: Play,
   },
 ];
 
