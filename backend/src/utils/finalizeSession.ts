@@ -46,9 +46,17 @@ export async function finalizeSession(
       await Promise.all([
         t("leaderboardUpdate", () =>
           Leaderboard.findOneAndUpdate(
-            { teamId: session.teamId, eventId: session.eventId },
             {
-              $inc: { totalPoints: session.finalScore, sessionsPlayed: 1 },
+              teamId: session.teamId,
+              eventId: session.eventId,
+              seasonId: session.seasonId,
+            },
+            {
+              $inc: {
+                totalPoints: session.finalScore,
+                sessionsPlayed: 1,
+                seasonPoints: session.finalScore,
+              },
               $set: { lastPlayedSession: new Date() },
             },
             { upsert: true, returnDocument: "after" },
