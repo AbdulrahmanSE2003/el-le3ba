@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Season from "../models/seasonModel";
 import Leaderboard from "../models/leaderboardModel";
 import { AppError } from "../utils/appError";
@@ -13,12 +14,33 @@ export const getActiveSeason = catchAsync(async (req, res, next) => {
 });
 
 export const getSeasonLeaderboard = catchAsync(async (req, res, next) => {
-  const { seasonId } = req.params;
+  const { seasonId } = req.params as { seasonId: string };
 
-  const leaderboard = await Leaderboard.find({ seasonId })
-    .sort({ seasonPoints: -1 })
-    .populate("teamId", "name")
-    .lean();
+  if (!mongoose.Types.ObjectId.isValid(seasonId))
+    return next(new AppError("Invalid season id.", 400));
+
+  const leaderboard = await Leaderboard.aggregate([
+    { $match: { seasonId: new mongoose.Types.ObjectId(seasonId) } },
+    { $group: { _id: "$teamId", seasonPoints: { $sum: "$seasonPoints" } } },
+    { $sort: { seasonPoints: -1 } },
+    {
+      $lookup: {
+        from: "teams",
+        localField: "_id",
+        foreignField: "_id",
+        as: "team",
+      },
+    },
+    { $unwind: "$team" },
+    {
+      $project: {
+        _id: 0,
+        teamId: "$_id",
+        teamName: "$team.teamName",
+        seasonPoints: 1,
+      },
+    },
+  ]);
 
   resHandler(res, 200, "leaderboard", leaderboard);
 });

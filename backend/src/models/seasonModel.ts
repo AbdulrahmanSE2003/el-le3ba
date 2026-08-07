@@ -33,6 +33,15 @@ const seasonSchema = new mongoose.Schema(
 
 seasonSchema.index({ status: 1 });
 
+seasonSchema.index(
+  { status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: { $in: ["active", "knockout"] } },
+    name: "status_1_active_knockout_unique",
+  },
+);
+
 const Season = mongoose.model<ISeason>("Season", seasonSchema);
 
 export default Season;

@@ -3,6 +3,7 @@ import { protect, restrictTo } from "../controllers/authController";
 import {
   changeCaptain,
   changeTeamName,
+  createTeam,
   deleteMyTeam,
   getMyTeam,
   getTeam,
@@ -16,6 +17,8 @@ import {
 const teamRoutes = express.Router();
 
 teamRoutes.use(protect);
+
+teamRoutes.route("/").post(createTeam);
 
 teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
 teamRoutes.route("/my-team/stats").get(getTeamStats);

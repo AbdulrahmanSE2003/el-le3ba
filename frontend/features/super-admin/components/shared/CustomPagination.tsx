@@ -1,4 +1,3 @@
-// components/ui/data-pagination.tsx
 "use client";
 
 import {
@@ -10,68 +9,87 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import createPageUrl from "@/features/admin/components/shared/utils/createPageUrl";
 
 interface CustomPaginationProps {
-  currentPage: number;
   totalPages: number;
   totalItems: number;
   limit: number;
-  onPageChange: (page: number) => void;
   className?: string;
 }
 
 export function CustomPagination({
-  currentPage,
   totalPages,
   totalItems,
   limit,
-  onPageChange,
   className,
 }: CustomPaginationProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const currentPage = Number(searchParams.get("page") ?? "1");
   const startItem = totalItems === 0 ? 0 : (currentPage - 1) * limit + 1;
+
   const endItem = Math.min(currentPage * limit, totalItems);
+
+  const changePage = (page: number) => {
+    if (page < 1 || page > totalPages || page === currentPage) {
+      return;
+    }
+
+    const url = createPageUrl("page", page.toString(), searchParams.toString());
+
+    router.push(`${pathname}${url}`);
+  };
 
   const getPageNumbers = () => {
     const pages: (number | "ellipsis")[] = [];
 
     if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+
       return pages;
     }
 
     pages.push(1);
 
-    if (currentPage > 3) pages.push("ellipsis");
+    if (currentPage > 3) {
+      pages.push("ellipsis");
+    }
 
     const start = Math.max(2, currentPage - 1);
     const end = Math.min(totalPages - 1, currentPage + 1);
 
     for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) pages.push(i);
+      if (!pages.includes(i)) {
+        pages.push(i);
+      }
     }
 
-    if (currentPage < totalPages - 2) pages.push("ellipsis");
-    if (!pages.includes(totalPages)) pages.push(totalPages);
+    if (currentPage < totalPages - 2) {
+      pages.push("ellipsis");
+    }
+
+    if (!pages.includes(totalPages)) {
+      pages.push(totalPages);
+    }
 
     return pages;
   };
 
-  const handlePrevious = () => {
-    if (currentPage > 1) onPageChange(currentPage - 1);
-  };
-
-  const handleNext = () => {
-    if (currentPage < totalPages) onPageChange(currentPage + 1);
-  };
-
-  if (totalPages <= 0) return null;
+  if (totalPages <= 0) {
+    return null;
+  }
 
   return (
     <div
-      className={`flex flex-col gap-4 sm:flex-row-reverse sm:items-center sm:justify-between px-6 ${className}`}
+      className={`flex flex-col gap-4 px-6 sm:flex-row-reverse sm:items-center sm:justify-between ${className ?? ""}`}
     >
-      {/* Pagination on the left */}
-      <Pagination>
+      <Pagination className={`justify-end`}>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
@@ -79,7 +97,7 @@ export function CustomPagination({
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handlePrevious();
+                changePage(currentPage - 1);
               }}
               className={
                 currentPage <= 1 ? "pointer-events-none opacity-50" : ""
@@ -87,9 +105,9 @@ export function CustomPagination({
             />
           </PaginationItem>
 
-          {getPageNumbers().map((page, idx) =>
+          {getPageNumbers().map((page, index) =>
             page === "ellipsis" ? (
-              <PaginationItem key={`ellipsis-${idx}`}>
+              <PaginationItem key={`ellipsis-${index}`}>
                 <PaginationEllipsis />
               </PaginationItem>
             ) : (
@@ -99,7 +117,7 @@ export function CustomPagination({
                   isActive={page === currentPage}
                   onClick={(e) => {
                     e.preventDefault();
-                    onPageChange(page);
+                    changePage(page);
                   }}
                 >
                   {page}
@@ -114,7 +132,7 @@ export function CustomPagination({
               href="#"
               onClick={(e) => {
                 e.preventDefault();
-                handleNext();
+                changePage(currentPage + 1);
               }}
               className={
                 currentPage >= totalPages
@@ -126,8 +144,7 @@ export function CustomPagination({
         </PaginationContent>
       </Pagination>
 
-      {/* Info text on the right */}
-      <div className="text-sm text-muted-foreground whitespace-nowrap">
+      <div className="whitespace-nowrap text-sm text-muted-foreground">
         عرض{" "}
         <span className="font-medium text-foreground">
           {startItem}-{endItem}

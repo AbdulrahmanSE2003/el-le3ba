@@ -22,7 +22,7 @@ const TableActions = ({ isActive }: { isActive: boolean }) => {
             <MoreVertical className="h-4 w-4" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuContent align="start" className="w-40">
           <DropdownMenuItem className="gap-2">
             <Pencil className="h-4 w-4" />
             تعديل

@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import {
   Table,
   TableBody,
@@ -8,15 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { CustomPagination } from "../shared/CustomPagination";
-import { getAllAdmins } from "../../api/shared";
-import Error from "@/app/error";
 import { Crown, Shield } from "lucide-react";
 import TableActions from "./TableActions";
 import { formatCreatedAt } from "@/lib/utils";
+import { AdminsRes } from "../../types/shared";
 import { SearchParams } from "@/app/(superAdmin)/super-admin/admins/page";
+import { CustomPagination } from "../shared/CustomPagination";
 
-// ─── Role Badge ───
 const RoleBadge = ({ role }: { role: string }) => {
   if (role === "superAdmin") {
     return (
@@ -29,6 +28,7 @@ const RoleBadge = ({ role }: { role: string }) => {
       </Badge>
     );
   }
+
   return (
     <Badge
       variant="outline"
@@ -40,7 +40,6 @@ const RoleBadge = ({ role }: { role: string }) => {
   );
 };
 
-// ─── Status Badge ───
 const StatusBadge = ({ isActive }: { isActive: boolean }) => {
   if (isActive) {
     return (
@@ -50,6 +49,7 @@ const StatusBadge = ({ isActive }: { isActive: boolean }) => {
       </span>
     );
   }
+
   return (
     <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground ring-1 ring-inset ring-border dark:bg-muted/50">
       <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/50" />
@@ -58,77 +58,88 @@ const StatusBadge = ({ isActive }: { isActive: boolean }) => {
   );
 };
 
-const AdminsTable = async ({ params }: { params: SearchParams }) => {
-  const adminsRes = await getAllAdmins(params);
-  if (!adminsRes.success) return <Error />;
+const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
+  const admins = res.admins.admins;
 
-  const admins = adminsRes.data.admins.admins;
+  const data = res.admins;
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border bg-card shadow-sm">
-        <Table className="text-right">
-          <TableHeader>
-            <TableRow className="bg-muted/50 hover:bg-muted/50 [&_th]:text-center">
-              <TableHead>#</TableHead>
-              <TableHead>المشرف</TableHead>
-              <TableHead>الصلاحية</TableHead>
-              <TableHead>الحالة</TableHead>
-              <TableHead>تاريخ الإنشاء</TableHead>
-              <TableHead>آخر تسجيل دخول</TableHead>
-              <TableHead className="text-left">إجراءات</TableHead>
+      <Table className="text-right">
+        <TableHeader>
+          <TableRow className="bg-muted/50 hover:bg-muted/50 [&_th]:text-center">
+            <TableHead>#</TableHead>
+            <TableHead>المشرف</TableHead>
+            <TableHead>الصلاحية</TableHead>
+            <TableHead>الحالة</TableHead>
+            <TableHead>تاريخ الإنشاء</TableHead>
+            <TableHead>آخر تسجيل دخول</TableHead>
+            <TableHead className="text-left">إجراءات</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody>
+          {admins.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={7}
+                className="h-32 text-center text-muted-foreground"
+              >
+                لا يوجد مشرفين حاليا...
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {admins.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="h-32 text-center text-muted-foreground"
-                >
-                  لا يوجد مشرفين حاليا...
+          ) : (
+            admins.map((admin, idx) => (
+              <TableRow key={admin._id} className="text-center">
+                <TableCell className="font-medium text-muted-foreground">
+                  {(data.page - 1) * data.limit + idx + 1}
+                </TableCell>
+
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold uppercase text-primary">
+                      {admin.name?.slice(0, 2) || "?"}
+                    </div>
+
+                    <div>
+                      <p className="text-right font-medium">{admin.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {admin.email}
+                      </p>
+                    </div>
+                  </div>
+                </TableCell>
+
+                <TableCell>
+                  <RoleBadge role={admin.role} />
+                </TableCell>
+
+                <TableCell>
+                  <StatusBadge isActive={admin.isActive} />
+                </TableCell>
+
+                <TableCell className="text-muted-foreground">
+                  {formatCreatedAt(admin.createdAt) || "------"}
+                </TableCell>
+
+                <TableCell className="text-muted-foreground">
+                  {formatCreatedAt(admin.lastLoginAt) || "------"}
+                </TableCell>
+
+                <TableCell className="text-left">
+                  <TableActions isActive={admin.isActive} />
                 </TableCell>
               </TableRow>
-            ) : (
-              admins.map((admin, idx) => (
-                <TableRow key={admin._id} className="text-center">
-                  <TableCell className="font-medium text-muted-foreground">
-                    {idx + 1}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="flex uppercase h-8 w-8 items-center justify-center rounded-full bg-muted text-sm font-bold text-primary">
-                        {admin.name?.slice(0, 2) || "?"}
-                      </div>
-                      <div>
-                        <p className="font-medium text-right">{admin.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {admin.email}
-                        </p>
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <RoleBadge role={admin.role} />
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge isActive={admin.isActive} />
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatCreatedAt(admin.createdAt) || "------"}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatCreatedAt(admin.lastLoginAt) || "------"}
-                  </TableCell>
-                  <TableCell className="text-left">
-                    <TableActions isActive={admin.isActive} />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          )}
+        </TableBody>
+      </Table>
+
+      <CustomPagination
+        totalPages={data.totalPages}
+        totalItems={data.totalResults}
+        limit={data.limit}
+      />
     </div>
   );
 };

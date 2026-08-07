@@ -1,19 +1,21 @@
 import PageHeader from "@/features/admin/components/shared/PageHeader";
 import AddAdmin from "@/features/super-admin/components/admins/AddAdmin";
-import AdminsTable from "@/features/super-admin/components/admins/AdminsTable";
 import AdminsStatsCards from "@/features/super-admin/components/admins/AdminsStatsCards";
 import { Suspense } from "react";
 import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 import SearchBar from "@/components/shared/SearchBar";
 import DataFilter from "@/components/shared/DataFilter";
 import SortSelect from "@/components/shared/SortSelect";
+import AdminsTable from "@/features/super-admin/components/admins/AdminsTable";
+import { getAllAdmins } from "@/features/super-admin/api/shared";
+import Error from "@/app/error";
 
 export type SearchParams = {
   search?: string;
   page?: string;
   limit?: string;
+  role?: string;
   sort?: string;
-
   [key: string]: string | undefined;
 };
 
@@ -23,27 +25,35 @@ export default async function AdminsManagementPage({
   searchParams: Promise<SearchParams>;
 }) {
   const params = await searchParams;
+
+  const query = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value) {
+      query.set(key, value);
+    }
+  });
+
+  const adminsRes = await getAllAdmins(params);
+  if (!adminsRes.success) return <Error />;
+
   return (
     <section className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className={`flex items-center justify-between`}>
         <PageHeader
           title="إدارة المشرفين"
-          description="إضافة، تعديل، وإدارة صلاحيات المشرفين على المنصة"
+          description="إدارة المشرفين والصلاحيات"
         />
         <AddAdmin />
       </div>
 
-      {/* Stats Cards */}
       <Suspense fallback={<StatsCardsSkeleton />}>
         <AdminsStatsCards />
       </Suspense>
 
-      {/* Toolbar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <SearchBar placeholder="بحث بالإسم أو الإيميل..." />
 
-        {/* Filter by Role */}
         <DataFilter
           queryKey="role"
           placeholder="الصلاحية"
@@ -64,8 +74,7 @@ export default async function AdminsManagementPage({
         />
       </div>
 
-      {/* Table */}
-      <AdminsTable params={params} />
+      <AdminsTable res={adminsRes.data} params={params} />
     </section>
   );
 }

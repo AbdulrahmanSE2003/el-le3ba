@@ -6,6 +6,8 @@ import { Server } from "socket.io";
 import app from "./app";
 import { connectDB } from "./config/db";
 import { startSessionExpirationJob } from "./jobs/sessionExpiry";
+import { startEventExpirationJob } from "./jobs/eventStatus";
+import { startSeasonLifecycleJob } from "./jobs/seasonStatus";
 import { initSocket } from "./socket";
 
 const PORT = process.env.PORT || 5000;
@@ -38,5 +40,7 @@ connectDB().then(() => {
   httpServer.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`🚀 Server running on PORT ${PORT}`);
     startSessionExpirationJob();
+    startEventExpirationJob();
+    startSeasonLifecycleJob();
   });
 });
