@@ -3,6 +3,7 @@ export const notificationTypes = [
   { label: "برودكاست", value: "broadcast" },
   { label: "أشخاص محددين", value: "selected" },
 ];
+
 export const notificationsSortBy = [
   { value: "default", label: "افتراضي" },
   { value: "recent", label: "الأحدث" },

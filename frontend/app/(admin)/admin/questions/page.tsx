@@ -5,8 +5,12 @@ export const metadata = {
   description: "إدارة الأسئلة المتاحة للجمهور",
 };
 
-const page = () => {
-  return <QuestionsContainer />;
+interface PageProps {
+  searchParams: Promise<URLSearchParams>;
+}
+
+const page = ({ searchParams }: PageProps) => {
+  return <QuestionsContainer searchParams={searchParams} />;
 };
 
 export default page;

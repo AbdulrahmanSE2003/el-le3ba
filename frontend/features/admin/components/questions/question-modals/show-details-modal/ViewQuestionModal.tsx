@@ -8,44 +8,41 @@ import Message from "@/features/admin/components/shared/Message";
 import CloseBtn from "@/features/admin/components/shared/CloseBtn";
 import DetailsCard from "@/features/admin/components/shared/DetailsCard";
 
-import { NotificationCampaign } from "@/features/admin/types/notification";
-
 import { formatCreatedAt } from "@/lib/utils";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
-import { Eye, Calendar, User, Users, Tag } from "lucide-react";
+import { Eye, Calendar, User, Users, Tag, Clock } from "lucide-react";
+import { AdminQuestion } from "@/features/admin/types/question";
 
-interface ViewNotificationModalProps {
-  notification: NotificationCampaign;
+interface ViewQuestionModalProps {
+  question: AdminQuestion;
 }
 
-export function ViewNotificationModal({
-  notification,
-}: ViewNotificationModalProps) {
+export function ViewQuestionModal({ question }: ViewQuestionModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const detailsCards = [
     {
       icon: Tag,
       title: "النوع",
-      value: notification.type,
+      value: question.type,
       className: "bg-primary/10 text-primary capitalize",
     },
     {
       icon: Users,
-      title: "عدد المستلمين",
-      value: notification.recipientsCount,
+      title: "الاجابة الصحيحة",
+      value: question.correctAnswer,
     },
     {
       icon: User,
-      title: "أنشئ بواسطة",
-      value: notification.createdBy?.name,
+      title: "تاريخ الانشاء",
+      value: formatCreatedAt(question.createdAt),
     },
     {
-      icon: Calendar,
-      title: "تاريخ الإرسال",
-      value: formatCreatedAt(notification.createdAt),
+      icon: Clock,
+      title: "وقت السؤال",
+      value: `${question.duration} ثانية`,
     },
   ];
 
@@ -64,18 +61,15 @@ export function ViewNotificationModal({
       <BaseModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="تفاصيل الإشعار"
-        description="تفاصيل وبيانات حملة الإشعار المرسلة."
+        title="تفاصيل السؤال"
+        description="تفاصيل وبيانات السؤال."
       >
         <div className="space-y-4 py-2 text-right font-body">
-          {/* Notification Title */}
-          <Title label="عنوان الإشعار" title={notification.title} />
+          {/* Question Title */}
+          <Title label="عنوان السؤال" title={question.question} />
 
-          {/* Notification Message */}
-          <Message
-            title={notification.message}
-            label="محتوى الإشعار"
-          />
+          {/* Question Options */}
+          <Message label="فئة السؤال" title={question.category} />
 
           {/* Details Grid */}
           <div className="grid grid-cols-2 gap-3">

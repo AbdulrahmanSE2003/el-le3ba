@@ -27,34 +27,26 @@ export default function FiltersContainer() {
     redirect("/admin/notifications");
   };
 
+  // Handle filter change
+  const handleFilterChange = (key: string, value: string) => {
+    const url = createPageUrl(key, value, searchParams.toString());
+    router.push(`${pathname}${url}`);
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto justify-end">
       <CustomSelect
         placeholder="فلتر حسب النوع"
         items={notificationTypes}
         value={searchParams.get("targetType") || "all"}
-        onValueChange={(value) => {
-          const url = createPageUrl(
-            "targetType",
-            value === "all" ? undefined : value,
-            searchParams.toString(),
-          );
-          router.push(`${pathname}${url}`);
-        }}
+        onValueChange={(value) => handleFilterChange("targetType", value)}
       />
 
       <CustomSelect
         placeholder="الترتيب"
         items={notificationsSortBy}
         value={searchParams.get("sort") || "default"}
-        onValueChange={(value) => {
-          const url = createPageUrl(
-            "sort",
-            value === "default" ? undefined : value,
-            searchParams.toString(),
-          );
-          router.push(`${pathname}${url}`);
-        }}
+        onValueChange={(value) => handleFilterChange("sort", value)}
       />
 
       <Button

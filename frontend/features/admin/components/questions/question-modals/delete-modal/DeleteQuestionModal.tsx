@@ -3,10 +3,6 @@
 import { useState } from "react";
 
 import { BaseModal } from "@/features/admin/components/shared/BaseModal";
-import { deleteNotificationAction } from "@/features/admin/actions/notifications";
-import { NotificationCampaign } from "@/features/admin/types/notification";
-import Warning from "@/features/admin/components/shared/Warning";
-import ActionBtn from "@/features/admin/components/shared/ActionBtn";
 
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
@@ -14,16 +10,20 @@ import { Trash2 } from "lucide-react";
 
 import { useFormFeedBack } from "@/hooks/useFormFeedback";
 
-interface DeleteNotificationModalProps {
-  notification: NotificationCampaign;
+import { deleteQuestionAction } from "@/features/admin/actions/questions";
+
+import { AdminQuestion } from "@/features/admin/types/question";
+import Warning from "../../../shared/Warning";
+import ActionBtn from "../../../shared/ActionBtn";
+
+interface DeleteQuestionModalProps {
+  question: AdminQuestion;
 }
 
-export function DeleteNotificationModal({
-  notification,
-}: DeleteNotificationModalProps) {
+export function DeleteQuestionModal({ question }: DeleteQuestionModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const action = deleteNotificationAction.bind(null, notification._id);
+  const action = deleteQuestionAction.bind(null, question._id);
   const { formAction, isPending } = useFormFeedBack(action, setIsOpen);
 
   return (
@@ -41,14 +41,14 @@ export function DeleteNotificationModal({
       <BaseModal
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
-        title="تأكيد حذف الإشعار"
-        description="سيتم حذف سجل هذا الإشعار بشكل نهائي من النظام."
+        title="تأكيد حذف السؤال"
+        description="سيتم حذف سجل هذا السؤال بشكل نهائي من النظام."
       >
         <form
           action={formAction}
           className="space-y-4 py-2 dir-rtl text-right font-body"
         >
-          <Warning title={notification.title} label="الإشعار" />
+          <Warning title={question.question} label="السؤال" />
 
           <div className="flex items-center justify-end gap-2 pt-2">
             <ActionBtn
@@ -61,7 +61,7 @@ export function DeleteNotificationModal({
 
             <ActionBtn
               pending={isPending}
-              text="حذف الإشعار"
+              text="حذف السؤال"
               variant="destructive"
               type="submit"
             />

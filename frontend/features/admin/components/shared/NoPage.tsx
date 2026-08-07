@@ -1,5 +1,5 @@
 import Link from "next/link";
-import createPageUrl from "../shared/utils/createPageUrl";
+import createPageUrl from "./utils/createPageUrl";
 
 // NoPage.tsx
 interface NoPageProps {

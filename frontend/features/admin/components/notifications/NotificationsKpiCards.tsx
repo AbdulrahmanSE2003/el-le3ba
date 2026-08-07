@@ -10,34 +10,38 @@ export async function NotificationsKpiCards() {
 
   const stats = notificationsStatsRes.data.stats;
 
+  const notificationsKpis = [
+    {
+      title: "إجمالي الحملات",
+      value: stats.totalCampaigns.value,
+      Icon: BellRing,
+      description: "جميع حملات الإشعارات التي تم إنشاؤها",
+    },
+    {
+      title: "عدد الإشعارات المقروءة",
+      value: stats.readNotifications.value,
+      Icon: Send,
+      description: "إجمالي عدد الإشعارات التي تم قراءتها",
+    },
+    {
+      title: "معدل القراءة",
+      value: `${stats.readRate.value} %`,
+      Icon: BellDot,
+      description: "عدد الإشعارات التي تمت قراءتها",
+    },
+    {
+      title: "إجمالي المستلمين",
+      value: stats.totalRecipients.value,
+      Icon: Users,
+      description: "عدد الإشعارات التي وصلت للمستخدمين",
+    },
+  ];
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard
-        Icon={BellRing}
-        title="إجمالي الحملات"
-        value={stats.totalCampaigns.value}
-        description="جميع حملات الإشعارات التي تم إنشاءها"
-      />
-
-      <StatCard
-        Icon={Send}
-        title="عدد الإشعارات المقروءة"
-        value={stats.readNotifications.value}
-        description="إجمالي عدد الإشعارات التي تم قراءتها"
-      />
-      <StatCard
-        Icon={BellDot}
-        title="معدل القراءة"
-        value={`${stats.readRate.value} %`}
-        description="عدد الإشعارات التي تمت قراءتها"
-      />
-
-      <StatCard
-        Icon={Users}
-        title="إجمالي المستلمين"
-        value={stats.totalRecipients.value}
-        description="عدد الإشعارات التي وصلت للمستخدمين"
-      />
+      {notificationsKpis.map((kpi) => (
+        <StatCard key={kpi.title} {...kpi} />
+      ))}
     </div>
   );
 }

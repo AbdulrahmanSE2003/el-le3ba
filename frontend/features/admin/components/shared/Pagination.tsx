@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 
 import { PaginationBtn } from "@/features/admin/types/notification";
 
-import createPageUrl from "../../shared/utils/createPageUrl";
+import createPageUrl from "./utils/createPageUrl";
 
 import Link from "next/link";
 
@@ -22,7 +22,7 @@ interface Props {
   totalPages: number;
 }
 
-export function NotificationsPagination({ page, totalPages }: Props) {
+export function Pagination({ page, totalPages }: Props) {
   const searchParams = useSearchParams();
 
   // Create pagination links

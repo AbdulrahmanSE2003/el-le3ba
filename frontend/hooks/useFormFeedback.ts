@@ -1,8 +1,14 @@
 import { showSuccess, showError } from "@/components/shared/notifications";
 import { useActionState, useEffect } from "react";
 
-export function useFormFeedBack(
-  action: (prevState: any) => Promise<any>,
+interface ActionState {
+  error?: string | null;
+  success?: boolean;
+  message?: string;
+}
+
+export function useFormFeedBack<TData>(
+  action: (prevState: ActionState, data: TData) => Promise<ActionState>,
   handlePanelChange?: (isClose: boolean) => void,
 ) {
   const [state, formAction, isPending] = useActionState(action, {

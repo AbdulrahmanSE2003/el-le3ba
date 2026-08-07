@@ -12,10 +12,10 @@ import { NotificationTypeBadge } from "./NotificationTypeBadge";
 
 import { formatCreatedAt } from "@/lib/utils";
 
-import { NotificationsPagination } from "../pagination/NotificationsPagination";
+import { Pagination } from "../../shared/Pagination";
 import { NotificationCampaignsRes } from "@/features/admin/types/notification";
-import NoPage from "../NoPage";
-import { Badge } from "@/components/ui/badge";
+import NoPage from "../../shared/NoPage";
+import NoTableData from "../../shared/NoTableData";
 
 interface Props {
   tableHeaders: string[];
@@ -59,14 +59,7 @@ export default async function NotificationsTable({
           <TableBody>
             {/* No notifications to display */}
             {notifications.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-8 text-muted-foreground"
-                >
-                  لا يوجد إشعارات مطابقة.
-                </TableCell>
-              </TableRow>
+              <NoTableData colSpan={7} title="اشعارات" />
             )}
 
             {/* Notifications rows */}
@@ -120,7 +113,7 @@ export default async function NotificationsTable({
       </div>
 
       {/* Pagination */}
-      <NotificationsPagination page={page} totalPages={totalPages} />
+      <Pagination page={page} totalPages={totalPages} />
     </div>
   );
 }

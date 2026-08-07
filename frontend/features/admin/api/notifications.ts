@@ -11,3 +11,5 @@ export async function createNotification(data: CreateNotificationDto) {
 
   return res.data;
 }
+
+

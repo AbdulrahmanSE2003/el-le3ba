@@ -1,17 +1,70 @@
-export type QuestionType = "mcq" | "true_false" | "short_answer";
-export type QuestionDifficulty = "easy" | "medium" | "hard";
-export type QuestionStatus = "active" | "archived";
+// NOTE: previously this was "mcq" | "true_false" | "short_answer", which didn't
+// match the real backend contract (mcq / numberExact) or constants/constants.ts.
+// Fixed to reflect what the API actually accepts.
+export type QuestionType = "mcq" | "numberExact";
 
 export interface AdminQuestion {
-  _id: string;
-  text: string;
+  _id?: string;
+  question: string;
   type: QuestionType;
-  choices: string[] | null;
+  options: string[] | null;
   correctAnswer: string;
   category: string;
-  difficulty: QuestionDifficulty;
-  season: string | null;
-  usageCount: number;
-  status: QuestionStatus;
-  createdAt: string;
+  duration: number;
+  createdAt?: string;
 }
+
+// Shape sent to the backend for create / update / bulk-insert.
+export interface CreateQuestionInput {
+  question: string;
+  type: QuestionType;
+  options?: string[];
+  correctAnswer: string;
+  category: string;
+  duration: number;
+}
+
+export type UpdateQuestionInput = CreateQuestionInput;
+
+export type QuestionStats = {
+  success: boolean;
+  data: {
+    status: boolean;
+    stats: {
+      totalQuestions: number;
+      totalCategories: number;
+      duration: {
+        averageDuration: number;
+      };
+    };
+  };
+  message: string;
+};
+
+export type QuestionsRes = {
+  success: boolean;
+  data: {
+    status: boolean;
+    questions: {
+      questions: AdminQuestion[];
+      pagination: {
+        totalResults: number;
+        totalPages: number;
+        page: number;
+        limit: number;
+      };
+    };
+  };
+  message: string;
+};
+
+export type QuestionMetadata = {
+  success: boolean;
+  data: {
+    status: boolean;
+    meta: {
+      categories: string[];
+      types: string[];
+    };
+  };
+};
