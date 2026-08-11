@@ -65,7 +65,7 @@ const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
 
   return (
     <div className="space-y-4">
-      <Table className="text-right">
+      <Table className="text-right shadow-md">
         <TableHeader>
           <TableRow className="bg-muted/50 hover:bg-muted/50 [&_th]:text-center">
             <TableHead>#</TableHead>
@@ -78,12 +78,12 @@ const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
           </TableRow>
         </TableHeader>
 
-        <TableBody>
+        <TableBody className={`bg-card`}>
           {admins.length === 0 ? (
             <TableRow>
               <TableCell
                 colSpan={7}
-                className="h-32 text-center text-muted-foreground"
+                className="h-32 text-center text-muted-foreground "
               >
                 لا يوجد مشرفين حاليا...
               </TableCell>
@@ -127,7 +127,11 @@ const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
                 </TableCell>
 
                 <TableCell className="text-left">
-                  <TableActions isActive={admin.isActive} />
+                  <TableActions
+                    adminId={admin._id}
+                    adminName={admin.name}
+                    isActive={admin.isActive}
+                  />
                 </TableCell>
               </TableRow>
             ))

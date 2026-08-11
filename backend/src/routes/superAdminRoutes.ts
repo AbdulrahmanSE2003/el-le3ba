@@ -2,6 +2,7 @@ import express from "express";
 import { protect, restrictTo } from "../controllers/authController";
 import {
   createNewAdminOrSuperAdmin,
+  deactivateAdmin,
   getAdminsStats,
   getAllAdmins,
   getAppStats,
@@ -24,5 +25,6 @@ superAdminRoutes.route("/recent-admin-logs").get(getRecentAdminLogs);
 // ===================================================
 superAdminRoutes.route("/admins").get(getAllAdmins);
 superAdminRoutes.route("/admins/stats").get(getAdminsStats);
+superAdminRoutes.route("/admins/:id").delete(deactivateAdmin);
 
 export default superAdminRoutes;

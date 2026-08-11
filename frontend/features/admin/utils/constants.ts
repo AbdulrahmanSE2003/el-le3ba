@@ -23,6 +23,7 @@ import {
   UserX,
   KeyRound,
   CalendarClock,
+  BellMinus,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -141,20 +142,45 @@ export const ACTIONS: Record<string, ActionConfig> = {
     title: "إشعار لمستخدمين محددين",
     color: "text-indigo-500 bg-indigo-500/10",
   },
+  "notification.deleted": {
+    icon: BellMinus,
+    title: "حذف إشعار",
+    color: "text-rose-500 bg-rose-500/10",
+  },
   "question.bulk_created": {
     icon: FileQuestion,
     title: "إضافة أسئلة",
     color: "text-emerald-500 bg-emerald-500/10",
   },
+  "question.deleted": {
+    icon: FileQuestion,
+    title: "حذف سؤال",
+    color: "text-rose-500 bg-rose-500/10",
+  },
   "user.created": {
     icon: UserPlus,
     title: "إضافة مستخدم",
-    color: "text-green-500 bg-green-500/10",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "super_admin.created": {
+    icon: UserPlus,
+    title: "إضافة سوبر أدمن",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "admin.created": {
+    icon: UserPlus,
+    title: "إضافة أدمن",
+    color: "text-yellow-500 bg-yellow-500/10",
   },
   "user.updated": {
     icon: Pencil,
     title: "تعديل مستخدم",
     color: "text-amber-500 bg-amber-500/10",
+  },
+  "user.bulk_deactivated": {
+    icon: Pencil,
+    title: "تعديل المستخدمين",
+    color: "text-yellow-500 bg-yellow-500/10",
   },
   "user.deactivated": {
     icon: UserX,

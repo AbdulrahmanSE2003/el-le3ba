@@ -3,6 +3,7 @@ import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
+import { deleteOne, updateOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 
 export const createNewAdminOrSuperAdmin = catchAsync(async (req, res, next) => {
@@ -176,4 +177,24 @@ export const getAllAdmins = catchAsync(async (req, res, next) => {
     totalPages,
     totalResults,
   });
+});
+
+export const editAdmin = updateOne(User);
+
+export const deactivateAdmin = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const admin = await User.findOne({
+    _id: id,
+    role: "admin",
+  });
+
+  if (!admin) {
+    return next(new AppError("Invalid operation, no admin found.", 400));
+  }
+
+  admin.isActive = false;
+  await admin.save();
+
+  res.status(200).send();
 });

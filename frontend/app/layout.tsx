@@ -52,7 +52,7 @@ export default function RootLayout({
         className={`${playpen.variable} ${zain.variable} font-body antialiased`}
       >
         <Providers>
-          <Toaster position="bottom-right" closeButton richColors dir="rtl" />
+          <Toaster position="bottom-left" closeButton richColors dir="rtl" />
           <main>{children}</main>
         </Providers>
       </body>
