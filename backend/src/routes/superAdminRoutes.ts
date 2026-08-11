@@ -3,6 +3,7 @@ import { protect, restrictTo } from "../controllers/authController";
 import {
   createNewAdminOrSuperAdmin,
   deactivateAdmin,
+  editAdmin,
   getAdminsStats,
   getAllAdmins,
   getAppStats,
@@ -25,6 +26,6 @@ superAdminRoutes.route("/recent-admin-logs").get(getRecentAdminLogs);
 // ===================================================
 superAdminRoutes.route("/admins").get(getAllAdmins);
 superAdminRoutes.route("/admins/stats").get(getAdminsStats);
-superAdminRoutes.route("/admins/:id").delete(deactivateAdmin);
+superAdminRoutes.route("/admins/:id").patch(editAdmin).delete(deactivateAdmin);
 
 export default superAdminRoutes;

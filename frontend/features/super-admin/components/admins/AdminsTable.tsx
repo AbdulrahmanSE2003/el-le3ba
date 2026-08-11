@@ -127,11 +127,7 @@ const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
                 </TableCell>
 
                 <TableCell className="text-left">
-                  <TableActions
-                    adminId={admin._id}
-                    adminName={admin.name}
-                    isActive={admin.isActive}
-                  />
+                  <TableActions admin={admin} isActive={admin.isActive} />
                 </TableCell>
               </TableRow>
             ))
