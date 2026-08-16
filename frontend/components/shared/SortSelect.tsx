@@ -56,9 +56,9 @@ export default function SortSelect({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center max-sm:items-end gap-3 max-sm:w-full">
       <Select value={currentSort || "default"} onValueChange={handleChange}>
-        <SelectTrigger className="min-w-44 bg-card">
+        <SelectTrigger className="min-w-44 bg-card max-sm:w-full">
           <ArrowUpDown className="h-4 w-4" />
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

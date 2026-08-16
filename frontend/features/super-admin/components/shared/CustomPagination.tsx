@@ -87,9 +87,9 @@ export function CustomPagination({
 
   return (
     <div
-      className={`flex flex-col gap-4 px-6 sm:flex-row-reverse sm:items-center sm:justify-between ${className ?? ""}`}
+      className={`flex flex-col-reverse gap-4 px-6 sm:flex-row-reverse items-center sm:justify-between ${className ?? ""}`}
     >
-      <Pagination className={`justify-end`}>
+      <Pagination className={`sm:justify-end`}>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious

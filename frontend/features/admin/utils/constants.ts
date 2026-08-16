@@ -230,3 +230,61 @@ export const superAdminNav = [
     icon: Shield,
   },
 ];
+
+export const seasonStatusOptions = [
+  {
+    label: "الكل",
+    value: "",
+  },
+  {
+    label: "قادم",
+    value: "upcoming",
+  },
+  {
+    label: "نشط",
+    value: "active",
+  },
+  {
+    label: "إقصائيات",
+    value: "knockout",
+  },
+  {
+    label: "منتهي",
+    value: "ended",
+  },
+];
+
+export const seasonSortOptions = [
+  {
+    label: "الأحدث إنشاءً",
+    value: "-createdAt",
+  },
+  {
+    label: "الأقدم إنشاءً",
+    value: "createdAt",
+  },
+  {
+    label: "تاريخ البداية - الأقرب",
+    value: "startDate",
+  },
+  {
+    label: "تاريخ البداية - الأبعد",
+    value: "-startDate",
+  },
+  {
+    label: "تاريخ النهاية - الأقرب",
+    value: "endDate",
+  },
+  {
+    label: "تاريخ النهاية - الأبعد",
+    value: "-endDate",
+  },
+  {
+    label: "الاسم تصاعديًا",
+    value: "title",
+  },
+  {
+    label: "الاسم تنازليًا",
+    value: "-title",
+  },
+];

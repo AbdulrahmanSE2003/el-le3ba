@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import createPageUrl from "@/features/admin/components/shared/utils/createPageUrl";
+import { cn } from "@/lib/utils";
 
 interface FilterOption {
   label: string;
@@ -57,9 +58,9 @@ export default function DataFilter({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 max-sm:w-full`}>
       <Select value={currentValue || "all"} onValueChange={handleChange}>
-        <SelectTrigger className="bg-card min-w-44">
+        <SelectTrigger className="bg-card min-w-44 max-sm:w-full">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
 
