@@ -1,7 +1,5 @@
 "use client";
 
-import { MoreVertical } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -12,8 +10,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SeasonsRes } from "../../api/seasons";
-import { formatCreatedAt } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
+import SeasonActions from "./SeasonActions";
 
 const statusConfig = {
   active: {
@@ -32,19 +31,43 @@ const statusConfig = {
     label: "إقصائيات",
     variant: "outline" as const,
     className:
-      "bg-slate-500/15 text-slate-600 hover:bg-slate-500/25 border-slate-500/20",
+      "bg-rose-500/15 text-rose-400 hover:bg-rose-500/25 border-rose-500/20",
   },
   ended: {
     label: "منتهي",
     variant: "destructive" as const,
     className:
-      "bg-rose-500/15 text-rose-600 hover:bg-rose-500/25 border-rose-500/20",
+      "bg-slate-500/15 text-slate-600 hover:bg-slate-500/25 border-slate-500/20",
   },
+};
+const formatDate = (dateString?: string) => {
+  if (!dateString) return "—";
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+
+  return new Intl.DateTimeFormat("ar-EG", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+};
+
+const DateCell = ({ date }: { date?: string }) => {
+  const formatted = formatDate(date);
+  if (!formatted) {
+    return <span className="text-muted-foreground/40 font-mono">—</span>;
+  }
+  return (
+    <time
+      dateTime={date}
+      className="font-mono text-xs text-muted-foreground whitespace-nowrap"
+    >
+      {formatted}
+    </time>
+  );
 };
 
 const SeasonsTable = ({ res }: { res: SeasonsRes }) => {
-  console.log(res);
-
   const seasons = res.seasons.seasons;
   const data = res.seasons.pagination;
   return (
@@ -77,29 +100,43 @@ const SeasonsTable = ({ res }: { res: SeasonsRes }) => {
                   <TableCell>
                     <Badge
                       variant={status.variant}
-                      className={status.className}
+                      className={cn(
+                        status.className,
+                        status.label === "نشط" ||
+                          (status.label === "إقصائيات" && "animate-pulse"),
+                      )}
                     >
                       {status.label}
                     </Badge>
                   </TableCell>
-                  <TableCell className={`text-muted-foreground`}>
-                    {formatCreatedAt(season.startDate)}
+                  {/* Start Date */}
+                  <TableCell>
+                    <DateCell date={season.startDate} />
                   </TableCell>
-                  <TableCell className={`text-muted-foreground`}>
-                    {formatCreatedAt(season.endDate)}
+                  {/* End Date */}
+                  <TableCell>
+                    <DateCell date={season.endDate} />
                   </TableCell>
                   <TableCell>
-                    {formatCreatedAt(season.knockoutStartDate)}
+                    {season.knockoutStartDate ? (
+                      <Badge variant={"secondary"}>
+                        {formatDate(season.knockoutStartDate)}
+                      </Badge>
+                    ) : (
+                      <span className="text-muted-foreground/50">—</span>
+                    )}
                   </TableCell>
-                  <TableCell>{season.createdBy.name}</TableCell>
+                  {/* Created By */}
+                  <TableCell
+                    className={`text-right text-muted-foreground flex flex-col gap-0.5`}
+                  >
+                    <span className={`text-foreground capitalize`}>
+                      {season.createdBy?.name ?? "—"}
+                    </span>
+                    <span>{season.createdBy?.email ?? "—"}</span>
+                  </TableCell>
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 border border-accent"
-                    >
-                      <MoreVertical className="size-4" />
-                    </Button>
+                    <SeasonActions season={season} />
                   </TableCell>
                 </TableRow>
               );

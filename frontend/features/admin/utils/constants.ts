@@ -82,13 +82,13 @@ export const quickActions = [
     desc: "إنشاء حساب مستخدم جديد",
     component: AddUserModal,
   },
-  {
-    title: "إعدادات النظام",
-    icon: Settings,
-    className:
-      "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
-    desc: "تعديل تفضيلات المنصة",
-  },
+  // {
+  //   title: "إعدادات النظام",
+  //   icon: Settings,
+  //   className:
+  //     "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
+  //   desc: "تعديل تفضيلات المنصة",
+  // },
   {
     title: "توليد تقرير",
     icon: FileText,
@@ -105,18 +105,26 @@ export const quickActions = [
     component: SendNotification,
   },
   {
-    title: "سجل الأمان",
-    icon: ShieldAlert,
-    className:
-      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
-    desc: "مراجعة محاولات الدخول",
-  },
-  {
     title: "جدولة حدث",
     icon: CalendarDaysIcon,
     className:
       "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
     desc: "نظّم تقويم الأحداث",
+  },
+  {
+    title: "جدولة موسم",
+    icon: CalendarClock,
+    className:
+      "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
+    desc: "نظّم تقويم المواسم",
+    component: CreateSeasonModal,
+  },
+  {
+    title: "سجل الأمان",
+    icon: ShieldAlert,
+    className:
+      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
+    desc: "مراجعة محاولات الدخول",
   },
 ];
 
@@ -202,6 +210,7 @@ export const ACTIONS: Record<string, ActionConfig> = {
 import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
 import { AddUserModal } from "../components/users/AddUserModal";
 import SendNotification from "../components/notifications/send-notification/SendNotification";
+import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
 
 export const superAdminNav = [
   {

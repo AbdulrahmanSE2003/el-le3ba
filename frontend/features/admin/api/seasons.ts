@@ -1,6 +1,6 @@
 import { serverFetch } from "@/shared/api/server";
 
-interface Season {
+export interface Season {
   _id: string;
   title: string;
   createdBy: {
@@ -44,6 +44,7 @@ export interface SeasonsSearchParams {
   sort?: string;
   page?: string;
   limit?: string;
+  [key: string]: string | undefined;
 }
 export const getAllSeasons = async (params: SeasonsSearchParams) =>
   serverFetch<SeasonsRes>({ url: "seasons", query: params });
