@@ -22,6 +22,8 @@ import {
   LucideIcon,
   UserX,
   KeyRound,
+  CalendarClock,
+  BellMinus,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -41,8 +43,18 @@ export const adminNavItems: NavItem[] = [
   },
   {
     title: "المواسم",
-    href: "/admin/events",
+    href: "/admin/seasons",
     icon: CalendarCog,
+  },
+  {
+    title: "الأحداث",
+    href: "/admin/events",
+    icon: CalendarClock,
+  },
+  {
+    title: "المباريات",
+    href: "/admin/sessions",
+    icon: Play,
   },
   {
     title: "لوحة الصدارة",
@@ -59,11 +71,6 @@ export const adminNavItems: NavItem[] = [
     href: "/admin/questions",
     icon: BadgeQuestionMark,
   },
-  {
-    title: "المباريات",
-    href: "/admin/sessions",
-    icon: Play,
-  },
 ];
 
 export const quickActions = [
@@ -75,13 +82,13 @@ export const quickActions = [
     desc: "إنشاء حساب مستخدم جديد",
     component: AddUserModal,
   },
-  {
-    title: "إعدادات النظام",
-    icon: Settings,
-    className:
-      "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
-    desc: "تعديل تفضيلات المنصة",
-  },
+  // {
+  //   title: "إعدادات النظام",
+  //   icon: Settings,
+  //   className:
+  //     "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
+  //   desc: "تعديل تفضيلات المنصة",
+  // },
   {
     title: "توليد تقرير",
     icon: FileText,
@@ -98,18 +105,26 @@ export const quickActions = [
     component: SendNotification,
   },
   {
-    title: "سجل الأمان",
-    icon: ShieldAlert,
-    className:
-      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
-    desc: "مراجعة محاولات الدخول",
-  },
-  {
     title: "جدولة حدث",
     icon: CalendarDaysIcon,
     className:
       "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
     desc: "نظّم تقويم الأحداث",
+  },
+  {
+    title: "جدولة موسم",
+    icon: CalendarClock,
+    className:
+      "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
+    desc: "نظّم تقويم المواسم",
+    component: CreateSeasonModal,
+  },
+  {
+    title: "سجل الأمان",
+    icon: ShieldAlert,
+    className:
+      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
+    desc: "مراجعة محاولات الدخول",
   },
 ];
 
@@ -135,20 +150,45 @@ export const ACTIONS: Record<string, ActionConfig> = {
     title: "إشعار لمستخدمين محددين",
     color: "text-indigo-500 bg-indigo-500/10",
   },
+  "notification.deleted": {
+    icon: BellMinus,
+    title: "حذف إشعار",
+    color: "text-rose-500 bg-rose-500/10",
+  },
   "question.bulk_created": {
     icon: FileQuestion,
     title: "إضافة أسئلة",
     color: "text-emerald-500 bg-emerald-500/10",
   },
+  "question.deleted": {
+    icon: FileQuestion,
+    title: "حذف سؤال",
+    color: "text-rose-500 bg-rose-500/10",
+  },
   "user.created": {
     icon: UserPlus,
     title: "إضافة مستخدم",
-    color: "text-green-500 bg-green-500/10",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "super_admin.created": {
+    icon: UserPlus,
+    title: "إضافة سوبر أدمن",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "admin.created": {
+    icon: UserPlus,
+    title: "إضافة أدمن",
+    color: "text-yellow-500 bg-yellow-500/10",
   },
   "user.updated": {
     icon: Pencil,
     title: "تعديل مستخدم",
     color: "text-amber-500 bg-amber-500/10",
+  },
+  "user.bulk_deactivated": {
+    icon: Pencil,
+    title: "تعديل المستخدمين",
+    color: "text-yellow-500 bg-yellow-500/10",
   },
   "user.deactivated": {
     icon: UserX,
@@ -170,6 +210,7 @@ export const ACTIONS: Record<string, ActionConfig> = {
 import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
 import { AddUserModal } from "../components/users/AddUserModal";
 import SendNotification from "../components/notifications/send-notification/SendNotification";
+import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
 
 export const superAdminNav = [
   {
@@ -196,5 +237,63 @@ export const superAdminNav = [
     title: "الملف الشخصي",
     href: "/super-admin/profile",
     icon: Shield,
+  },
+];
+
+export const seasonStatusOptions = [
+  {
+    label: "الكل",
+    value: "",
+  },
+  {
+    label: "قادم",
+    value: "upcoming",
+  },
+  {
+    label: "نشط",
+    value: "active",
+  },
+  {
+    label: "إقصائيات",
+    value: "knockout",
+  },
+  {
+    label: "منتهي",
+    value: "ended",
+  },
+];
+
+export const seasonSortOptions = [
+  {
+    label: "الأحدث إنشاءً",
+    value: "-createdAt",
+  },
+  {
+    label: "الأقدم إنشاءً",
+    value: "createdAt",
+  },
+  {
+    label: "تاريخ البداية - الأقرب",
+    value: "startDate",
+  },
+  {
+    label: "تاريخ البداية - الأبعد",
+    value: "-startDate",
+  },
+  {
+    label: "تاريخ النهاية - الأقرب",
+    value: "endDate",
+  },
+  {
+    label: "تاريخ النهاية - الأبعد",
+    value: "-endDate",
+  },
+  {
+    label: "الاسم تصاعديًا",
+    value: "title",
+  },
+  {
+    label: "الاسم تنازليًا",
+    value: "-title",
   },
 ];

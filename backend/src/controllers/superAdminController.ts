@@ -3,12 +3,13 @@ import User from "../models/userModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
+import { deleteOne, updateOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 
-export const createSuperAdmin = catchAsync(async (req, res, next) => {
+export const createNewAdminOrSuperAdmin = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
 
-  const { name, email, password, passwordConfirm } = req.body;
+  const { name, email, password, passwordConfirm, role } = req.body;
 
   if (!name || !email || !password || !passwordConfirm)
     return next(
@@ -23,12 +24,15 @@ export const createSuperAdmin = catchAsync(async (req, res, next) => {
     email,
     password,
     passwordConfirm,
-    role: "superAdmin",
+    role: role || "admin",
   });
+
+  const action =
+    role && role === "admin" ? "admin.created" : "super_admin.created";
 
   await logAudit({
     actor: req.user._id,
-    action: "super_admin.created",
+    action: action,
     target: superAdmin._id,
     targetModel: "User",
   });
@@ -173,4 +177,24 @@ export const getAllAdmins = catchAsync(async (req, res, next) => {
     totalPages,
     totalResults,
   });
+});
+
+export const editAdmin = updateOne(User);
+
+export const deactivateAdmin = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const admin = await User.findOne({
+    _id: id,
+    role: "admin",
+  });
+
+  if (!admin) {
+    return next(new AppError("Invalid operation, no admin found.", 400));
+  }
+
+  admin.isActive = false;
+  await admin.save();
+
+  res.status(200).send();
 });

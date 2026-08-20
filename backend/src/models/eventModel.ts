@@ -1,8 +1,9 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export interface IEvent extends Document {
   title: string;
-  createdBy: mongoose.Types.ObjectId;
+  createdBy: Types.ObjectId;
+  seasonId: Types.ObjectId;
   startTime: Date;
   endTime: Date;
   status: "scheduled" | "running" | "finished";
@@ -16,6 +17,8 @@ const eventSchema = new mongoose.Schema(
     title: { type: String, required: true },
 
     createdBy: { type: mongoose.Schema.ObjectId, ref: "User", required: true },
+
+    seasonId: { type: mongoose.Schema.ObjectId, ref: "Season", required: true },
 
     startTime: { type: Date, required: true },
 

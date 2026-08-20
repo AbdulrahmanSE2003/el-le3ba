@@ -4,7 +4,11 @@ import Question from "../models/questionModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
-import { MIN_TEAM_SIZE, QUESTIONS_PER_SESSION, SESSION_DURATION_MS } from "../constants";
+import {
+  MIN_TEAM_SIZE,
+  QUESTIONS_PER_SESSION,
+  SESSION_DURATION_MS,
+} from "../constants";
 
 export interface CreateSessionResult {
   sessionId: string;
@@ -73,6 +77,7 @@ export async function createSessionForTeam(
   const session = await Session.create({
     teamId: tid,
     eventId: event._id,
+    seasonId: event.seasonId,
     questions: questions.map((q: any) => q._id),
     startedAt: new Date(),
     expiresAt: new Date(Date.now() + SESSION_DURATION_MS),

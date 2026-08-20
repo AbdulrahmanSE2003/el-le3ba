@@ -34,7 +34,7 @@ export interface User {
   name: string;
   email: string;
   avatar: typeof AVATARS;
-  role: "student" | "admin" | string;
+  role: "student" | "admin" | "superAdmin";
   isActive: boolean;
   team?: UserTeam | null;
   createdAt: string;

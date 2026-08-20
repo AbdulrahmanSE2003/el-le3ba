@@ -11,9 +11,9 @@ interface Props {
 }
 
 const NotificationItem = ({ notification }: Props) => {
-  const handleRead = (id: typeof notification._id) => {
+  const handleRead = async (id: typeof notification._id) => {
     try {
-      markNotificationAsRead(id);
+      await markNotificationAsRead(id);
       toast.success("تم تعليم الإشعار كمقروء.");
     } catch (error) {
       toast.error(

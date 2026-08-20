@@ -8,8 +8,53 @@ import { generateCode } from "../utils/utils";
 import resHandler from "../utils/resHandler";
 import { getAll, getOne } from "../utils/factory";
 import Leaderboard from "../models/leaderboardModel";
-import Event from "../models/eventModel";
+import Season from "../models/seasonModel";
 import { logAudit } from "../utils/AuditLog";
+
+export const createTeam = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  const isInTeam = await TeamMembership.findOne({ userId: user!._id });
+  if (isInTeam) return next(new AppError("User is already in a team.", 400));
+
+  let codeIsUnique = false;
+  let GCode: string = "";
+  while (!codeIsUnique) {
+    GCode = generateCode();
+    const exists = await Team.exists({ teamCode: GCode });
+    if (!exists) codeIsUnique = true;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const [newTeam] = await Team.create(
+      [{ teamName: req.body.teamName, teamLeader: user!._id, teamCode: GCode }],
+      { session },
+    );
+
+    await TeamMembership.create(
+      [{ userId: user!._id, teamId: newTeam._id, role: "captain" }],
+      { session },
+    );
+
+    await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.created",
+      target: newTeam._id,
+      targetModel: "Team",
+    });
+
+    resHandler(res, 201, "team", newTeam);
+  } catch (error) {
+    await session.abortTransaction();
+    throw error;
+  } finally {
+    session.endSession();
+  }
+});
 
 export const joinTeam = catchAsync(async (req, res, next) => {
   const userId = req.user._id;
@@ -55,24 +100,25 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
     teamId: membership.teamId,
   }).populate("userId", "name email avatar");
 
-  const teamLeaderboardEntry = await Leaderboard.findOne({ teamId: team._id });
-  if (!teamLeaderboardEntry) {
-    return resHandler(res, 200, "team", {
-      team,
-      members: teamMembers,
-      myRole: membership.role,
-      rank: null,
-    });
+  const activeSeason = await Season.findOne({ status: "active" });
+
+  let rank: number | null = null;
+  if (activeSeason) {
+    const myTotal = await Leaderboard.aggregate<{ points: number }>([
+      { $match: { seasonId: activeSeason._id, teamId: team._id } },
+      { $group: { _id: "$teamId", points: { $sum: "$seasonPoints" } } },
+    ]);
+
+    if (myTotal.length > 0) {
+      const rankedAbove = await Leaderboard.aggregate<{ count: number }>([
+        { $match: { seasonId: activeSeason._id } },
+        { $group: { _id: "$teamId", points: { $sum: "$seasonPoints" } } },
+        { $match: { points: { $gt: myTotal[0].points } } },
+        { $count: "count" },
+      ]);
+      rank = (rankedAbove[0]?.count ?? 0) + 1;
+    }
   }
-
-  // Calculate the team's rank based on totalPoints
-
-  const event = await Event.findOne({ status: "running" });
-  const rank =
-    (await Leaderboard.countDocuments({
-      eventId: event?._id,
-      totalPoints: { $gt: teamLeaderboardEntry.totalPoints },
-    })) + 1;
 
   resHandler(res, 200, "team", {
     team,

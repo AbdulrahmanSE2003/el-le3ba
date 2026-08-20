@@ -728,48 +728,6 @@ export const getTeamsStats = catchAsync(async (req, res) => {
   });
 });
 
-// export const createTeam = catchAsync(async (req, res, next) => {
-//   const user = req.user;
-//   let codeIsUnique = false;
-//   let GCode: string = "";
-//   while (!codeIsUnique) {
-//     GCode = generateCode();
-//     const exists = await Team.exists({ teamCode: GCode });
-//     if (!exists) codeIsUnique = true;
-//   }
-
-//   const session = await mongoose.startSession();
-//   session.startTransaction();
-
-//   try {
-//     const [newTeam] = await Team.create(
-//       [{ teamName: req.body.teamName, teamLeader: user!._id, teamCode: GCode }],
-//       { session },
-//     );
-
-//     await TeamMembership.create(
-//       [{ userId: user!._id, teamId: newTeam._id, role: "captain" }],
-//       { session },
-//     );
-
-//     await session.commitTransaction();
-
-//     await logAudit({
-//       actor: req.user._id,
-//       action: "team.created",
-//       target: newTeam._id,
-//       targetModel: "Team",
-//     });
-
-//     resHandler(res, 201, "team", newTeam);
-//   } catch (error) {
-//     await session.abortTransaction();
-//     throw error;
-//   } finally {
-//     session.endSession();
-//   }
-// });
-
 export const editTeam = catchAsync(async (req, res, next) => {
   const { id } = req.params;
   const { teamName, teamLeader } = req.body;
@@ -839,11 +797,11 @@ export const editTeam = catchAsync(async (req, res, next) => {
 export const deleteTeam = catchAsync(async (req, res, next) => {
   const { id } = req.params;
 
-  const isTeamPlaying = await Session.findOne({
+  const runningSessions = await Session.countDocuments({
     teamId: id,
     status: "running",
   });
-  if (!isTeamPlaying)
+  if (runningSessions > 0)
     return next(
       new AppError(
         "Invalid operation, can't delete a team while there is a running session.",

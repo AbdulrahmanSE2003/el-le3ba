@@ -66,7 +66,7 @@ export const getProfileStats = cache(async () =>
 );
 
 export const getRecentLogs = cache(async () =>
-  serverFetch<ProfileRecentLogs>({ url: "/admin/profile/recent-logs" }),
+  serverFetch<ProfileRecentLogs>({ url: "admin/profile/recent-logs" }),
 );
 // =====================================================================================
 export const getUsersStats = cache(async () =>

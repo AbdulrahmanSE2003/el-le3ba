@@ -13,6 +13,7 @@ type AnswerLog = {
 export interface ISession extends Document {
   teamId: mongoose.Types.ObjectId;
   eventId: mongoose.Types.ObjectId;
+  seasonId: mongoose.Types.ObjectId;
   questions: mongoose.Types.ObjectId[];
   status: "running" | "completed" | "scored";
   startedAt: Date;
@@ -31,6 +32,8 @@ const sessionSchema = new mongoose.Schema(
     teamId: { type: mongoose.Schema.ObjectId, ref: "Team", required: true },
 
     eventId: { type: mongoose.Schema.ObjectId, ref: "Event", required: true },
+
+    seasonId: { type: mongoose.Schema.ObjectId, ref: "Season", required: true },
 
     questions: [
       { type: mongoose.Schema.ObjectId, ref: "Question", required: true },
