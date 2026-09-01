@@ -71,7 +71,7 @@ const SeasonsTable = ({ res }: { res: SeasonsRes }) => {
   const seasons = res.seasons.seasons;
   const data = res.seasons.pagination;
   return (
-    <div className={`flex flex-col justify-between gap-3 min-h-88`}>
+    <div className={`flex flex-col justify-between gap-6`}>
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50 hover:bg-muted/50 [&_th]:text-center [&_th]:font-medium">
@@ -128,7 +128,7 @@ const SeasonsTable = ({ res }: { res: SeasonsRes }) => {
                   </TableCell>
                   {/* Created By */}
                   <TableCell
-                    className={`text-right text-muted-foreground flex flex-col gap-0.5`}
+                    className={`text-center text-muted-foreground flex flex-col gap-0.5`}
                   >
                     <span className={`text-foreground capitalize`}>
                       {season.createdBy?.name ?? "—"}

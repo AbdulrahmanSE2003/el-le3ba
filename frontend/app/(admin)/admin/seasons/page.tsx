@@ -4,6 +4,7 @@ import SortSelect from "@/components/shared/SortSelect";
 import PageHeader from "@/features/admin/components/seasons/PageHeader";
 import SeasonsContainer from "@/features/admin/components/seasons/SeasonsContainer";
 import SeasonsStats from "@/features/admin/components/seasons/SeasonsStats";
+import SeasonsStatsSkeleton from "@/features/admin/components/seasons/SeasonsStatsSkeleton";
 import { Suspense } from "react";
 
 interface SeasonsPageProps {
@@ -23,7 +24,7 @@ export default async function SeasonsPage({ searchParams }: SeasonsPageProps) {
     <div className="space-y-6">
       <PageHeader />
 
-      <Suspense fallback={<div>ss</div>}>
+      <Suspense fallback={<SeasonsStatsSkeleton/>}>
         <SeasonsStats />
       </Suspense>
 

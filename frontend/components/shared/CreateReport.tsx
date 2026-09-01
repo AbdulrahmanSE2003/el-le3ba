@@ -9,7 +9,7 @@ import {
 const CreateReport = () => {
   return (
     <Tooltip>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <Button variant={"warning"} disabled>
           <FileChartColumnIncreasingIcon />
           توليد تقرير
