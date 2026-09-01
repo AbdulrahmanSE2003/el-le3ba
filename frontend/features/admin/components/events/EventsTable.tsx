@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
-import type { EventWithSeason } from "@/shared/types/event";
 import EventActions from "./EventActions";
+import { Event } from "@/shared/types/event";
 
 type EventStatus = "scheduled" | "running" | "finished";
 
@@ -92,7 +92,7 @@ interface SeasonOption {
 }
 
 interface EventsTableProps {
-  events: EventWithSeason[];
+  events: Event[];
   seasons: SeasonOption[];
   pagination: {
     currentPage: number;
@@ -103,6 +103,9 @@ interface EventsTableProps {
 }
 
 const EventsTable = ({ events, seasons, pagination }: EventsTableProps) => {
+
+  console.log(events[0]);
+  
   return (
     <div className={`flex flex-col justify-between gap-6`}>
       <Table>
@@ -132,7 +135,7 @@ const EventsTable = ({ events, seasons, pagination }: EventsTableProps) => {
                 <TableRow key={event._id}>
                   <TableCell className="font-medium">{event.title}</TableCell>
                   <TableCell>
-                    {event.season?.title ?? (
+                    {event.seasonId?.title ?? (
                       <span className="text-muted-foreground/50">—</span>
                     )}
                   </TableCell>

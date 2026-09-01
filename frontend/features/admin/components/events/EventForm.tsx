@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -110,11 +111,14 @@ export function EventForm({
           control={form.control}
           name="startTime"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>وقت البداية</FormLabel>
-              <FormControl>
-                <Input type="datetime-local" {...field} />
-              </FormControl>
+              <DatePicker
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="اختر وقت بداية الحدث"
+                showTime
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -123,15 +127,25 @@ export function EventForm({
         <FormField
           control={form.control}
           name="endTime"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>وقت النهاية</FormLabel>
-              <FormControl>
-                <Input type="datetime-local" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            const startTimeValue = form.watch("startTime");
+            const minDate = startTimeValue
+              ? new Date(startTimeValue)
+              : undefined;
+            return (
+              <FormItem className="flex flex-col">
+                <FormLabel>وقت النهاية</FormLabel>
+                <DatePicker
+                  value={field.value}
+                  onChange={field.onChange}
+                  placeholder="اختر وقت نهاية الحدث"
+                  showTime
+                  minDate={minDate}
+                />
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
 
         <FormField

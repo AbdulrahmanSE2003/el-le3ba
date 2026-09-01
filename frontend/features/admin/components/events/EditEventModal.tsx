@@ -9,23 +9,32 @@ import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import GenericModal from "@/components/shared/GenericModal";
 import { updateEventAction } from "../../actions/events";
 import { type EventFormValues } from "../../schema/EventSchema";
-import type { EventWithSeason } from "@/shared/types/event";
 import { EventForm } from "./EventForm";
+import { Event } from "@/shared/types/event";
+import { Season } from "../../api/events";
 
-interface SeasonOption {
-  _id: string;
-  title: string;
-}
+
 
 interface EditEventModalProps {
-  event: EventWithSeason;
-  seasons: SeasonOption[];
+  event: Event;
+  seasons: Season[];
 }
 
 export function EditEventModal({ event, seasons }: EditEventModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  const validSeasons = seasons.filter((season) => season.status !== "finished");
+
+  const toLocalDateTimeValue = (iso: string): string => {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate(),
+    )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  };
 
   const handleUpdateEvent = async (data: EventFormValues) => {
     setIsLoading(true);
@@ -73,12 +82,12 @@ export function EditEventModal({ event, seasons }: EditEventModalProps) {
           mode="update"
           initialValues={{
             title: event.title,
-            seasonId: event.seasonId,
-            startTime: event.startTime.slice(0, 16),
-            endTime: event.endTime.slice(0, 16),
+            seasonId: event.seasonId._id,
+            startTime: toLocalDateTimeValue(event.startTime),
+            endTime: toLocalDateTimeValue(event.endTime),
             maxAttempts: event.maxAttempts,
           }}
-          seasons={seasons}
+          seasons={validSeasons}
           onSubmit={handleUpdateEvent}
           isLoading={isLoading}
         />

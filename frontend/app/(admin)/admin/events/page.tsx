@@ -7,7 +7,6 @@ import EventsStats from "@/features/admin/components/events/EventsStats";
 import { getAllSeasons } from "@/features/admin/api/events";
 import { Suspense } from "react";
 import EventsStatsSkeleton from "@/features/admin/components/events/EventsStatsSkeleton";
-import { log } from "console";
 
 interface EventsPageProps {
   searchParams: Promise<{
@@ -26,7 +25,6 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   const seasons = seasonsRes.success
     ? seasonsRes.data.seasons.seasons
     : [];
-
     
 
 

@@ -108,8 +108,9 @@ export const quickActions = [
     title: "جدولة حدث",
     icon: CalendarDaysIcon,
     className:
-      "bg-purple-500/20 text-purple-500 group-hover:bg-purple-500 group-hover:text-white",
+      "bg-cyan-500/20 text-cyan-500 group-hover:bg-cyan-500 group-hover:text-white",
     desc: "نظّم تقويم الأحداث",
+    component: CreateEventModal
   },
   {
     title: "جدولة موسم",
@@ -211,6 +212,7 @@ import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
 import { AddUserModal } from "../components/users/AddUserModal";
 import SendNotification from "../components/notifications/send-notification/SendNotification";
 import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
+import CreateEventModal from "../components/events/CreateEventModal";
 
 export const superAdminNav = [
   {

@@ -7,10 +7,17 @@ import { useTransition } from "react";
 import { toast } from "sonner";
 const LeaderboardHeader = ({
   refreshAction,
+  seasonTitle,
+  isSeason = false,
 }: {
   refreshAction: () => void;
+  seasonTitle?: string;
+  isSeason?: boolean;
 }) => {
   const [isPending, startTransition] = useTransition();
+
+  console.log(seasonTitle);
+  
 
   const handleRefresh = () => {
     if (refreshAction) {
@@ -42,11 +49,15 @@ const LeaderboardHeader = ({
             المتصدرون
           </h1>
           <span className="inline-flex items-center rounded-full bg-brand-success/10 px-2.5 py-0.5 text-xs font-bold text-brand-success border border-brand-success/20 animate-pulse">
-            نشط
+            {isSeason ? "الموسم" : "نشط"}
           </span>
         </div>
         <p className="text-xs md:text-sm text-muted-foreground font-medium">
-          بطولة يوليو الكبرى
+          {isSeason
+            ? seasonTitle
+              ? `ترتيب الموسم الكلي · ${seasonTitle}`
+              : "ترتيب الموسم الكلي"
+            : seasonTitle ?? "بطولة يوليو الكبرى"}
         </p>
       </Motion>
 

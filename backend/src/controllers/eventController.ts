@@ -101,6 +101,7 @@ export const createEvent = catchAsync(async (req, res, next) => {
     startTime: req.body.startTime,
     endTime: req.body.endTime,
     maxAttempts: req.body.maxAttempts,
+    status: new Date(req.body.startTime) > new Date() ? "scheduled" : "running",
   });
 
   await logAudit({
