@@ -24,7 +24,7 @@ export function SidebarNav({ items }: SidebarNavProps) {
     <Motion
       variants={{
         hidden: {},
-        visible: { transition: { staggerChildren: 0.2 } },
+        visible: { transition: { staggerChildren: 0.1 } },
       }}
       initial="hidden"
       animate="visible"
