@@ -3,6 +3,7 @@ import { Trophy, Crown } from "lucide-react";
 import type { LeaderboardEntry } from "@/shared/api/helpers";
 import { cn } from "@/lib/utils";
 import { formatPoints } from "@/lib/utils";
+import { LeaderboardEmptyState } from "@/features/leaderboard/components/LeaderboardEmptyState";
 
 type LeaderboardRow = LeaderboardEntry;
 
@@ -46,7 +47,7 @@ const LeaderboardSnapshot = ({ rows }: LeaderboardSnapshotProps) => {
 
       {/* Rows Container */}
       <div className="space-y-2.5">
-        {rows.map((row, index) => (
+        {rows.length ? rows.map((row, index) => (
           <div
             key={row._id}
             className={cn(
@@ -91,7 +92,19 @@ const LeaderboardSnapshot = ({ rows }: LeaderboardSnapshotProps) => {
               </div>
             </div>
           </div>
-        ))}
+        )) : 
+          <div className="z-10 text-center flex flex-col items-center justify-center">
+
+        {/* Text Details */}
+        <h3 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+          لا توجد نتائج بعد
+        </h3>
+
+        <p className="mt-2 max-w-sm text-sm text-muted-foreground leading-relaxed">
+          جدول الصدارة فارغ حالياً. كن أول فريق ينتهي من اللعبة ليتصدر القائمة!
+        </p>
+
+      </div>}
       </div>
     </div>
   );

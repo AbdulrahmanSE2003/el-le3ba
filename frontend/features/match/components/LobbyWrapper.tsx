@@ -9,6 +9,8 @@ import {
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import NoTeam from "@/components/shared/no-team/NoTeam";
+import NoActiveEvent from "@/components/shared/NoActiveEvent";
+import { log } from "console";
 
 const LobbyWrapper = async () => {
   const [teamRes, eventRes] = await Promise.all([
@@ -26,11 +28,13 @@ const LobbyWrapper = async () => {
     return <NoTeam />;
   }
 
-  if (!eventRes.success) {
-    throw new Error(eventRes.error || "Failed to load event data");
+  if (!eventRes.success ) {
+    return <NoActiveEvent type="event" />;
   }
 
+  
   const event = eventRes.data.event;
+  console.log(event);
 
   const teamAttempts = await getTeamAttempts(teamData.team._id, event._id);
 

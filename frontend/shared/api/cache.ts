@@ -6,5 +6,6 @@ export const CACHE = {
   myRank: { cache: "no-store" as const },
   event: { revalidate: 30 },
   eventStats: { revalidate: 60 },
+  season: { revalidate: 30 },
   leaderboard: { revalidate: 15 },
 } as const;

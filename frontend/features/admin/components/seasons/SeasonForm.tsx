@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SeasonDatePicker } from "./SeasonDatePicker";
+import { DatePicker } from "@/components/ui/date-picker";
 
 interface SeasonFormProps {
   mode?: "create" | "update";
@@ -84,7 +84,7 @@ export function SeasonForm({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>تاريخ البداية</FormLabel>
-              <SeasonDatePicker
+              <DatePicker
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="اختر تاريخ بداية الموسم"
@@ -101,7 +101,7 @@ export function SeasonForm({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>موعد بدء الإقصائيات</FormLabel>
-              <SeasonDatePicker
+              <DatePicker
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="اختر موعد بدء الإقصائيات"
@@ -118,7 +118,7 @@ export function SeasonForm({
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>تاريخ النهاية</FormLabel>
-              <SeasonDatePicker
+              <DatePicker
                 value={field.value}
                 onChange={field.onChange}
                 placeholder="اختر تاريخ نهاية الموسم"

@@ -85,6 +85,29 @@ export interface EventStatsResponse {
   stats: { totalTeams: number };
 }
 
+export interface ActiveSeason {
+  _id: string;
+  title: string;
+  startDate: string;
+  knockoutStartDate?: string;
+  endDate: string;
+  status: "upcoming" | "active" | "knockout" | "ended";
+}
+
+export interface ActiveSeasonResponse {
+  season: ActiveSeason;
+}
+
+export interface SeasonLeaderboardEntry {
+  teamId: string;
+  teamName: string;
+  seasonPoints: number;
+}
+
+export interface SeasonLeaderboardResponse {
+  leaderboard: SeasonLeaderboardEntry[];
+}
+
 export interface LeaderboardEntry {
   _id: string;
   teamId: {
@@ -220,6 +243,20 @@ export const getNotifications = cache(async () =>
 export const getLeaderboard = cache(async (eventId?: string) =>
   serverFetch<LeaderboardApiResponse>({
     url: `leaderboard?eventId=${eventId}`,
+    ...CACHE.leaderboard,
+  }),
+);
+
+export const getActiveSeason = cache(async () =>
+  serverFetch<ActiveSeasonResponse>({
+    url: "seasons/active",
+    ...CACHE.season,
+  }),
+);
+
+export const getSeasonLeaderboard = cache(async (seasonId: string) =>
+  serverFetch<SeasonLeaderboardResponse>({
+    url: `seasons/${seasonId}/leaderboard`,
     ...CACHE.leaderboard,
   }),
 );
