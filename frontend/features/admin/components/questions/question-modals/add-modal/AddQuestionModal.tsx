@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { BaseModal } from "@/features/admin/components/shared/BaseModal";
@@ -10,7 +10,7 @@ import { useFormFeedBack } from "@/hooks/useFormFeedback";
 
 import { Plus } from "lucide-react";
 
-export function AddQuestionModal() {
+export function AddQuestionModal({trigger} : {trigger?: ReactNode}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const { formAction, isPending } = useFormFeedBack(
@@ -20,9 +20,15 @@ export function AddQuestionModal() {
 
   return (
     <>
-      <Button onClick={() => setIsOpen(true)} className="gap-2">
+
+    {trigger ? (
+                <div onClick={() => setIsOpen(true)}>{trigger}</div>
+              ) : (
+                <Button onClick={() => setIsOpen(true)} className="gap-2">
         <Plus className="w-4 h-4" /> إضافة سؤال جديد
       </Button>
+              )}
+      
 
       <BaseModal
         isOpen={isOpen}

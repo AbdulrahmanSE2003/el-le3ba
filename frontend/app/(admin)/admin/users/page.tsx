@@ -19,6 +19,7 @@ import { formatCreatedAt } from "@/lib/utils";
 import UsersTableSkeleton from "@/features/admin/components/users/UsersTableSkeleton";
 import { AddUserModal } from "@/features/admin/components/users/AddUserModal";
 import { UsersTableToolbar } from "@/features/admin/components/users/UsersTableToolbar";
+import CreateReport from "@/components/shared/CreateReport";
 
 export default async function UsersPage({
   searchParams,
@@ -145,7 +146,10 @@ export default async function UsersPage({
           title="إدارة المستخدمين"
           description="قم بإدارة المستخدمين بطريقة فعالة"
         />
-        <AddUserModal />
+        <div className={`flex items-center gap-3`}>
+          <CreateReport/>
+          <AddUserModal />
+        </div>
       </div>
       <Suspense fallback={<StatsCardsSkeleton />}>
         <UsersKpiCards />

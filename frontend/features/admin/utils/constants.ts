@@ -90,17 +90,18 @@ export const quickActions = [
   //   desc: "تعديل تفضيلات المنصة",
   // },
   {
-    title: "توليد تقرير",
+    title: "إضافة سؤال",
     icon: FileText,
     className:
-      "bg-emerald-500/20 text-emerald-500  group-hover:bg-emerald-500/75 group-hover:text-white",
-    desc: "تصدير البيانات بصيغة PDF",
+      "bg-slate-500/30 text-slate-500  group-hover:bg-slate-500/75 group-hover:text-white",
+    desc: "أضف المزيد من المتعة إلى اللعبة.",
+    component: AddQuestionModal,
   },
   {
     title: "إرسال إشعار",
     icon: Bell,
     className:
-      "bg-accent/15 text-accent group-hover:bg-accent group-hover:text-white",
+      "bg-amber-500/15 text-amber-500 group-hover:bg-amber-500 group-hover:text-white",
     desc: "إرسال إشعارات أو تنبيهات",
     component: SendNotification,
   },
@@ -121,11 +122,11 @@ export const quickActions = [
     component: CreateSeasonModal,
   },
   {
-    title: "سجل الأمان",
-    icon: ShieldAlert,
+    title: "توليد تقرير",
+    icon: FileText,
     className:
-      "bg-rose-500/20 text-rose-500 group-hover:bg-rose-500 group-hover:text-white",
-    desc: "مراجعة محاولات الدخول",
+      "bg-emerald-500/20 text-emerald-500  group-hover:bg-emerald-500/75 group-hover:text-white",
+    desc: "تصدير البيانات بصيغة PDF",
   },
 ];
 
@@ -213,6 +214,7 @@ import { AddUserModal } from "../components/users/AddUserModal";
 import SendNotification from "../components/notifications/send-notification/SendNotification";
 import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
 import CreateEventModal from "../components/events/CreateEventModal";
+import { AddQuestionModal } from "../components/questions/question-modals/add-modal/AddQuestionModal";
 
 export const superAdminNav = [
   {

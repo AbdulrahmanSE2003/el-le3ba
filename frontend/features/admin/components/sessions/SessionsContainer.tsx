@@ -1,35 +1,25 @@
-import PageHeader from "@/features/admin/components/shared/PageHeader";
-import { SessionsKpiCards } from "@/features/admin/components/sessions/SessionsKpiCards";
-import { SessionsPagination } from "@/features/admin/components/sessions/pagination/SessionsPagination";
-import SessionFilter from "./session-filter/SessionFilter";
-import SessionsTable from "./session-table/SessionsTable";
+import Error from "@/app/error";
+import { getAllSessions } from "../../api/sessions";
+import SessionsTable from "./SessionsTable";
 
-import { sessionsTable } from "./constants/constants";
-
-interface PageProps {
-  searchParams: Promise<{ page?: string; limit?: string }>;
+interface SessionsContainerProps {
+  searchParams: {
+    search?: string;
+    status?: string;
+    sort?: string;
+    page?: string;
+    limit?: string;
+  };
 }
 
-export default async function SessionsContainer({ searchParams }: PageProps) {
-  return (
-    <div className="p-3 space-y-6 dir-rtl text-right font-body">
-      <PageHeader
-        title="المباريات"
-        description="متابعة كل المباريات اللي بتتلعب على المنصة، سواء شغالة دلوقتي أو خلصت."
-      />
+const SessionsContainer = async ({ searchParams }: SessionsContainerProps) => {
+  const sessionsRes = await getAllSessions(searchParams);
 
-      <SessionsKpiCards />
+  if (!sessionsRes.success) return <Error />;
 
-      <div className="space-y-4">
-        <SessionFilter />
+  const data = sessionsRes.data;
 
-        <SessionsTable
-          tableHeaders={sessionsTable.tableHeaders}
-          sessions={sessionsTable.sessions}
-        />
+  return <SessionsTable res={data} />;
+};
 
-        <SessionsPagination />
-      </div>
-    </div>
-  );
-}
+export default SessionsContainer;

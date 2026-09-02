@@ -3,6 +3,7 @@ import { protect, restrictTo } from "../controllers/authController";
 import {
   getActiveSeason,
   getSeasonLeaderboard,
+  getSeasonLeaderboardStats,
   createSeason,
   getAllSeasons,
   getSeason,
@@ -16,6 +17,7 @@ const seasonRoutes = express.Router();
 seasonRoutes.use(protect);
 
 seasonRoutes.route("/active").get(getActiveSeason);
+seasonRoutes.route("/:seasonId/leaderboard/stats").get(getSeasonLeaderboardStats);
 seasonRoutes.route("/:seasonId/leaderboard").get(getSeasonLeaderboard);
 
 seasonRoutes.use(restrictTo("admin", "superAdmin"));

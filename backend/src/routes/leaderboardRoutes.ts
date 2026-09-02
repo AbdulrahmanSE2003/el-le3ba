@@ -15,4 +15,6 @@ leaderboardRoutes.route("/top-three").get(getTopThree);
 
 leaderboardRoutes.route("/my-rank").get(getMyRank);
 
+
+
 export default leaderboardRoutes;

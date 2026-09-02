@@ -34,7 +34,6 @@ const LobbyWrapper = async () => {
 
   
   const event = eventRes.data.event;
-  console.log(event);
 
   const teamAttempts = await getTeamAttempts(teamData.team._id, event._id);
 

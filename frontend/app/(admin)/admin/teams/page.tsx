@@ -19,6 +19,7 @@ import { TeamsTableToolbar } from "@/features/admin/components/teams/TeamsTableT
 import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 import { Suspense } from "react";
 import TeamsTableSkeleton from "@/features/admin/components/teams/TeamsTableSkeleton";
+import CreateReport from "@/components/shared/CreateReport";
 
 export default async function TeamsPage({
   searchParams,
@@ -174,6 +175,7 @@ export default async function TeamsPage({
           title="إدارة الفرق"
           description="قم بإدارة الفرق ومتابعة أعضائها وحالاتها بفعالية"
         />
+        <CreateReport/>
       </div>
       <Suspense fallback={<StatsCardsSkeleton />}>
         <TeamsKpiCards />

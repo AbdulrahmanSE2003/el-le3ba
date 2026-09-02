@@ -21,7 +21,14 @@ export const getSeasonLeaderboard = catchAsync(async (req, res, next) => {
 
   const leaderboard = await Leaderboard.aggregate([
     { $match: { seasonId: new mongoose.Types.ObjectId(seasonId) } },
-    { $group: { _id: "$teamId", seasonPoints: { $sum: "$seasonPoints" } } },
+    {
+      $group: {
+        _id: "$teamId",
+        seasonPoints: { $sum: "$seasonPoints" },
+        sessionsPlayed: { $sum: "$sessionsPlayed" },
+        lastPlayedSession: { $max: "$lastPlayedSession" },
+      },
+    },
     { $sort: { seasonPoints: -1 } },
     {
       $lookup: {
@@ -32,12 +39,15 @@ export const getSeasonLeaderboard = catchAsync(async (req, res, next) => {
       },
     },
     { $unwind: "$team" },
+    { $match: { "team._id": { $exists: true } } },
     {
       $project: {
         _id: 0,
         teamId: "$_id",
         teamName: "$team.teamName",
         seasonPoints: 1,
+        sessionsPlayed: 1,
+        lastPlayedSession: 1,
       },
     },
   ]);
@@ -133,6 +143,51 @@ export const getSeasonsStats = catchAsync(async (req, res, next) => {
     upcoming,
     knockout,
     ended,
+  });
+});
+
+export const getSeasonLeaderboardStats = catchAsync(async (req, res, next) => {
+  const { seasonId } = req.params as { seasonId: string };
+
+  if (!mongoose.Types.ObjectId.isValid(seasonId))
+    return next(new AppError("Invalid season id.", 400));
+
+  const sid = new mongoose.Types.ObjectId(seasonId);
+
+  const [teamsCount, sessionStats, topScore] = await Promise.all([
+Leaderboard.aggregate([
+  { $match: { seasonId: sid } },
+  { $group: { _id: "$teamId" } },
+  { $count: "total" },
+]).then((res) => res[0]?.total ?? 0),
+
+    Leaderboard.aggregate([
+      { $match: { seasonId: sid } },
+      {
+        $group: {
+          _id: null,
+          totalSessions: { $sum: "$sessionsPlayed" },
+          totalPoints: { $sum: "$seasonPoints" },
+        },
+      },
+    ]),
+    mongoose.model("Session").findOne({ seasonId: sid })
+      .sort({ finalScore: -1 })
+      .select("finalScore teamId")
+      .populate("teamId", "teamName")
+      .lean(),
+  ]);
+
+  resHandler(res, 200, "stats", {
+    totalTeams: teamsCount,
+    totalSessions: sessionStats[0]?.totalSessions ?? 0,
+    totalPoints: sessionStats[0]?.totalPoints ?? 0,
+    topScore: topScore
+      ? {
+          score: (topScore as any).finalScore,
+          teamName: (topScore as any).teamId?.teamName ?? "—",
+        }
+      : null,
   });
 });
 

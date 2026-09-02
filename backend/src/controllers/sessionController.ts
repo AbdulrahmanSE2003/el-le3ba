@@ -5,7 +5,6 @@ import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
 import { AppError } from "../utils/appError";
 import { catchAsync } from "../utils/catchAsync";
-import { getAll } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 import { finalizeSession } from "../utils/finalizeSession";
 import { BASE_SCORE, STREAK_BONUS, STREAK_MILESTONE } from "../constants";
@@ -302,7 +301,81 @@ export const abandonSession = catchAsync(async (req, res, next) => {
 // ============================================================
 // GET /sessions — Admin only
 // ============================================================
-export const getAllSessions = getAll(Session, [
-  { path: "teamId", select: "teamName" },
-  { path: "eventId", select: "title" },
-]);
+export const getAllSessions = catchAsync(async (req, res, next) => {
+  const {
+    search,
+    status,
+    sort = "-startedAt",
+    page = "1",
+    limit = "10",
+  } = req.query;
+
+  const currentPage = Math.max(Number(page) || 1, 1);
+  const currentLimit = Math.max(Number(limit) || 10, 1);
+  const skip = (currentPage - 1) * currentLimit;
+
+  const filter: Record<string, unknown> = {};
+
+  if (
+    status &&
+    ["running", "completed", "scored"].includes(String(status))
+  ) {
+    filter.status = status;
+  }
+
+  const searchTerm = typeof search === "string" ? search.trim() : "";
+
+  if (searchTerm) {
+    const matchingTeams = await Team.find({
+      teamName: { $regex: searchTerm, $options: "i" },
+    }).select("_id");
+    const teamIds = matchingTeams.map((t) => t._id);
+    filter.teamId = { $in: teamIds };
+  }
+
+  const [sessions, total] = await Promise.all([
+    Session.find(filter)
+      .select("-__v")
+      .populate("teamId", "teamName")
+      .populate("eventId", "title")
+      .populate("seasonId", "title")
+      .sort(String(sort))
+      .skip(skip)
+      .limit(currentLimit)
+      .lean(),
+
+    Session.countDocuments(filter),
+  ]);
+
+  const totalPages = Math.ceil(total / currentLimit);
+
+  resHandler(res, 200, "sessions", {
+    sessions,
+    pagination: {
+      currentPage,
+      limit: currentLimit,
+      total,
+      totalPages,
+    },
+  });
+});
+
+
+export const getSessionsStats = catchAsync(async (req, res, next) => {
+  const [total, completed, running, avgScoreResult] = await Promise.all([
+    Session.countDocuments(),
+    Session.countDocuments({ endReason: "completed" }),
+    Session.countDocuments({ status: "running" }),
+    Session.aggregate([
+      { $match: { status: "completed" } },
+      { $group: { _id: null, avg: { $avg: "$finalScore" } } },
+    ]),
+  ]);
+
+  resHandler(res, 200, "stats", {
+    total,
+    completed,
+    running,
+    averageScore: Math.round(avgScoreResult[0]?.avg ?? 0),
+  });
+});

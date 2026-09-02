@@ -17,6 +17,7 @@ import { Suspense } from "react";
 import { TableSelectionProvider } from "@/features/admin/components/shared/TableCheckbox";
 import { AddQuestionModal } from "./question-modals/add-modal/AddQuestionModal";
 import { BulkInsertQuestionsModal } from "./question-modals/bulk-insert-modal/BulkInsertQuestionsModal";
+import CreateReport from "@/components/shared/CreateReport";
 
 interface Props {
   searchParams: Promise<URLSearchParams>;
@@ -44,7 +45,8 @@ export default async function QuestionsContainer({ searchParams }: Props) {
           description="إدارة بنك الأسئلة المستخدم في كل المباريات والمواسم."
         />
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
+          <CreateReport/>
           <BulkInsertQuestionsModal />
           <AddQuestionModal />
         </div>

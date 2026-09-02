@@ -1,12 +1,11 @@
 "use client";
 
-import { Season } from "../../api/events";
 import CreateEventModal from "./CreateEventModal";
 import CreateReport from "@/components/shared/CreateReport";
 
 
 
-const PageHeader = ({ seasons }: { seasons:Season[] }) => {
+const PageHeader = () => {
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -17,7 +16,7 @@ const PageHeader = ({ seasons }: { seasons:Season[] }) => {
       </div>
       <div className={`flex items-center gap-3`}>
         <CreateReport />
-        <CreateEventModal seasons={seasons} />
+        <CreateEventModal  />
       </div>
     </div>
   );

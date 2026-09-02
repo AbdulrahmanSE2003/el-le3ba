@@ -124,3 +124,4 @@ export const getMyRank = catchAsync(async (req, res, next) => {
     totalPoints: myEntry?.totalPoints || 0,
   });
 });
+

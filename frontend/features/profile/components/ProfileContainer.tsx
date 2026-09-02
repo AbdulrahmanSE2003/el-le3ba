@@ -14,7 +14,7 @@ export default async function ProfileContainer() {
 
   const userData = userRes.data.userData;
   // NOTE: Here is the role of user
-  console.log(userData.myTeamRole);
+  // console.log(userData.myTeamRole);
 
   return (
     <div className="flex flex-col gap-5">
