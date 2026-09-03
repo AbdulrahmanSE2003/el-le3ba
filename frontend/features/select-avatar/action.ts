@@ -2,7 +2,13 @@
 
 import { serverFetch } from "@/shared/api/server";
 
-import { ActionResponse } from "../profile/types";
+// import { ActionResponse } from "../profile/types";
+
+export interface ActionResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
 
 import { redirect } from "next/navigation";
 

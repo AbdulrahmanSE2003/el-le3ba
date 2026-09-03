@@ -42,7 +42,7 @@ export default function SidebarNavBtn({
         tooltip={{
           children: tooltip,
           className:
-            "[&_svg]:hidden! bg-primary text-primary-foreground border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
+            "[&_svg]:hidden! bg-primary text-white border-none font-body text-xs px-2 py-1.5 rounded-lg ms-2 shadow-lg",
         }}
         asChild
         isActive={isActive}

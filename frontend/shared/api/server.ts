@@ -8,40 +8,56 @@ export interface ServerFetchOptions {
   url: string;
   method?: string;
   body?: object;
+  query?: Record<string, string | string[] | undefined>;
   cache?: RequestCache;
   revalidate?: number;
 }
 
-function resolveUrl(path: string): string {
+function resolveUrl(
+  path: string,
+  query?: Record<string, string | string[] | undefined>,
+): string {
   const base = API_URL.replace(/\/+$/, "");
   const cleaned = path.replace(/^\/+/, "");
-  return `${base}/${cleaned}`;
+
+  const url = new URL(`${base}/${cleaned}`);
+
+  if (query) {
+    Object.entries(query).forEach(([key, value]) => {
+      if (value === undefined || value === "") return;
+
+      if (Array.isArray(value)) {
+        value.forEach((v) => url.searchParams.append(key, v));
+      } else {
+        url.searchParams.set(key, value);
+      }
+    });
+  }
+
+  return url.toString();
 }
 
 function normalizeArgs(
   urlOrOptions: string | ServerFetchOptions,
   method?: string,
   body?: object,
-): {
-  url: string;
-  method: string;
-  body: object | undefined;
-  cache: RequestCache | undefined;
-  revalidate: number | undefined;
-} {
+) {
   if (typeof urlOrOptions === "string") {
     return {
       url: urlOrOptions,
       method: method ?? "GET",
       body,
+      query: undefined,
       cache: undefined,
       revalidate: undefined,
     };
   }
+
   return {
     url: urlOrOptions.url,
     method: urlOrOptions.method ?? "GET",
     body: urlOrOptions.body,
+    query: urlOrOptions.query,
     cache: urlOrOptions.cache,
     revalidate: urlOrOptions.revalidate,
   };
@@ -61,6 +77,7 @@ export async function serverFetch<T = unknown>(
       url,
       method: resolvedMethod,
       body: resolvedBody,
+      query,
       cache,
       revalidate,
     } = normalizeArgs(urlOrOptions, method, body);
@@ -76,7 +93,7 @@ export async function serverFetch<T = unknown>(
       headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const resolvedUrl = resolveUrl(url);
+    const resolvedUrl = resolveUrl(url, query);
 
     const fetchInit: RequestInit & { next?: { revalidate?: number } } = {
       method: resolvedMethod,

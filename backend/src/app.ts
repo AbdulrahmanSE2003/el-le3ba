@@ -16,6 +16,10 @@ import questionRoutes from "./routes/questionRoutes";
 import { sanitizeInput } from "./middleware/sanitize";
 import path from "path";
 import notificationRoutes from "./routes/notificationRoutes";
+import adminRoutes from "./routes/adminRoutes";
+import superAdminRoutes from "./routes/superAdminRoutes";
+import { AppError } from "./utils/appError";
+import seasonRoutes from "./routes/seasonRoutes";
 
 const app = express();
 
@@ -66,13 +70,20 @@ app.use("/avatars", express.static(path.join(process.cwd(), "public/avatars")));
 // ── Routes ─────────────────────────────────────────────────
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/teams", teamRoutes);
+app.use("/api/v1/seasons", seasonRoutes);
 app.use("/api/v1/events", eventRoutes);
 app.use("/api/v1/leaderboard", leaderboardRoutes);
 app.use("/api/v1/sessions", sessionRoutes);
 app.use("/api/v1/questions", questionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/super-admin", superAdminRoutes);
 
 // ── Global error handler ───────────────────────────────────
+app.all("*path", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server.`, 404));
+});
+
 app.use(globalErrorHandler);
 
 export default app;

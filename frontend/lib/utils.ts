@@ -1,9 +1,29 @@
+import { ActionConfig, ACTIONS } from "@/features/admin/utils/constants";
 import { clsx, type ClassValue } from "clsx";
+import { HelpCircle } from "lucide-react";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const AVATARS = [
+  "avatar1.png",
+  "avatar2.png",
+  "avatar3.png",
+  "avatar4.png",
+  "avatar5.png",
+  "avatar6.png",
+  "avatar7.png",
+  "avatar8.png",
+  "avatar9.png",
+  "avatar10.png",
+  "avatar11.png",
+  "avatar12.png",
+  "avatar13.png",
+  "avatar14.png",
+  "avatar15.png",
+] as const;
 
 export const getRemainingDays = (endTimeStr: string): number => {
   const diffTime = new Date(endTimeStr).getTime() - Date.now();
@@ -40,17 +60,19 @@ export const formatPoints = (
 export const formatCreatedAt = (
   dateInput: string | Date | number,
   locale: "ar-EG" | "en-US" = "ar-EG",
+  useLatinNumbers: boolean = true,
 ): string => {
   if (!dateInput) return "";
 
   const date = new Date(dateInput);
-  // Check for invalid dates
   if (isNaN(date.getTime())) return "";
 
   const now = new Date();
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
-  // If the date is in the future or less than 5 seconds ago, treat as "Just now"
+  const activeLocale =
+    locale === "ar-EG" && useLatinNumbers ? "ar-EG-u-nu-latn" : locale;
+
   if (diffInSeconds < 5) {
     return locale.startsWith("ar") ? "الآن" : "Just now";
   }
@@ -59,9 +81,8 @@ export const formatCreatedAt = (
   const diffInHours = Math.floor(diffInMinutes / 60);
   const diffInDays = Math.floor(diffInHours / 24);
 
-  // Use relative time formatting for anything newer than 7 days
   if (diffInDays < 7) {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
+    const rtf = new Intl.RelativeTimeFormat(activeLocale, { numeric: "auto" });
 
     if (diffInMinutes < 60) {
       return rtf.format(-diffInMinutes, "minute");
@@ -72,10 +93,65 @@ export const formatCreatedAt = (
     return rtf.format(-diffInDays, "day");
   }
 
-  // Fallback to absolute calendar date formatting for older items
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat(activeLocale, {
     day: "numeric",
     month: "long",
     year: "numeric",
   }).format(date);
 };
+
+export const getLogActionDetails = (action: string): ActionConfig => {
+  return (
+    ACTIONS[action] || {
+      icon: HelpCircle,
+      title: action,
+      color: "text-muted-foreground bg-muted",
+    }
+  );
+};
+
+const BACKEND_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace("/api/v1", "") ??
+  "http://localhost:5000";
+
+export function getAvatarUrl(avatar?: string | null) {
+  if (!avatar) return "/images/default-avatar.png";
+
+  if (avatar.startsWith("http")) return avatar;
+
+  return `${BACKEND_URL}/avatars/${avatar}`;
+}
+
+/**
+ * Formats large numbers into a compact human-readable string (e.g., 1.5K, 2.3M)
+ * @param number - The number to format
+ * @param options - Optional formatting options
+ */
+export function formatCompactNumber(
+  number: number,
+  options?: {
+    threshold?: number; // The minimum number before compact formatting is applied (default 10,000)
+    locale?: string; // The locale (default 'en-US' for K, M, B or 'ar-EG' for Arabic)
+    maxDecimals?: number; // The maximum number of decimal places (default 1)
+  },
+): string {
+  if (number === null || number === undefined || isNaN(number)) return "0";
+
+  const {
+    threshold = 10000,
+    locale = "en-US",
+    maxDecimals = 1,
+  } = options || {};
+
+  // If the number is smaller than the threshold, display it normally with thousands separators (1,250)
+  if (Math.abs(number) < threshold) {
+    return new Intl.NumberFormat(locale).format(number);
+  }
+
+  // If the number exceeds the threshold, convert it to the compact format (10K, 1.5M, etc.)
+  return new Intl.NumberFormat(locale, {
+    notation: "compact",
+    compactDisplay: "short",
+    maximumFractionDigits: maxDecimals,
+  }).format(number);
+}

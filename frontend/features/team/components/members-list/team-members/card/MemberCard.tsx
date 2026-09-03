@@ -9,6 +9,7 @@ import { Dispatch, SetStateAction } from "react";
 
 import { Member } from "@/shared/types/team";
 import { formatDate } from "@/components/shared/formatted-date";
+import { getAvatarUrl } from "@/lib/utils";
 
 interface Props {
   member: Member;
@@ -39,7 +40,7 @@ export default function MemberCard({
     >
       {/* Avatar */}
       <UserAvatar
-        src={`http://localhost:5000/avatars/${userId.avatar}`}
+        src={getAvatarUrl(userId.avatar)}
         fallback={userId.name[0]?.toUpperCase() || "U"}
         size="xl"
       />

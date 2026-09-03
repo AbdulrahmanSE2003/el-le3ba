@@ -11,6 +11,8 @@ export interface IUser extends Document {
   passwordConfirm?: string;
   avatar?: string;
   role: "student" | "admin" | "superAdmin";
+  isActive: boolean;
+  lastLoginAt: Date | null;
   passwordResetToken?: string;
   passwordResetExpires?: Date;
   passwordChangedAt?: Date;
@@ -59,6 +61,7 @@ const userSchema = new mongoose.Schema<IUser>(
         },
         message: "كلمات المرور يجب ان تكون متطابقة",
       },
+      select: false,
     },
 
     avatar: {
@@ -73,14 +76,21 @@ const userSchema = new mongoose.Schema<IUser>(
       enum: ["student", "admin", "superAdmin"],
     },
 
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+
+    lastLoginAt: { type: Date, default: null },
+
     currentStreak: { type: Number, default: 0 },
     bestStreak: { type: Number, default: 0 },
     totalScore: { type: Number, default: 0 },
     gamesPlayed: { type: Number, default: 0 },
 
     passwordResetToken: { type: String, select: false },
-    passwordResetExpires: { type: Date },
-    passwordChangedAt: { type: Date },
+    passwordResetExpires: { type: Date, select: false },
+    passwordChangedAt: { type: Date, select: false },
   },
 
   {

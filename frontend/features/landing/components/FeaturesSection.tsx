@@ -13,7 +13,7 @@ import {
 export function FeaturesSection() {
   return (
     <section className="py-20 bg-background text-foreground overflow-hidden">
-      <div className="container mx-auto px-4 md:px-8">
+      <div className="container mx-auto px-4 md:px-6">
         {/* ── Section Header Animation ── */}
         <Motion
           as="div"
@@ -44,7 +44,7 @@ export function FeaturesSection() {
             delay={0.1}
             className="relative order-2 lg:order-1 flex justify-center lg:justify-start"
           >
-            <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5 max-w-md md:max-w-xl">
+            <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5  md:max-w-xl">
               <Image
                 src="/images/feature-1.png"
                 alt="واجهة اللعبة الذكية"
@@ -123,7 +123,7 @@ export function FeaturesSection() {
             </p>
 
             {/* Grid items animate smoothly within the content block */}
-            <div className="grid grid-cols-2 gap-4 pt-4">
+            <div className="grid md:grid-cols-2 gap-4 pt-4">
               <Motion
                 as="div"
                 initial="hidden"
@@ -209,7 +209,7 @@ export function FeaturesSection() {
             delay={0.1}
             className="relative flex justify-center lg:justify-end"
           >
-            <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5 max-w-md md:max-w-xl">
+            <div className="relative p-2 rounded-3xl bg-card border border-border shadow-xl shadow-primary/5 md:max-w-xl">
               <Image
                 src="/images/feature-2.png"
                 alt="وضع المخاطرة والتصنيفات"

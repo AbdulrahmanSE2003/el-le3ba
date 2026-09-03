@@ -32,14 +32,14 @@ export function Footer() {
             <Link href="/about" className="hover:text-brand transition-colors">
               عن اللعبة
             </Link>
-            <Link href="/terms" className="hover:text-brand transition-colors">
-              الشروط والأحكام
-            </Link>
             <Link
               href="/privacy"
               className="hover:text-brand transition-colors"
             >
               سياسة الخصوصية
+            </Link>
+            <Link href="/terms" className="hover:text-brand transition-colors">
+              الشروط والأحكام
             </Link>
             <Link
               href="/support"

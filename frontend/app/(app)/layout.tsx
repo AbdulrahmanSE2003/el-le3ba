@@ -11,6 +11,8 @@ import StoreInitializer from "@/store/storeInitializer";
 import { cookies } from "next/headers";
 import { getCurrentUser } from "@/shared/api/helpers";
 
+export const dynamic = "force-dynamic";
+
 async function getProfile() {
   const cookieStore = await cookies();
   const token = cookieStore.get("jwt")?.value;
@@ -19,7 +21,7 @@ async function getProfile() {
 
   const result = await getCurrentUser();
 
-  if (!result.success) return null;
+  if (!result.success) redirect("/login");
   return result.data.userData;
 }
 export default async function AppLayout({ children }: { children: ReactNode }) {

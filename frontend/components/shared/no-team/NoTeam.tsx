@@ -14,25 +14,25 @@ export default function NoTeam() {
   const {
     handleModalChange: handleJoinModalChange,
     openModal: openJoinModal,
-    isLoading: isJoinLoading,
-    teamOrCode: teamCode,
-    setTeamOrCode: setTeamCode,
+    // isLoading: isJoinLoading,
+    data: teamCode,
+    setData: setTeamCode,
     handleAction: handleJoinTeam,
   } = useModal(joinTeam, "تم الانضمام للفريق بنجاح", "فشل الانضمام للفريق");
 
   const {
     handleModalChange: handleCreateModalChange,
     openModal: openCreateModal,
-    isLoading: isCreateLoading,
-    teamOrCode: teamName,
-    setTeamOrCode: setTeamName,
+    // isLoading: isCreateLoading,
+    data: teamName,
+    setData: setTeamName,
     handleAction: handleCreateTeam,
   } = useModal(createTeam, "تم إنشاء الفريق بنجاح", "فشل إنشاء الفريق");
 
-  // Loading State
-  if (isJoinLoading || isCreateLoading) {
-    return <Loading />;
-  }
+  // // Loading State
+  // if (isJoinLoading || isCreateLoading) {
+  //   return <Loading />;
+  // }
 
   // No Team UI
   return (
@@ -58,7 +58,6 @@ export default function NoTeam() {
       {/* Create Team Modal */}
       <CreateTeamModal
         open={openCreateModal}
-        confirmText="إنشاء"
         onOpenChange={handleCreateModalChange}
         onConfirm={handleCreateTeam}
         teamName={teamName}
@@ -68,7 +67,6 @@ export default function NoTeam() {
       {/* Join Team Modal */}
       <JoinTeamModal
         open={openJoinModal}
-        confirmText="إنضمام"
         onOpenChange={handleJoinModalChange}
         onConfirm={handleJoinTeam}
         teamCode={teamCode}

@@ -1,8 +1,10 @@
+import Notification from "../models/notificationModel";
 import Session from "../models/sessionModel";
 import TeamMembership from "../models/teamMembershipModel";
 import Team from "../models/teamModel";
 import User from "../models/userModel";
 import { AppError } from "../utils/appError";
+import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
 import { getOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
@@ -13,7 +15,9 @@ export const getMyId = catchAsync(async (req, res, next) => {
 });
 
 export const getMe = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.user._id).select("-role");
+  const user = await User.findById(req.user._id).select(
+    "-password -passwordChangedAt -passwordResetToken -passwordResetExpires",
+  );
   if (!user)
     return next(
       new AppError("Invalid operation, there is no such a user.", 400),
@@ -97,6 +101,11 @@ export const updateMe = catchAsync(async (req, res, next) => {
   if (!newUser)
     return next(new AppError("Invalid operation, no such user to update", 404));
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.profile_updated",
+    targetModel: "User",
+  });
   resHandler(res, 200, "newUser", newUser);
 });
 
@@ -113,13 +122,19 @@ export const changePassword = catchAsync(async (req, res, next) => {
     return next(new AppError("Invalid operation, no such a user found.", 400));
 
   if (!(await user.correctPassword(oldPassword)))
-    return next(new AppError("Invalid operation, password is incorrect.", 400));
+    return next(new AppError("برجاء ادخال باسوورد صحيح.", 400));
 
   user.password = newPassword;
   user.passwordConfirm = newPasswordConfirm;
   user.passwordChangedAt = new Date();
 
   await user.save();
+
+  await logAudit({
+    actor: req.user._id,
+    action: "user.password_changed",
+    targetModel: "User",
+  });
 
   resHandler(res, 200, "user", user);
 });
@@ -140,6 +155,12 @@ export const deleteMe = catchAsync(async (req, res, next) => {
     );
   await membership?.deleteOne();
   await user.deleteOne();
+  await Notification.deleteMany({ userId: user._id });
 
+  await logAudit({
+    actor: req.user._id,
+    action: "user.deactivated",
+    targetModel: "User",
+  });
   res.status(204).send();
 });

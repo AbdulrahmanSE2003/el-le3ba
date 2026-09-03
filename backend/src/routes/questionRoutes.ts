@@ -7,6 +7,9 @@ import {
   updateQuestion,
   createQuestion,
   getAllQuestions,
+  getQuestionsStats,
+  getQuestionsMeta,
+  bulkDeleteQuestions,
 } from "../controllers/questionController";
 
 const questionRoutes = express.Router();
@@ -14,9 +17,15 @@ const questionRoutes = express.Router();
 questionRoutes.use(protect);
 questionRoutes.use(restrictTo("admin", "superAdmin"));
 
+questionRoutes.get("/stats", getQuestionsStats);
+questionRoutes.get("/meta", getQuestionsMeta);
+
 questionRoutes.route("/").get(getAllQuestions).post(createQuestion);
 
-questionRoutes.route("/bulk").post(bulkCreateQuestions);
+questionRoutes
+  .route("/bulk")
+  .post(bulkCreateQuestions)
+  .delete(bulkDeleteQuestions);
 
 questionRoutes
   .route("/:id")

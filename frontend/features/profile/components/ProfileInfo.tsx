@@ -1,8 +1,8 @@
-import Image from "next/image";
 import { fadeInDown } from "@/components/shared/animations";
 import StyleContainer from "../../../components/shared/StyleContainer";
 import { UserProfileProps } from "../types";
 import UserAvatar from "../../../components/shared/UserAvatar";
+import { getAvatarUrl } from "@/lib/utils";
 
 export default function ProfileInfo({ user }: UserProfileProps) {
   const { name, email, avatar } = user;
@@ -28,10 +28,7 @@ export default function ProfileInfo({ user }: UserProfileProps) {
       </div>
 
       {/* Avatar */}
-      <UserAvatar
-        src={`http://localhost:5000/avatars/${avatar}`}
-        fallback={`${name[0]}`}
-      />
+      <UserAvatar src={getAvatarUrl(avatar)} fallback={`${name[0]}`} />
     </StyleContainer>
   );
 }

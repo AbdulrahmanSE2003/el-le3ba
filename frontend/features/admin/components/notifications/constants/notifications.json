@@ -1,0 +1,418 @@
+[
+  {
+    "_id": "notif-001",
+    "title": "مبروك! وصلت لأعلى 10 في لوحة الصدارة",
+    "message": "أداء رائع النهاردة، كمّل بنفس الحماس.",
+    "type": "achievement",
+    "audience": {
+      "type": "user",
+      "label": "سارة كمال"
+    },
+    "status": "failed",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-06-01T20:59:22.088Z"
+  },
+  {
+    "_id": "notif-002",
+    "title": "إشعار حظر مؤقت",
+    "message": "تم إيقاف الحساب مؤقتًا بسبب مخالفة تكرار الدخول.",
+    "type": "warning",
+    "audience": {
+      "type": "user",
+      "label": "أحمد سامي"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": "2026-05-26T21:21:09.464Z",
+    "scheduledFor": null,
+    "createdAt": "2026-07-20T05:48:09.540Z"
+  },
+  {
+    "_id": "notif-003",
+    "title": "تحديث جديد على المنصة",
+    "message": "تمت إضافة ميزات جديدة للوحة المتصدرين، جرّبوها الآن.",
+    "type": "announcement",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "failed",
+    "recipientsCount": 1136,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-06-12T18:04:42.166Z"
+  },
+  {
+    "_id": "notif-004",
+    "title": "إشعار حظر مؤقت",
+    "message": "تم إيقاف الحساب مؤقتًا بسبب مخالفة تكرار الدخول.",
+    "type": "warning",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "sent",
+    "recipientsCount": 1174,
+    "readCount": 479,
+    "sentAt": "2026-07-14T11:02:08.460Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-03T21:38:10.478Z"
+  },
+  {
+    "_id": "notif-005",
+    "title": "تحذير: مخالفة في قواعد اللعب",
+    "message": "تم رصد نشاط غير طبيعي في آخر مباراة، يرجى مراجعة القواعد.",
+    "type": "warning",
+    "audience": {
+      "type": "user",
+      "label": "مروة عادل"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": "2026-07-09T10:00:01.490Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-26T01:00:52.121Z"
+  },
+  {
+    "_id": "notif-006",
+    "title": "تحذير: مخالفة في قواعد اللعب",
+    "message": "تم رصد نشاط غير طبيعي في آخر مباراة، يرجى مراجعة القواعد.",
+    "type": "warning",
+    "audience": {
+      "type": "event",
+      "label": "بطولة الصيف"
+    },
+    "status": "sent",
+    "recipientsCount": 302,
+    "readCount": 297,
+    "sentAt": "2026-07-17T05:43:42.231Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-13T19:07:18.489Z"
+  },
+  {
+    "_id": "notif-007",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "event",
+      "label": "بطولة الصيف"
+    },
+    "status": "sent",
+    "recipientsCount": 295,
+    "readCount": 79,
+    "sentAt": "2026-06-27T15:23:33.129Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-25T08:46:38.179Z"
+  },
+  {
+    "_id": "notif-008",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "team",
+      "label": "فريق الأبطال"
+    },
+    "status": "sent",
+    "recipientsCount": 5,
+    "readCount": 4,
+    "sentAt": "2026-05-26T07:59:45.385Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-20T00:38:59.313Z"
+  },
+  {
+    "_id": "notif-009",
+    "title": "إنجاز جديد: أطول سلسلة إجابات صحيحة",
+    "message": "فريقك حقق أطول Streak في الموسم الحالي.",
+    "type": "achievement",
+    "audience": {
+      "type": "user",
+      "label": "مروة عادل"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": "2026-05-01T03:15:58.535Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-14T20:32:17.159Z"
+  },
+  {
+    "_id": "notif-010",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "scheduled",
+    "recipientsCount": 1254,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": "2026-08-06T21:40:13.382Z",
+    "createdAt": "2026-06-28T16:37:35.363Z"
+  },
+  {
+    "_id": "notif-011",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "user",
+      "label": "سارة كمال"
+    },
+    "status": "failed",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-06-20T07:20:01.880Z"
+  },
+  {
+    "_id": "notif-012",
+    "title": "مبروك! وصلت لأعلى 10 في لوحة الصدارة",
+    "message": "أداء رائع النهاردة، كمّل بنفس الحماس.",
+    "type": "achievement",
+    "audience": {
+      "type": "team",
+      "label": "فريق النسور"
+    },
+    "status": "sent",
+    "recipientsCount": 4,
+    "readCount": 3,
+    "sentAt": "2026-06-11T10:20:49.205Z",
+    "scheduledFor": null,
+    "createdAt": "2026-07-16T17:11:52.925Z"
+  },
+  {
+    "_id": "notif-013",
+    "title": "إشعار حظر مؤقت",
+    "message": "تم إيقاف الحساب مؤقتًا بسبب مخالفة تكرار الدخول.",
+    "type": "warning",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "sent",
+    "recipientsCount": 919,
+    "readCount": 390,
+    "sentAt": "2026-07-01T09:02:13.571Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-01T02:27:17.913Z"
+  },
+  {
+    "_id": "notif-014",
+    "title": "إنجاز جديد: أطول سلسلة إجابات صحيحة",
+    "message": "فريقك حقق أطول Streak في الموسم الحالي.",
+    "type": "achievement",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "sent",
+    "recipientsCount": 1140,
+    "readCount": 133,
+    "sentAt": "2026-06-06T03:26:51.544Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-24T01:20:32.778Z"
+  },
+  {
+    "_id": "notif-015",
+    "title": "مباراتك هتبدأ بعد شوية",
+    "message": "المباراة القادمة هتبدأ خلال 15 دقيقة، جهّز فريقك.",
+    "type": "match_reminder",
+    "audience": {
+      "type": "event",
+      "label": "بطولة الصيف"
+    },
+    "status": "scheduled",
+    "recipientsCount": 312,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": "2026-08-05T21:40:13.383Z",
+    "createdAt": "2026-06-08T20:22:20.842Z"
+  },
+  {
+    "_id": "notif-016",
+    "title": "مباراتك هتبدأ بعد شوية",
+    "message": "المباراة القادمة هتبدأ خلال 15 دقيقة، جهّز فريقك.",
+    "type": "match_reminder",
+    "audience": {
+      "type": "team",
+      "label": "فريق النسور"
+    },
+    "status": "scheduled",
+    "recipientsCount": 3,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": "2026-08-02T21:40:13.383Z",
+    "createdAt": "2026-06-17T10:01:05.115Z"
+  },
+  {
+    "_id": "notif-017",
+    "title": "مباراتك هتبدأ بعد شوية",
+    "message": "المباراة القادمة هتبدأ خلال 15 دقيقة، جهّز فريقك.",
+    "type": "match_reminder",
+    "audience": {
+      "type": "team",
+      "label": "فريق الفرسان"
+    },
+    "status": "failed",
+    "recipientsCount": 6,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-05-06T12:05:08.900Z"
+  },
+  {
+    "_id": "notif-018",
+    "title": "إنجاز جديد: أطول سلسلة إجابات صحيحة",
+    "message": "فريقك حقق أطول Streak في الموسم الحالي.",
+    "type": "achievement",
+    "audience": {
+      "type": "event",
+      "label": "الموسم التمهيدي"
+    },
+    "status": "sent",
+    "recipientsCount": 238,
+    "readCount": 226,
+    "sentAt": "2026-06-19T01:03:51.864Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-03T10:36:10.319Z"
+  },
+  {
+    "_id": "notif-019",
+    "title": "إنجاز جديد: أطول سلسلة إجابات صحيحة",
+    "message": "فريقك حقق أطول Streak في الموسم الحالي.",
+    "type": "achievement",
+    "audience": {
+      "type": "user",
+      "label": "يوسف حسن"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 1,
+    "sentAt": "2026-07-22T23:46:10.827Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-25T15:56:52.592Z"
+  },
+  {
+    "_id": "notif-020",
+    "title": "تحذير: مخالفة في قواعد اللعب",
+    "message": "تم رصد نشاط غير طبيعي في آخر مباراة، يرجى مراجعة القواعد.",
+    "type": "warning",
+    "audience": {
+      "type": "user",
+      "label": "مروة عادل"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": "2026-05-24T11:29:17.175Z",
+    "scheduledFor": null,
+    "createdAt": "2026-07-08T07:16:00.327Z"
+  },
+  {
+    "_id": "notif-021",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "team",
+      "label": "فريق النسور"
+    },
+    "status": "failed",
+    "recipientsCount": 6,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-05-20T06:20:06.197Z"
+  },
+  {
+    "_id": "notif-022",
+    "title": "تذكير: آخر يوم في بطولة الصيف",
+    "message": "النهاردة آخر يوم للمشاركة في بطولة الصيف، متفوتوش الفرصة.",
+    "type": "match_reminder",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "failed",
+    "recipientsCount": 1195,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-06-27T07:53:27.552Z"
+  },
+  {
+    "_id": "notif-023",
+    "title": "صيانة مجدولة للمنصة",
+    "message": "هيكون فيه توقف قصير للصيانة يوم الجمعة الساعة 2 صباحًا.",
+    "type": "announcement",
+    "audience": {
+      "type": "user",
+      "label": "أحمد سامي"
+    },
+    "status": "sent",
+    "recipientsCount": 1,
+    "readCount": 1,
+    "sentAt": "2026-05-11T10:11:02.591Z",
+    "scheduledFor": null,
+    "createdAt": "2026-06-22T14:19:27.541Z"
+  },
+  {
+    "_id": "notif-024",
+    "title": "تحذير: مخالفة في قواعد اللعب",
+    "message": "تم رصد نشاط غير طبيعي في آخر مباراة، يرجى مراجعة القواعد.",
+    "type": "warning",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "sent",
+    "recipientsCount": 1193,
+    "readCount": 216,
+    "sentAt": "2026-07-05T10:41:44.734Z",
+    "scheduledFor": null,
+    "createdAt": "2026-05-29T04:15:55.041Z"
+  },
+  {
+    "_id": "notif-025",
+    "title": "تذكير: آخر يوم في بطولة الصيف",
+    "message": "النهاردة آخر يوم للمشاركة في بطولة الصيف، متفوتوش الفرصة.",
+    "type": "match_reminder",
+    "audience": {
+      "type": "all",
+      "label": "كل المستخدمين"
+    },
+    "status": "sent",
+    "recipientsCount": 1122,
+    "readCount": 469,
+    "sentAt": "2026-06-11T10:09:21.135Z",
+    "scheduledFor": null,
+    "createdAt": "2026-07-11T08:15:53.843Z"
+  },
+  {
+    "_id": "notif-026",
+    "title": "تحذير: مخالفة في قواعد اللعب",
+    "message": "تم رصد نشاط غير طبيعي في آخر مباراة، يرجى مراجعة القواعد.",
+    "type": "warning",
+    "audience": {
+      "type": "user",
+      "label": "أحمد سامي"
+    },
+    "status": "failed",
+    "recipientsCount": 1,
+    "readCount": 0,
+    "sentAt": null,
+    "scheduledFor": null,
+    "createdAt": "2026-06-30T08:33:55.640Z"
+  }
+]

@@ -5,11 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { usePathname } from "next/navigation";
+
+const navLinks = [
+  {
+    href: "/",
+    label: "الرئيسية",
+  },
+  {
+    href: "/about",
+    label: "عن المنصة",
+  },
+  {
+    href: "/privacy",
+    label: "سياسة الخصوصية",
+  },
+  {
+    href: "/terms",
+    label: "الشروط والأحكام",
+  },
+];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
+  const pathname = usePathname();
 
   return (
     <>
@@ -23,7 +44,7 @@ export function Navbar() {
         onClick={() => setIsOpen(false)}
       />
 
-      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-muted backdrop-blur-md">
         <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-8">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -33,8 +54,11 @@ export function Navbar() {
           </Link>
 
           {/* Burger Icon */}
-          <div className="md:hidden flex items-center">
-            <button
+          <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
+
+            <Button
+              variant={"outline"}
               onClick={toggleMenu}
               className="p-2 text-muted-foreground hover:text-primary transition-colors focus:outline-none"
               aria-label="Toggle Menu"
@@ -44,42 +68,43 @@ export function Navbar() {
               ) : (
                 <Menu className="h-6 w-6 animate-in fade-in zoom-in-50 duration-200" />
               )}
-            </button>
+            </Button>
           </div>
 
           {/* Nav Links */}
           <nav className="hidden md:flex items-center gap-6 text-md font-medium text-card-foreground">
-            <Link href="/" className="text-primary font-semibold">
-              الرئيسية
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="hover:text-primary transition-colors"
-            >
-              المتصدرين
-            </Link>
-            <Link
-              href="/about"
-              className="hover:text-primary transition-colors"
-            >
-              عن المنصة
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={
+                  link.href === pathname
+                    ? "text-primary font-semibold"
+                    : "hover:text-primary transition-colors font-medium text-foreground/75"
+                }
+              >
+                {link.label}
+              </Link>
+            ))}
           </nav>
           {/* Desktop Buttons */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
-            <Button
-              asChild
-              className="bg-primary hover:bg-primary text-primary-foreground font-bold rounded-full px-6 transition-all hover:scale-105"
-            >
-              <Link href="/register">ابدأ اللعب</Link>
+            <Button asChild className={`rounded-xl px-5`}>
+              <Link href="/login">ابدأ اللعب</Link>
             </Button>
-            <Link
-              href="/login"
-              className="text-sm font-medium text-card-foreground hover:text-primary transition-colors"
+            {/* <Button
+              variant={"secondary"}
+              asChild
+              className={`px-5 rounded-full`}
             >
-              دخول
-            </Link>
+              <Link
+                href="/login"
+                className="text-sm font-medium text-card-foreground hover:text-primary transition-colors"
+              >
+                دخول
+              </Link>
+            </Button> */}
           </div>
         </div>
 
@@ -92,37 +117,26 @@ export function Navbar() {
           }`}
         >
           <nav className="flex flex-col p-4 space-y-4 text-right font-medium text-muted-foreground">
-            <Link
-              href="/"
-              onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-border hover:text-primary text-primary font-bold"
-            >
-              الرئيسية
-            </Link>
-            <Link
-              href="/leaderboard"
-              onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-border hover:text-primary"
-            >
-              المتصدرين
-            </Link>
-            <Link
-              href="/about"
-              onClick={() => setIsOpen(false)}
-              className="pb-2 border-b border-border hover:text-primary"
-            >
-              عن المنصة
-            </Link>
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`pb-2 border-b border-border hover:text-primary ${
+                  link.href === "/" ? "text-primary font-bold" : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
 
             {/* In Mobile */}
             <div className="flex flex-col gap-3 pt-2">
-              <ThemeToggle />
-
               <Button
                 asChild
                 className="bg-primary hover:bg-primary text-primary-foreground font-bold rounded-xl w-full h-11"
               >
-                <Link href="/register" onClick={() => setIsOpen(false)}>
+                <Link href="/login" onClick={() => setIsOpen(false)}>
                   ابدأ اللعب
                 </Link>
               </Button>
@@ -131,8 +145,8 @@ export function Navbar() {
                 variant="outline"
                 className="border-input text-foreground font-bold rounded-xl w-full h-11 bg-background"
               >
-                <Link href="/login" onClick={() => setIsOpen(false)}>
-                  دخول
+                <Link href="/register" onClick={() => setIsOpen(false)}>
+                  تسجيل{" "}
                 </Link>
               </Button>
             </div>

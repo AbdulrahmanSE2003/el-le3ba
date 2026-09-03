@@ -18,7 +18,7 @@ interface SidebarBrandProps {
 
 export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   const isAdmin = variant === "admin";
-  const href = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const href = isAdmin ? "/admin/" : "/dashboard";
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,9 @@ export function SidebarBrand({ variant = "user" }: SidebarBrandProps) {
   }
 
   return (
-    <SidebarHeader className=" overflow-hidden border-b">
+    <SidebarHeader
+      className={` overflow-hidden border-b ${isCollapsed ? "p-1" : "p-2"}`}
+    >
       <Link
         href={href}
         className="flex justify-center items-center duration-300"

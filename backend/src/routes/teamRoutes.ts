@@ -5,7 +5,6 @@ import {
   changeTeamName,
   createTeam,
   deleteMyTeam,
-  getAllTeams,
   getMyTeam,
   getTeam,
   getTeamAttempts,
@@ -19,10 +18,7 @@ const teamRoutes = express.Router();
 
 teamRoutes.use(protect);
 
-teamRoutes
-  .route("/")
-  .get(restrictTo("admin", "superAdmin"), getAllTeams)
-  .post(createTeam);
+teamRoutes.route("/").post(createTeam);
 
 teamRoutes.route("/my-team").get(getMyTeam).delete(deleteMyTeam);
 teamRoutes.route("/my-team/stats").get(getTeamStats);

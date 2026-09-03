@@ -1,9 +1,16 @@
 import { ClipboardList } from "lucide-react";
 
 const RULES = [
-  { id: 1, label: "20 سؤال" },
-  { id: 2, label: "7 دقائق" },
-  { id: 3, label: "إجابة اسرع = نقاط أكتر" },
+  { id: 1, label: "20 سؤال لكل مباراة" },
+  { id: 2, label: "مدة المباراة 7 دقائق" },
+  { id: 4, label: "الإجابة الأسرع = نقاط أكثر" },
+  { id: 5, label: "لا يمكن الرجوع للسؤال السابق" },
+  { id: 6, label: "يتم احتساب النتيجة فور انتهاء الوقت" },
+  {
+    id: 7,
+    label:
+      "عند إرسال أكثر من إجابة من الفريق، تُحتسب أول إجابة فقط ويتم تجاهل الباقي",
+  },
 ];
 
 const RulesSection = () => (
@@ -13,14 +20,15 @@ const RulesSection = () => (
       قواعد اللعبة
     </span>
 
-    <div className="flex items-center gap-3">
+    <div className="space-y-2">
       {RULES.map((rule) => (
-        <span
+        <div
           key={rule.id}
-          className="bg-muted border border-primary/50 rounded-full text-card-foreground/85 text-xs p-1 px-3 dark:border-primary/20 dark:bg-primary/5"
+          className="flex items-center gap-2 text-sm text-muted-foreground"
         >
-          {rule.label}
-        </span>
+          <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+          <span>{rule.label}</span>
+        </div>
       ))}
     </div>
   </div>

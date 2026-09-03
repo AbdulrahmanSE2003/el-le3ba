@@ -8,6 +8,8 @@ import { generateCode } from "../utils/utils";
 import resHandler from "../utils/resHandler";
 import { getAll, getOne } from "../utils/factory";
 import Leaderboard from "../models/leaderboardModel";
+import Season from "../models/seasonModel";
+import { logAudit } from "../utils/AuditLog";
 
 export const createTeam = catchAsync(async (req, res, next) => {
   const user = req.user;
@@ -37,6 +39,14 @@ export const createTeam = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.created",
+      target: newTeam._id,
+      targetModel: "Team",
+    });
+
     resHandler(res, 201, "team", newTeam);
   } catch (error) {
     await session.abortTransaction();
@@ -66,6 +76,13 @@ export const joinTeam = catchAsync(async (req, res, next) => {
     role: "member",
   });
 
+  await logAudit({
+    actor: req.user._id,
+    action: "team.joined",
+    target: membership._id,
+    targetModel: "TeamMembership",
+  });
+
   resHandler(res, 201, "membership", membership);
 });
 
@@ -83,21 +100,25 @@ export const getMyTeam = catchAsync(async (req, res, next) => {
     teamId: membership.teamId,
   }).populate("userId", "name email avatar");
 
-  const teamLeaderboardEntry = await Leaderboard.findOne({ teamId: team._id });
-  if (!teamLeaderboardEntry) {
-    return resHandler(res, 200, "team", {
-      team,
-      members: teamMembers,
-      myRole: membership.role,
-      rank: null,
-    });
-  }
+  const activeSeason = await Season.findOne({ status: "active" });
 
-  // Calculate the team's rank based on totalPoints
-  const rank =
-    (await Leaderboard.countDocuments({
-      totalPoints: { $gt: teamLeaderboardEntry.totalPoints },
-    })) + 1;
+  let rank: number | null = null;
+  if (activeSeason) {
+    const myTotal = await Leaderboard.aggregate<{ points: number }>([
+      { $match: { seasonId: activeSeason._id, teamId: team._id } },
+      { $group: { _id: "$teamId", points: { $sum: "$seasonPoints" } } },
+    ]);
+
+    if (myTotal.length > 0) {
+      const rankedAbove = await Leaderboard.aggregate<{ count: number }>([
+        { $match: { seasonId: activeSeason._id } },
+        { $group: { _id: "$teamId", points: { $sum: "$seasonPoints" } } },
+        { $match: { points: { $gt: myTotal[0].points } } },
+        { $count: "count" },
+      ]);
+      rank = (rankedAbove[0]?.count ?? 0) + 1;
+    }
+  }
 
   resHandler(res, 200, "team", {
     team,
@@ -152,6 +173,13 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
     await TeamMembership.deleteMany({ teamId }, { session });
     await Leaderboard.deleteMany({ teamId }, { session });
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.deleted",
+      target: teamId,
+      targetModel: "Team",
+    });
     res.status(204).send();
   } catch (error) {
     await session.abortTransaction();
@@ -170,6 +198,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
   // Regular member — just remove
   if (userMembership.role === "member") {
     await TeamMembership.deleteOne({ userId });
+    await logAudit({
+      actor: req.user._id,
+      action: "team.left",
+      target: userMembership._id,
+      targetModel: "TeamMembership",
+    });
     return res.status(204).send();
   }
 
@@ -191,6 +225,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
         { session },
       );
       await session.commitTransaction();
+      await logAudit({
+        actor: req.user._id,
+        action: "team.delete",
+        target: userMembership.teamId,
+        targetModel: "Team",
+      });
       return res.status(204).send();
     } catch (error) {
       await session.abortTransaction();
@@ -217,6 +257,12 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+    await logAudit({
+      actor: req.user._id,
+      action: "team.left",
+      target: userMembership._id,
+      targetModel: "Team",
+    });
     res.status(204).send();
   } catch (error) {
     await session.abortTransaction();
@@ -267,6 +313,14 @@ export const changeCaptain = catchAsync(async (req, res, next) => {
     );
 
     await session.commitTransaction();
+
+    await logAudit({
+      actor: req.user._id,
+      action: "team.captain_transferred",
+      target: newCaptainId,
+      targetModel: "Team",
+    });
+
     resHandler(res, 200, "team", team);
   } catch (error) {
     await session.abortTransaction();
@@ -319,6 +373,13 @@ export const kickMember = catchAsync(async (req, res, next) => {
 
   await TeamMembership.deleteOne({ userId: targetUserId });
 
+  await logAudit({
+    actor: req.user._id,
+    action: "team.member_removed",
+    target: targetUserId as string,
+    targetModel: "Team",
+  });
+
   res.status(204).send();
 });
 
@@ -343,4 +404,3 @@ export const getTeamAttempts = catchAsync(async (req, res, next) => {
 // NOTE: Admins Only
 // ===================================
 export const getTeam = getOne(Team);
-export const getAllTeams = getAll(Team);

@@ -19,8 +19,9 @@ export interface UserData {
   _id: string;
   name: string;
   email: string;
-  role: "student" | "admin";
+  role: "student" | "admin" | "superAdmin";
   avatar: string | null;
+  isActive: boolean;
   totalScore: number;
   gamesPlayed: number;
   gamesWon?: number;
@@ -42,6 +43,11 @@ export interface CurrentUserResponse {
 
 export interface RecentSession {
   _id: string;
+  teamId: {
+    _id: string;
+    teamName: string;
+    teamCode: string;
+  };
   eventId: {
     _id: string;
     title: string;
@@ -77,6 +83,29 @@ export interface CurrentEventResponse {
 
 export interface EventStatsResponse {
   stats: { totalTeams: number };
+}
+
+export interface ActiveSeason {
+  _id: string;
+  title: string;
+  startDate: string;
+  knockoutStartDate?: string;
+  endDate: string;
+  status: "upcoming" | "active" | "knockout" | "ended";
+}
+
+export interface ActiveSeasonResponse {
+  season: ActiveSeason;
+}
+
+export interface SeasonLeaderboardEntry {
+  teamId: string;
+  teamName: string;
+  seasonPoints: number;
+}
+
+export interface SeasonLeaderboardResponse {
+  leaderboard: SeasonLeaderboardEntry[];
 }
 
 export interface LeaderboardEntry {
@@ -135,11 +164,15 @@ export interface SessionDetailsResponse {
 
 export interface INotificationItem {
   _id: string;
-  title: string;
-  message: string;
+  campaignId: {
+    _id: string;
+    title: string;
+    message: string;
+    type: "broadcast" | "selected";
+    createdAt: string;
+  };
   userId: string;
   isRead: boolean;
-  isBroadcast: boolean;
   __v: number;
   createdAt: string;
   updatedAt: string;
@@ -210,6 +243,20 @@ export const getNotifications = cache(async () =>
 export const getLeaderboard = cache(async (eventId?: string) =>
   serverFetch<LeaderboardApiResponse>({
     url: `leaderboard?eventId=${eventId}`,
+    ...CACHE.leaderboard,
+  }),
+);
+
+export const getActiveSeason = cache(async () =>
+  serverFetch<ActiveSeasonResponse>({
+    url: "seasons/active",
+    ...CACHE.season,
+  }),
+);
+
+export const getSeasonLeaderboard = cache(async (seasonId: string) =>
+  serverFetch<SeasonLeaderboardResponse>({
+    url: `seasons/${seasonId}/leaderboard`,
     ...CACHE.leaderboard,
   }),
 );

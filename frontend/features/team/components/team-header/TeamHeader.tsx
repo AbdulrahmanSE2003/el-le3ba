@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 import { Input } from "@/components/ui/input";
 
 import StyleContainer from "@/components/shared/StyleContainer";
@@ -11,58 +9,64 @@ import TeamActions from "./TeamActions";
 import { MyAlertModal } from "@/components/shared/MyAlertModal";
 
 import { TeamType } from "../../types";
-import { changeTeamName, deleteTeam, leaveTeam } from "../../actions";
-import { showError, showSuccess } from "@/components/shared/notifications";
+
+import { useTeamHeaderModal } from "@/hooks/useTeamHeaderModal";
+// import Loading from "@/components/shared/Loading";
 
 interface TeamHeaderProps {
   teamData: TeamType;
 }
 
-type ActiveModal = "rename" | "delete" | "leave" | null;
-
 export default function TeamHeader({ teamData }: TeamHeaderProps) {
   const { team, myRole, rank } = teamData;
 
-  const [activeModal, setActiveModal] = useState<ActiveModal>(null);
-  const [newTeamName, setNewTeamName] = useState(team.teamName);
+  const {
+    openModal,
+    activeModal,
+    newTeamName,
+    setNewTeamName,
+    closeModal,
+    handleRename,
+    handleLeave,
+    handleDelete,
+    // isLoading
+  } = useTeamHeaderModal({
+    teamName: team.teamName,
+    id: team._id,
+  });
 
-  function openModal(modal: Exclude<ActiveModal, null>) {
-    if (modal === "rename") {
-      setNewTeamName(team.teamName);
-    }
+  // Rename Modal Content
+  const renameContent = (
+    <div className="py-4 w-full">
+      <Input
+        value={newTeamName}
+        maxLength={20}
+        className="rounded-xl text-right"
+        placeholder="اسم الفريق الجديد"
+        onChange={(e) => setNewTeamName(e.target.value)}
+      />
+    </div>
+  );
 
-    setActiveModal(modal);
-  }
+  // Delete Modal Content
+  const removeContent = (
+    <p className="py-4 text-right text-sm text-muted-foreground">
+      هل أنت متأكد من حذف الفريق بالكامل؟ سيتم حذف جميع الأعضاء وبيانات الفريق،
+      ولا يمكن التراجع عن هذا الإجراء.
+    </p>
+  );
 
-  function closeModal(open: boolean, modal: Exclude<ActiveModal, null>) {
-    setActiveModal(open ? modal : null);
-  }
+  // Leave Modal Content
+  const leaveContent = (
+    <p className="py-4 text-right text-sm text-muted-foreground">
+      هل أنت متأكد من مغادرة الفريق؟ ستحتاج للانضمام إلى فريق آخر حتى تتمكن من
+      المشاركة مرة أخرى.
+    </p>
+  );
 
-  async function runAction(action: () => Promise<unknown>) {
-    const result = await action();
-
-    if (result?.error) {
-      showError(result.error);
-      return false;
-    }
-
-    return true;
-  }
-
-  async function handleRename() {
-    const success = await runAction(() =>
-      changeTeamName(team._id, newTeamName),
-    );
-
-    if (!success) return false;
-
-    showSuccess("تم تعديل اسم الفريق بنجاح");
-    return true;
-  }
-
-  const handleDelete = () => runAction(deleteTeam);
-
-  const handleLeave = () => runAction(leaveTeam);
+  // if (isLoading) {
+  //   return <Loading/>
+  // }
 
   return (
     <StyleContainer className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 p-6 md:p-8">
@@ -88,47 +92,27 @@ export default function TeamHeader({ teamData }: TeamHeaderProps) {
         title="تعديل اسم الفريق"
         confirmText="تعديل"
         open={activeModal === "rename"}
-        onOpenChange={(open) => closeModal(open, "rename")}
+        onOpenChange={closeModal}
         onConfirm={handleRename}
-        content={
-          <div className="py-4 w-full">
-            <Input
-              value={newTeamName}
-              maxLength={20}
-              className="rounded-xl text-right"
-              placeholder="اسم الفريق الجديد"
-              onChange={(e) => setNewTeamName(e.target.value)}
-            />
-          </div>
-        }
+        content={renameContent}
       />
 
       <MyAlertModal
         title="تنبيه حذف الفريق"
         confirmText="حذف"
         open={activeModal === "delete"}
-        onOpenChange={(open) => closeModal(open, "delete")}
+        onOpenChange={closeModal}
         onConfirm={handleDelete}
-        content={
-          <p className="py-4 text-right text-sm text-muted-foreground">
-            هل أنت متأكد من حذف الفريق بالكامل؟ سيتم حذف جميع الأعضاء وبيانات
-            الفريق، ولا يمكن التراجع عن هذا الإجراء.
-          </p>
-        }
+        content={removeContent}
       />
 
       <MyAlertModal
         title="مغادرة الفريق"
         confirmText="مغادرة"
         open={activeModal === "leave"}
-        onOpenChange={(open) => closeModal(open, "leave")}
+        onOpenChange={closeModal}
         onConfirm={handleLeave}
-        content={
-          <p className="py-4 text-right text-sm text-muted-foreground">
-            هل أنت متأكد من مغادرة الفريق؟ ستحتاج للانضمام إلى فريق آخر حتى
-            تتمكن من المشاركة مرة أخرى.
-          </p>
-        }
+        content={leaveContent}
       />
     </StyleContainer>
   );

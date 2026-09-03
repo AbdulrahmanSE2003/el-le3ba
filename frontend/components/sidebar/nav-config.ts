@@ -37,26 +37,3 @@ export const userNavItems: NavItem[] = [
     icon: User,
   },
 ];
-
-export const adminNavItems: NavItem[] = [
-  {
-    title: "لوحة الإدارة",
-    href: "/admin/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "المستخدمون",
-    href: "/admin/users",
-    icon: Users,
-  },
-  {
-    title: "المباريات",
-    href: "/admin/matches",
-    icon: CalendarDays,
-  },
-  {
-    title: "الإعدادات",
-    href: "/admin/settings",
-    icon: Settings,
-  },
-];

@@ -67,7 +67,7 @@ export function MyAlertModal({
 
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold">{title}</AlertDialogTitle>
 
           <AlertDialogDescription>{description}</AlertDialogDescription>
 

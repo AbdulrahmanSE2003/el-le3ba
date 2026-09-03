@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,23 +10,13 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 
-interface AlertModalProps {
+interface CreateTeamModalProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-
-  trigger?: ReactNode;
-
-  confirmText?: string | ReactNode;
-  cancelText?: string | ReactNode;
-
-  variant?: "default" | "secondary" | "outline" | "destructive";
-
   onConfirm?: () => Promise<boolean | void> | boolean | void;
-
   teamName: string;
   setTeamName: (teamName: string) => void;
 }
@@ -34,14 +24,10 @@ interface AlertModalProps {
 export default function CreateTeamModal({
   open,
   onOpenChange,
-  trigger,
-  confirmText = "إنشاء",
-  cancelText = "إلغاء",
   onConfirm,
-  variant,
   teamName,
   setTeamName,
-}: AlertModalProps) {
+}: CreateTeamModalProps) {
   const [loading, setLoading] = useState(false);
 
   // Modal create Content
@@ -75,8 +61,6 @@ export default function CreateTeamModal({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
-
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>إنشاء فريق جديد</AlertDialogTitle>
@@ -90,14 +74,14 @@ export default function CreateTeamModal({
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading}>{cancelText}</AlertDialogCancel>
+          <AlertDialogCancel disabled={loading}>إلغاء</AlertDialogCancel>
 
           <AlertDialogAction
             disabled={loading}
             onClick={handleConfirm}
-            variant={variant || "default"}
+            variant="default"
           >
-            {loading ? "جاري التنفيذ..." : confirmText}
+            {loading ? "جاري التنفيذ..." : "إنشاء"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
