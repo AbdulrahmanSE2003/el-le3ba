@@ -7,7 +7,7 @@ import { Search, SearchIcon } from "lucide-react";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import createPageUrl from "./utils/createPageUrl";
 
@@ -20,18 +20,21 @@ export default function SearchInput({ placeholder }: { placeholder: string }) {
     searchParams.get("search") || "",
   );
 
+  // Reset the visible value whenever the URL's search param changes (e.g. when
+  // the "reset filters" button clears it), without relying on an effect.
+  const [prevSearch, setPrevSearch] = useState<string | null>(
+    searchParams.get("search"),
+  );
+  if (prevSearch !== searchParams.get("search")) {
+    setPrevSearch(searchParams.get("search"));
+    setSearchValue(searchParams.get("search") || "");
+  }
+
   // Search when click on search button
   const handleSearch = () => {
     const url = createPageUrl("search", searchValue, searchParams.toString());
     router.push(`${pathname}${url}`);
   };
-
-  // Reset search when click on reset filters button
-  useEffect(() => {
-    if (!searchParams.get("search")) {
-      setSearchValue("");
-    }
-  }, [searchParams]);
 
   return (
     <form action={handleSearch} className="relative w-full lg:w-96 flex-1">

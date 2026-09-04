@@ -17,6 +17,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { getDashboardRecentSessions } from "../api/shared";
 import { RecentSession } from "@/shared/api/helpers";
 import { cn } from "@/lib/utils";
+import { endReasonConfig } from "./sessions/SessionsTable";
 
 const statusMap = {
   completed: {
@@ -41,7 +42,7 @@ export default async function RecentSessions() {
 
   if (!sessionsRes.success) return <Error />;
 
-  const sessions = sessionsRes.data.recentSessions;
+  const sessions = sessionsRes.data.sessions;
 
   return (
     <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
@@ -61,23 +62,31 @@ export default async function RecentSessions() {
         </Button>
       </div>
 
-      <ScrollArea dir="rtl" className="h-104 p-0 border-0 rounded-md ">
+      <ScrollArea dir="rtl" className="h-104 px-1.5 border-0 rounded-md ">
         <Table className={`overflow-x-scroll rounded-t-0`}>
           <TableHeader>
             <TableRow className={`bg-muted`}>
               <TableHead className="text-center">الفريق</TableHead>
-              <TableHead className="text-center">الموسم</TableHead>
+              <TableHead className="text-center">الحدث</TableHead>
               <TableHead className="text-center">النقاط</TableHead>
+              <TableHead className="text-center">الإجابات الصحيحة</TableHead>
               <TableHead className="text-center">الحالة</TableHead>
               <TableHead className="text-center">انتهت</TableHead>
-              <TableHead className="text-right">إجراءات</TableHead>
+              <TableHead className="text-center">السبب</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {sessions.map((session: RecentSession) => {
+            {!sessions.length ? <TableRow>
+              <TableCell colSpan={7} className={`p-6 text-muted-foreground`}>
+                لا يوجد مباريات مطابقة.
+              </TableCell>
+            </TableRow> : sessions.map((session: RecentSession) => {
               const status =
                 statusMap[session.endReason as keyof typeof statusMap];
+                const reason = session.endReason
+                                ? endReasonConfig[session.endReason]
+                                : null;
 
               return (
                 <TableRow
@@ -94,19 +103,16 @@ export default async function RecentSessions() {
                       >
                         {session.teamId?.teamName ?? "فريق محذوف"}
                       </span>
-
-                      {session.teamId?.teamCode && (
-                        <span className="text-xs text-muted-foreground">
-                          #{session.teamId.teamCode}
-                        </span>
-                      )}
                     </div>
                   </TableCell>
 
                   <TableCell>{session.eventId?.title ?? "-"}</TableCell>
 
                   <TableCell className="font-semibold">
-                    {session.finalScore}
+                    {session?.finalScore ?? "--"}
+                  </TableCell>
+                  <TableCell className="font-semibold">
+                    {session?.correctAnswers ?? "--"}
                   </TableCell>
 
                   <TableCell>
@@ -123,14 +129,19 @@ export default async function RecentSessions() {
                   </TableCell>
 
                   <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={`border border-accent`}
-                    >
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
+                    {reason ? (
+                      reason.label === "—" ? (
+                        <span className="text-muted-foreground/50">—</span>
+                      ) : (
+                        <span className="text-muted-foreground">
+                          {reason.label}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-muted-foreground/50">—</span>
+                    )}
                   </TableCell>
+
                 </TableRow>
               );
             })}

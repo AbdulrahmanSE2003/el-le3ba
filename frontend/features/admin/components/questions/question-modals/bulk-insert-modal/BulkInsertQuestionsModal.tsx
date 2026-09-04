@@ -111,7 +111,7 @@ export function BulkInsertQuestionsModal() {
           )}
 
           <p className="text-[11px] text-muted-foreground leading-relaxed">
-            كل سؤال يجب أن يحتوي على: question, type ("mcq" أو "numberExact"),
+            كل سؤال يجب أن يحتوي على: question, type (&quot;mcq&quot; أو &quot;numberExact&quot;),
             category, duration, correctAnswer، بالإضافة إلى options في حالة mcq.
           </p>
 

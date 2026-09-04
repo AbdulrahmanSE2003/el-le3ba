@@ -34,7 +34,7 @@ const statusConfig = {
   },
 };
 
-const endReasonConfig = {
+export const endReasonConfig = {
   completed: { label: "—" },
   expired: { label: "منتهية" },
   abandoned: { label: "مهجورة" },
@@ -78,9 +78,10 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
           <TableRow className="bg-muted/50 hover:bg-muted/50 [&_th]:text-center [&_th]:font-medium">
             <TableHead>الفريق</TableHead>
             <TableHead>الحدث</TableHead>
-            <TableHead>السكور</TableHead>
-            <TableHead>الإجابات الصح</TableHead>
+            <TableHead>النقاط</TableHead>
+            <TableHead>الإجابات الصحيحة</TableHead>
             <TableHead>الحالة</TableHead>
+            <TableHead>انتهت</TableHead>
             <TableHead>السبب</TableHead>
             <TableHead>التاريخ</TableHead>
           </TableRow>
@@ -88,7 +89,7 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
         <TableBody className={`text-center bg-card`}>
           {!sessions.length ? (
             <TableRow>
-              <TableCell colSpan={7} className={`p-6 text-muted-foreground`}>
+              <TableCell colSpan={8} className={`p-6 text-muted-foreground`}>
                 لا يوجد مباريات مطابقة.
               </TableCell>
             </TableRow>
@@ -107,10 +108,10 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
                     {session.eventId?.title ?? "—"}
                   </TableCell>
                   <TableCell className="font-semibold text-foreground">
-                    {session.finalScore}
+                    {session?.finalScore ?? "--"}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {session.correctAnswers}
+                    {session?.correctAnswers ?? "--"}
                   </TableCell>
                   <TableCell>
                     <Badge

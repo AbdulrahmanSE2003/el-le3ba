@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 import EventActions from "./EventActions";
 import { Event } from "@/shared/types/event";
+import { Season } from "../../api/events";
 
 type EventStatus = "scheduled" | "running" | "finished";
 
@@ -86,14 +87,9 @@ const DateCell = ({ date }: { date?: string }) => {
   );
 };
 
-interface SeasonOption {
-  _id: string;
-  title: string;
-}
-
 interface EventsTableProps {
   events: Event[];
-  seasons: SeasonOption[];
+  seasons: Season[];
   pagination: {
     currentPage: number;
     limit: number;

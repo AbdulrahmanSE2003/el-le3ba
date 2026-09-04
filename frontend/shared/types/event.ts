@@ -15,3 +15,5 @@ export interface Event {
   
 }
 
+export type EventWithSeason = Event;
+

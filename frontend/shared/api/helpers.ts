@@ -46,17 +46,19 @@ export interface RecentSession {
   teamId: {
     _id: string;
     teamName: string;
-    teamCode: string;
   };
   eventId: {
     _id: string;
     title: string;
   };
-  endReason: string;
   finalScore: number;
   correctAnswers: number;
   bestStreak: number;
   completedAt: string;
+  status: "running" | "completed" | "scored";
+  startedAt: Date;
+  expiresAt: Date;
+  endReason: "completed" | "expired" | "flagged" | "abandoned";
 }
 export interface MyTeamStats {
   teamStats: {

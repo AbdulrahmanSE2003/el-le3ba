@@ -40,14 +40,25 @@ export default function RegisterForm() {
       />
 
       <FormWrapper action={formAction}>
-        {registerBtns.map((btn) => (
-          <Input
-            key={btn.name}
-            {...btn}
-            defaultValue={state?.userData?.[btn.name] || ""}
-            disabled={isPending}
-          />
-        ))}
+        {registerBtns
+          .filter((btn) => btn.name !== "password" && btn.name !== "passwordConfirm")
+          .map((btn) => (
+            <Input
+              key={btn.name}
+              {...btn}
+              defaultValue={state?.userData?.[btn.name] || ""}
+              disabled={isPending}
+            />
+          ))}
+        {registerBtns
+          .filter((btn) => btn.name === "password" || btn.name === "passwordConfirm")
+          .map((btn) => (
+            <Input
+              key={btn.name}
+              {...btn}
+              disabled={isPending}
+            />
+          ))}
 
         {/* Submit button */}
         <FooterWrapper>

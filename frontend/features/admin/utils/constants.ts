@@ -24,6 +24,9 @@ import {
   KeyRound,
   CalendarClock,
   BellMinus,
+  CalendarX,
+  CalendarRangeIcon,
+  CalendarMinus,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -157,6 +160,11 @@ export const ACTIONS: Record<string, ActionConfig> = {
     title: "حذف إشعار",
     color: "text-rose-500 bg-rose-500/10",
   },
+  "question.created": {
+    icon: FileQuestion,
+    title: "إضافة سؤال",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
   "question.bulk_created": {
     icon: FileQuestion,
     title: "إضافة أسئلة",
@@ -165,6 +173,36 @@ export const ACTIONS: Record<string, ActionConfig> = {
   "question.deleted": {
     icon: FileQuestion,
     title: "حذف سؤال",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "season.created": {
+    icon: CalendarRangeIcon,
+    title: "إضافة موسم",
+    color: "text-mauve-500 bg-mauve-500/10",
+  },
+  "season.updated": {
+    icon: CalendarMinus,
+    title: "تعديل موسم",
+    color: "text-mist-500 bg-mist-500/10",
+  },
+  "season.deleted": {
+    icon: CalendarDaysIcon,
+    title: "حذف موسم",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "event.created": {
+    icon: CalendarDaysIcon,
+    title: "إضافة حدث",
+    color: "text-orange-500 bg-orange-500/10",
+  },
+  "event.updated": {
+    icon: CalendarCog,
+    title: "تعديل حدث",
+    color: "text-taupe-500 bg-taupe-500/10",
+  },
+  "event.deleted": {
+    icon: CalendarX,
+    title: "حذف حدث",
     color: "text-rose-500 bg-rose-500/10",
   },
   "user.created": {

@@ -9,6 +9,7 @@ import SortSelect from "@/components/shared/SortSelect";
 import AdminsTable from "@/features/super-admin/components/admins/AdminsTable";
 import { getAllAdmins } from "@/features/super-admin/api/shared";
 import Error from "@/app/error";
+import CreateReport from "@/components/shared/CreateReport";
 
 export type SearchParams = {
   search?: string;
@@ -44,7 +45,10 @@ export default async function AdminsManagementPage({
           title="إدارة المشرفين"
           description="إدارة المشرفين والصلاحيات"
         />
-        <AddAdmin />
+      <div className={`flex items-center gap-3`}>
+                <CreateReport/>
+                <AddAdmin />
+      </div>
       </div>
 
       <Suspense fallback={<StatsCardsSkeleton />}>

@@ -12,20 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import type { EventWithSeason } from "@/shared/types/event";
+import { Season } from "../../api/events";
 import { EditEventModal } from "./EditEventModal";
 import { DeleteEventModal } from "./DeleteEventModal";
-
-interface SeasonOption {
-  _id: string;
-  title: string;
-}
 
 export default function EventActions({
   event,
   seasons,
 }: {
   event: EventWithSeason;
-  seasons: SeasonOption[];
+  seasons: Season[];
 }) {
   return (
     <DropdownMenu dir="rtl">

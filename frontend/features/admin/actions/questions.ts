@@ -4,6 +4,7 @@ import { serverFetch } from "@/shared/api/server";
 import { revalidatePath } from "next/cache";
 import { CreateQuestionInput, UpdateQuestionInput } from "../types/question";
 import { ActionResponse } from "@/shared/types/response";
+import type { ActionState } from "@/hooks/useFormFeedback";
 
 // Strip options for non-mcq types so we never send a stale options array
 function normalizePayload(data: CreateQuestionInput) {
@@ -14,7 +15,7 @@ function normalizePayload(data: CreateQuestionInput) {
 
 // Create question action
 export async function createQuestionAction(
-  prevState: any,
+  prevState: ActionState | null,
   data: CreateQuestionInput,
 ): Promise<ActionResponse> {
   const res = await serverFetch("questions", "POST", normalizePayload(data));
@@ -31,7 +32,7 @@ export async function createQuestionAction(
 // Update question action
 export async function updateQuestionAction(
   questionId: string,
-  prevState: any,
+  prevState: ActionState | null,
   data: UpdateQuestionInput,
 ): Promise<ActionResponse> {
   const res = await serverFetch(
@@ -50,7 +51,7 @@ export async function updateQuestionAction(
 }
 
 // Delete question action
-export async function deleteQuestionAction(questionId: string, prevState: any) {
+export async function deleteQuestionAction(questionId: string, prevState: ActionState | null) {
   const response = await serverFetch(`questions/${questionId}`, "DELETE");
 
   if (!response.success) {

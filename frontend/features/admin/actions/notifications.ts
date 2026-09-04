@@ -3,6 +3,7 @@
 import { serverFetch } from "@/shared/api/server";
 import { revalidatePath } from "next/cache";
 import { NotificationsRes } from "../types/notification";
+import type { ActionState } from "@/hooks/useFormFeedback";
 
 // Fetch all notifications action
 export async function fetchNotifications(
@@ -30,7 +31,7 @@ export async function fetchNotifications(
 // Delete notification action
 export async function deleteNotificationAction(
   notificationId: string,
-  prevState: any,
+  prevState: ActionState | null,
 ) {
   const response = await serverFetch(
     `admin/notifications/${notificationId}`,
