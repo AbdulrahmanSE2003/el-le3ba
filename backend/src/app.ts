@@ -20,6 +20,7 @@ import adminRoutes from "./routes/adminRoutes";
 import superAdminRoutes from "./routes/superAdminRoutes";
 import { AppError } from "./utils/appError";
 import seasonRoutes from "./routes/seasonRoutes";
+import logsRoutes from "./routes/logsRoutes";
 
 const app = express();
 
@@ -78,6 +79,7 @@ app.use("/api/v1/questions", questionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/super-admin", superAdminRoutes);
+app.use("/api/v1/logs", logsRoutes);
 
 // ── Global error handler ───────────────────────────────────
 app.all("*path", (req, res, next) => {
