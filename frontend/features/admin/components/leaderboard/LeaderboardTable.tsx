@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { SeasonLeaderboardEntry } from "../../api/seasons";
+import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return "—";
@@ -45,14 +46,21 @@ const rankBadge = (rank: number) => {
   return <span className="text-muted-foreground font-mono">{rank}</span>;
 };
 
+interface LeaderboardTableProps {
+  leaderboard: SeasonLeaderboardEntry[];
+  totalResults: number;
+  totalPages: number;
+  currentPage: number;
+  limit: number;
+}
+
 const LeaderboardTable = ({
   leaderboard,
-}: {
-  leaderboard: SeasonLeaderboardEntry[];
-}) => {
-console.log(leaderboard);
-
-
+  totalResults,
+  totalPages,
+  currentPage,
+  limit,
+}: LeaderboardTableProps) => {
   return (
     <div className="flex flex-col justify-between gap-6">
       <Table>
@@ -75,7 +83,9 @@ console.log(leaderboard);
           ) : (
             leaderboard.map((entry, index) => (
               <TableRow key={entry.teamId}>
-                <TableCell>{rankBadge(index + 1)}</TableCell>
+                <TableCell>
+                  {rankBadge((currentPage - 1) * limit + index + 1)}
+                </TableCell>
                 <TableCell className="font-medium">{entry.teamName}</TableCell>
                 <TableCell>
                   <Badge variant="secondary">{entry.seasonPoints}</Badge>
@@ -94,6 +104,14 @@ console.log(leaderboard);
           )}
         </TableBody>
       </Table>
+
+      <CustomPagination
+        className="mt-auto"
+        totalItems={totalResults}
+        totalPages={totalPages}
+        limit={limit}
+        showLimitSelect
+      />
     </div>
   );
 };

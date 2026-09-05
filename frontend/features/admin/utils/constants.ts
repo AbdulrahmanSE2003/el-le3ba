@@ -27,6 +27,7 @@ import {
   CalendarX,
   CalendarRangeIcon,
   CalendarMinus,
+  LucideLineDotRightHorizontal,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -339,3 +340,70 @@ export const seasonSortOptions = [
     value: "-title",
   },
 ];
+import {
+  Code2,
+  Database,
+  Globe,
+  HelpCircle,
+  Cpu,
+  Hash,
+} from "lucide-react";
+
+export interface QuestionTypeStyle {
+  label: string;
+  icon: LucideIcon;
+  className: string;
+}
+
+export const QUESTION_TYPE_STYLES: Record<string, QuestionTypeStyle> = {
+  mcq: {
+    label: "MCQ",
+    icon: Globe,
+    className:
+      "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+  },
+
+  numberexact: {
+    label: "Number Exact",
+    icon: Hash,
+    className:
+      "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  },
+
+  // database: {
+  //   label: "Database",
+  //   icon: Database,
+  //   className:
+  //     "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  // },
+
+  // programming: {
+  //   label: "Programming",
+  //   icon: Code2,
+  //   className:
+  //     "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  // },
+
+  // devops: {
+  //   label: "DevOps",
+  //   icon: Cpu,
+  //   className:
+  //     "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+  // },
+
+  default: {
+    label: "General",
+    icon: HelpCircle,
+    className: "bg-muted text-muted-foreground border-border",
+  },
+};
+
+export function getQuestionTypeStyle(type: string): QuestionTypeStyle {
+  return (
+    QUESTION_TYPE_STYLES[type.toLowerCase().trim()] ??
+    {
+      ...QUESTION_TYPE_STYLES.default,
+      label: type,
+    }
+  );
+}

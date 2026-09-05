@@ -99,9 +99,6 @@ interface EventsTableProps {
 }
 
 const EventsTable = ({ events, seasons, pagination }: EventsTableProps) => {
-
-  console.log(events[0]);
-  
   return (
     <div className={`flex flex-col justify-between gap-6`}>
       <Table>
@@ -170,6 +167,7 @@ const EventsTable = ({ events, seasons, pagination }: EventsTableProps) => {
         totalItems={pagination.total}
         totalPages={pagination.totalPages}
         limit={pagination.limit}
+        showLimitSelect
       />
     </div>
   );

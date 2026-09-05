@@ -35,10 +35,10 @@ const statusConfig = {
 };
 
 export const endReasonConfig = {
-  completed: { label: "—" },
-  expired: { label: "منتهية" },
-  abandoned: { label: "مهجورة" },
-  flagged: { label: "مشبوهة" },
+  completed: { label: "مكتملة", className:"text-emerald-700/50" },
+  expired: { label: "منتهية", className:"text-amber-700/50" },
+  abandoned: { label: "انسحاب", className:"text-rose-700/50" },
+  flagged: { label: "مشبوهة", className:"text-rose-500/50" },
 };
 
 const formatDate = (dateString?: string) => {
@@ -50,6 +50,9 @@ const formatDate = (dateString?: string) => {
     day: "numeric",
     month: "short",
     year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
   }).format(date);
 };
 
@@ -81,9 +84,8 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
             <TableHead>النقاط</TableHead>
             <TableHead>الإجابات الصحيحة</TableHead>
             <TableHead>الحالة</TableHead>
-            <TableHead>انتهت</TableHead>
+            <TableHead>انتهت في</TableHead>
             <TableHead>السبب</TableHead>
-            <TableHead>التاريخ</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className={`text-center bg-card`}>
@@ -96,6 +98,7 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
           ) : (
             sessions.map((session) => {
               const status = statusConfig[session.status];
+              
               const reason = session.endReason
                 ? endReasonConfig[session.endReason]
                 : null;
@@ -125,20 +128,17 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
                     </Badge>
                   </TableCell>
                   <TableCell>
+                    <DateCell date={session.startedAt} />
+                  </TableCell>
+                  <TableCell>
                     {reason ? (
-                      reason.label === "—" ? (
-                        <span className="text-muted-foreground/50">—</span>
-                      ) : (
-                        <span className="text-muted-foreground">
+                        <span className={`${reason.className} ${reason.label === "مشبوهة" ? "animate-pulse" : ""}`}>
                           {reason.label}
                         </span>
                       )
-                    ) : (
+                     : (
                       <span className="text-muted-foreground/50">—</span>
                     )}
-                  </TableCell>
-                  <TableCell>
-                    <DateCell date={session.startedAt} />
                   </TableCell>
                 </TableRow>
               );
@@ -152,6 +152,7 @@ const SessionsTable = ({ res }: { res: SessionsRes }) => {
         totalItems={data.total}
         totalPages={data.totalPages}
         limit={data.limit}
+        showLimitSelect
       />
     </div>
   );

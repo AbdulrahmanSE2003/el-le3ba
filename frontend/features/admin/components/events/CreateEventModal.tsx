@@ -33,8 +33,8 @@ const CreateEventModal = ({
           { credentials: "include" }
         );
         const data = await res.json();
-        if (data.success) {
-          setSeasons(data.data.seasons.seasons);
+        if (data.status && Array.isArray(data.seasons?.seasons)) {
+          setSeasons(data.seasons.seasons);
         }
       } catch (error) {
         console.error("Failed to fetch seasons:", error);

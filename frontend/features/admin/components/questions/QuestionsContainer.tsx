@@ -31,6 +31,8 @@ export default async function QuestionsContainer({ searchParams }: Props) {
   const questions = res.data.questions.questions;
   const page = res.data.questions.pagination.page;
   const totalPages = res.data.questions.pagination.totalPages;
+  const totalResults = res.data.questions.pagination.totalResults;
+  const limit = res.data.questions.pagination.limit;
 
   if (!questions) {
     return <Error />;
@@ -71,6 +73,8 @@ export default async function QuestionsContainer({ searchParams }: Props) {
               questions={questions}
               page={page}
               totalPages={totalPages}
+              totalResults={totalResults}
+              limit={limit}
             />
           </div>
         </TableSelectionProvider>

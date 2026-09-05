@@ -150,6 +150,7 @@ const SeasonsTable = ({ res }: { res: SeasonsRes }) => {
         totalItems={data.total}
         totalPages={data.totalPages}
         limit={data.limit}
+        showLimitSelect
       />
     </div>
   );
