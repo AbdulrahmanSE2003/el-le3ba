@@ -1,6 +1,9 @@
 import { serverFetch } from "@/shared/api/server";
-import { GamesOverTimeRes } from "../types/analytics";
+import { GamesOverTimeRes, TeamsPerformanceRes } from "../types/analytics";
 
 
 export const getGamesOverTime = async()=>
     serverFetch<GamesOverTimeRes>({url:"admin/analytics/games-over-time"})
+
+export const getTeamsPerformance = async()=>
+    serverFetch<TeamsPerformanceRes>({url:"admin/analytics/teams-performance"})

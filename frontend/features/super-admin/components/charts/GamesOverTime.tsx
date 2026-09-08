@@ -8,7 +8,7 @@ const GamesOverTime = async() => {
     const analytics = gamesRes.data.analytics;
 
     return (
-        <div className={`col-span-4 rounded-2xl`}>
+        <div className={`col-span-4 rounded-2xl max-h-104`}>
             <GamesOverTimeChart points={analytics?.points ?? []} title="إحصائيات المباريات" description="عرض تحليلي لعدد الجلسات والتفاعلات في اللعبة خلال الفترة الأخيرة."/>
         </div>
 

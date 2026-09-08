@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import StatsCardsSkeleton from "@/features/admin/components/StatsCardsSkeleton";
 import GamesOverTime from "@/features/super-admin/components/charts/GamesOverTime";
 import { Skeleton } from "@/components/ui/skeleton";
+import TeamsPerformance from "@/features/super-admin/components/charts/TeamsPerformance";
 
 export default function SuperAdminDashboard() {
   return (
@@ -27,10 +28,12 @@ export default function SuperAdminDashboard() {
       </Suspense>
 
       <div className={`grid grid-cols-6 gap-4`}>
-<Suspense fallback={<Skeleton className={`h-96 col-span-4 rounded-2xl`}/>}>
-  <GamesOverTime/> 
-</Suspense >               
-<div className={`bg-rose-500 col-span-2 rounded-2xl h-96`}>ss</div>
+          <Suspense fallback={<Skeleton className={`h-96 col-span-4 rounded-2xl`}/>}>
+            <GamesOverTime/> 
+          </Suspense> 
+          <Suspense fallback={<Skeleton className={`h-96 col-span-4 rounded-2xl`}/>} >
+            <TeamsPerformance/>
+          </Suspense>
           <div className={`bg-emerald-500 col-span-2 rounded-2xl h-96`}>ss</div>
           <div className={`bg-fuchsia-500 col-span-4 rounded-2xl h-96`}>ss</div>
       </div>

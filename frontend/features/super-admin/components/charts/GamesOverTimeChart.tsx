@@ -59,7 +59,7 @@ export function GamesOverTimeChart({
 
       <CardContent className="px-2 pb-0">
         {/* Controlled compact height */}
-        <ChartContainer config={chartConfig} className="max-h-50 w-full">
+        <ChartContainer config={chartConfig} className="max-h-56 w-full">
           <AreaChart
             accessibilityLayer
             data={chartData}
@@ -136,20 +136,6 @@ export function GamesOverTimeChart({
             </span>
           </div>
 
-          <div className="text-xs text-muted-foreground">
-            {points.length > 0
-              ? `${new Date(points[0].date).toLocaleDateString("ar-EG", {
-                  month: "short",
-                  year: "numeric",
-                })} - ${new Date(points.at(-1)!.date).toLocaleDateString(
-                  "ar-EG",
-                  {
-                    month: "short",
-                    year: "numeric",
-                  }
-                )}`
-              : "لا توجد بيانات"}
-          </div>
         </div>
       </CardFooter>
     </Card>
