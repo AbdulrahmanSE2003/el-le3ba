@@ -165,6 +165,19 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
     return next(new AppError("You are not a captain of any team.", 404));
 
   const teamId = userTeam._id;
+
+  const runningSessions = await Session.countDocuments({
+    teamId,
+    status: "running",
+  });
+  if (runningSessions > 0)
+    return next(
+      new AppError(
+        "Invalid operation, can't delete a team while there is a running session.",
+        400,
+      ),
+    );
+
   const session = await mongoose.startSession();
   session.startTransaction();
 
@@ -172,6 +185,7 @@ export const deleteMyTeam = catchAsync(async (req, res, next) => {
     await Team.deleteOne({ _id: teamId }, { session });
     await TeamMembership.deleteMany({ teamId }, { session });
     await Leaderboard.deleteMany({ teamId }, { session });
+    await Session.deleteMany({ teamId }, { session });
     await session.commitTransaction();
 
     await logAudit({
@@ -215,6 +229,18 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
 
   // If no members left, delete the team entirely
   if (!nextCaptain) {
+    const runningSessions = await Session.countDocuments({
+      teamId: userMembership.teamId,
+      status: "running",
+    });
+    if (runningSessions > 0)
+      return next(
+        new AppError(
+          "Invalid operation, can't delete a team while there is a running session.",
+          400,
+        ),
+      );
+
     const session = await mongoose.startSession();
     session.startTransaction();
     try {
@@ -224,6 +250,7 @@ export const leaveTeam = catchAsync(async (req, res, next) => {
         { teamId: userMembership.teamId },
         { session },
       );
+      await Session.deleteMany({ teamId: userMembership.teamId }, { session });
       await session.commitTransaction();
       await logAudit({
         actor: req.user._id,

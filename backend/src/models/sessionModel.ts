@@ -88,6 +88,8 @@ sessionSchema.index({ teamId: 1, eventId: 1 });
 sessionSchema.index({ eventId: 1, finalScore: -1 });
 
 sessionSchema.index({ status: 1 });
+
+sessionSchema.index({ startedAt: 1 });
 // find all inProgress sessions (timeout cleanup later)
 
 const Session = mongoose.model<ISession>("Session", sessionSchema);

@@ -36,6 +36,14 @@ const eventSchema = new mongoose.Schema(
 );
 
 eventSchema.index({ status: 1 });
+eventSchema.index(
+  { status: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: "running" },
+    name: "status_1_running_unique",
+  },
+);
 eventSchema.index({ startTime: 1, endTime: 1 });
 
 const Event = mongoose.model<IEvent>("Event", eventSchema);

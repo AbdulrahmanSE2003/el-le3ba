@@ -1,0 +1,64 @@
+{
+  "phases": [
+    {
+      "name": "11",
+      "tests": [
+        {
+          "name": "admin sends selected notification (201)",
+          "pass": true,
+          "detail": "{\"title\":\"IT Notification (p11)\",\"message\":\"Please review.\",\"type\":\"selected\",\"recipientsCount\":2,\"createdBy\":\"6a9f0ce7b08899b8a3e0efb9\",\"_id\":\"6a9f6e764c403f911d76b1e1\",\"createdAt\":\"2026-09-08T02:09:58.710Z\",\"updatedAt\":\"2026-09-08T02:09:58.710Z\",\"__v\":0}"
+        },
+        {
+          "name": "member16 received exactly 1 notification",
+          "pass": true,
+          "detail": "n=1"
+        },
+        {
+          "name": "member17 received exactly 1 notification",
+          "pass": true,
+          "detail": "n=1"
+        },
+        {
+          "name": "notifications arrive unread",
+          "pass": true,
+          "detail": "{\"m16\":1,\"m17\":1}"
+        },
+        {
+          "name": "markAllAsRead marks member16 notifications read",
+          "pass": true,
+          "detail": "[true,true]"
+        },
+        {
+          "name": "IDOR: member16 CANNOT mark member17's notification (blocked)",
+          "pass": true,
+          "detail": "http=404 {\"status\":\"fail\",\"message\":\"Notification not found.\",\"stack\":\"Error: Notification not found.\\n    at D:\\\\Abdulrahman\\\\el-le3ba\\\\el-le3ba\\\\backend\\\\dist\\\\controllers\\\\notificationController.js:73:21\\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)\",\"error\":{\"statusCode\":404,\"status\":\"fail\",\"isOperational\":true}}"
+        },
+        {
+          "name": "IDOR: member17's notification still unread after intruder mark",
+          "pass": true,
+          "detail": "isRead=false"
+        },
+        {
+          "name": "member17 can mark own notification read (200)",
+          "pass": true,
+          "detail": "http=200 {\"status\":true,\"message\":\"Notification marked as read successfully.\"}"
+        },
+        {
+          "name": "member17's own notification is now read",
+          "pass": true,
+          "detail": "isRead=true"
+        },
+        {
+          "name": "admin broadcast notification (201) with recipients",
+          "pass": true,
+          "detail": "recipients=82"
+        }
+      ]
+    }
+  ],
+  "bugs": [],
+  "notes": [
+    "markAsRead IDOR repro: http=404. blocked as expected.",
+    "Campaigns cleaned: 6a9f6e764c403f911d76b1e1, 6a9f6e7e4c403f911d76b1e5"
+  ]
+}

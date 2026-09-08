@@ -84,10 +84,13 @@ export const markAsRead = catchAsync(async (req, res, next) => {
         400,
       ),
     );
-  await Notification.findByIdAndUpdate(
-    { _id: req.params.id },
+  const notification = await Notification.findOneAndUpdate(
+    { _id: req.params.id, userId: req.user._id },
     { isRead: true },
+    { new: true },
   );
+  if (!notification)
+    return next(new AppError("Notification not found.", 404));
 
   res.status(200).json({
     status: true,

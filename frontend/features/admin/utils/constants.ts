@@ -355,11 +355,6 @@ export const superAdminNav = [
     icon: LayoutDashboard,
   },
   {
-    title: "إحصائيات اللعبة",
-    href: "/super-admin/insights",
-    icon: ChartBarIncreasing,
-  },
-  {
     title: "المشرفون",
     href: "/super-admin/admins",
     icon: UserRoundCog,

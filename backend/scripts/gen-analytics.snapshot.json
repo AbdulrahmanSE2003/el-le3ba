@@ -1,0 +1,534 @@
+{
+  "createdAt": "2026-09-08T15:00:13.713Z",
+  "generated": true,
+  "eventIdFinished": "6a9f0d18b08899b8a3e0f068",
+  "eventIdRunning": "6a9f0d18b08899b8a3e0f069",
+  "seasonId": "6a9f0d18b08899b8a3e0f066",
+  "sessionIds": [
+    "6aa022fd5bc6dea73708ce0e",
+    "6aa022fd5bc6dea73708ce14",
+    "6aa022fd5bc6dea73708ce1a",
+    "6aa022fd5bc6dea73708ce20",
+    "6aa022fd5bc6dea73708ce26",
+    "6aa022fd5bc6dea73708ce2c",
+    "6aa022fd5bc6dea73708ce32",
+    "6aa022fd5bc6dea73708ce38",
+    "6aa022fd5bc6dea73708ce3e",
+    "6aa022fd5bc6dea73708ce44",
+    "6aa022fd5bc6dea73708ce4a",
+    "6aa022fd5bc6dea73708ce50",
+    "6aa022fd5bc6dea73708ce56",
+    "6aa022fd5bc6dea73708ce59",
+    "6aa022fd5bc6dea73708ce5b",
+    "6aa022fd5bc6dea73708ce61",
+    "6aa022fd5bc6dea73708ce67",
+    "6aa022fd5bc6dea73708ce6d",
+    "6aa022fd5bc6dea73708ce73",
+    "6aa022fd5bc6dea73708ce79",
+    "6aa022fd5bc6dea73708ce7f",
+    "6aa022fd5bc6dea73708ce85",
+    "6aa022fd5bc6dea73708ce8b",
+    "6aa022fd5bc6dea73708ce91",
+    "6aa022fd5bc6dea73708ce96",
+    "6aa022fd5bc6dea73708ce9c",
+    "6aa022fd5bc6dea73708cea2",
+    "6aa022fd5bc6dea73708cea8",
+    "6aa022fd5bc6dea73708ceae",
+    "6aa022fd5bc6dea73708ceb1",
+    "6aa022fd5bc6dea73708ceb7",
+    "6aa022fd5bc6dea73708cebd",
+    "6aa022fd5bc6dea73708cec3",
+    "6aa022fd5bc6dea73708cec9",
+    "6aa022fd5bc6dea73708cecf",
+    "6aa022fd5bc6dea73708ced5",
+    "6aa022fd5bc6dea73708cedb",
+    "6aa022fd5bc6dea73708cee1",
+    "6aa022fd5bc6dea73708cee7",
+    "6aa022fd5bc6dea73708ceeb",
+    "6aa022fd5bc6dea73708cef1",
+    "6aa022fd5bc6dea73708cef7",
+    "6aa022fd5bc6dea73708cefd",
+    "6aa022fd5bc6dea73708cf03",
+    "6aa022fd5bc6dea73708cf09",
+    "6aa022fd5bc6dea73708cf0f",
+    "6aa022fd5bc6dea73708cf15",
+    "6aa022fd5bc6dea73708cf1b",
+    "6aa022fd5bc6dea73708cf21",
+    "6aa022fd5bc6dea73708cf27",
+    "6aa022fd5bc6dea73708cf2d",
+    "6aa022fd5bc6dea73708cf33",
+    "6aa022fd5bc6dea73708cf39",
+    "6aa022fd5bc6dea73708cf3f",
+    "6aa022fd5bc6dea73708cf45",
+    "6aa022fd5bc6dea73708cf4b",
+    "6aa022fd5bc6dea73708cf51",
+    "6aa022fd5bc6dea73708cf57",
+    "6aa022fd5bc6dea73708cf58",
+    "6aa022fd5bc6dea73708cf5e",
+    "6aa022fd5bc6dea73708cf64",
+    "6aa022fd5bc6dea73708cf6a",
+    "6aa022fd5bc6dea73708cf70",
+    "6aa022fd5bc6dea73708cf76",
+    "6aa022fd5bc6dea73708cf7c",
+    "6aa022fd5bc6dea73708cf82",
+    "6aa022fd5bc6dea73708cf88",
+    "6aa022fd5bc6dea73708cf8e",
+    "6aa022fd5bc6dea73708cf94",
+    "6aa022fd5bc6dea73708cf9a",
+    "6aa022fd5bc6dea73708cfa0",
+    "6aa022fd5bc6dea73708cfa6",
+    "6aa022fd5bc6dea73708cfac",
+    "6aa022fd5bc6dea73708cfb2"
+  ],
+  "leaderboardKeys": [
+    "6a9f0d17b08899b8a3e0f00b:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00b:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00c:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00c:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00d:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00d:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00e:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00e:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00f:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f00f:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f010:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f010:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f011:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f011:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f012:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f012:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f013:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f013:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f014:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f014:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f015:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f015:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f016:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f016:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f017:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f017:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f018:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f018:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f019:6a9f0d18b08899b8a3e0f068:6a9f0d18b08899b8a3e0f066",
+    "6a9f0d17b08899b8a3e0f019:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066"
+  ],
+  "teams": {
+    "6a9f0d17b08899b8a3e0f00b": {
+      "points": 103,
+      "totalGames": 2,
+      "bestStreak": 2
+    },
+    "6a9f0d17b08899b8a3e0f00c": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f00d": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f00e": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f00f": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f010": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f011": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f012": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f013": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f014": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f015": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f016": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f017": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f018": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    },
+    "6a9f0d17b08899b8a3e0f019": {
+      "points": 0,
+      "totalGames": 0,
+      "bestStreak": 0
+    }
+  },
+  "users": {
+    "6a9f0ce6b08899b8a3e0efb8": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ce7b08899b8a3e0efb9": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ce7b08899b8a3e0efba": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ce8b08899b8a3e0efbb": {
+      "totalScore": 103,
+      "gamesPlayed": 2
+    },
+    "6a9f0ce9b08899b8a3e0efbc": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ce9b08899b8a3e0efbd": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ceab08899b8a3e0efbe": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ceab08899b8a3e0efbf": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cebb08899b8a3e0efc0": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cebb08899b8a3e0efc1": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cecb08899b8a3e0efc2": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cedb08899b8a3e0efc3": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cedb08899b8a3e0efc4": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ceeb08899b8a3e0efc5": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0ceeb08899b8a3e0efc6": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cefb08899b8a3e0efc7": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf0b08899b8a3e0efc8": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf0b08899b8a3e0efc9": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf1b08899b8a3e0efca": {
+      "totalScore": 103,
+      "gamesPlayed": 2
+    },
+    "6a9f0cf1b08899b8a3e0efcb": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf2b08899b8a3e0efcc": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf3b08899b8a3e0efcd": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf3b08899b8a3e0efce": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf4b08899b8a3e0efcf": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf4b08899b8a3e0efd0": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf5b08899b8a3e0efd1": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf6b08899b8a3e0efd2": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf6b08899b8a3e0efd3": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf7b08899b8a3e0efd4": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf8b08899b8a3e0efd5": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf8b08899b8a3e0efd6": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf9b08899b8a3e0efd7": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cf9b08899b8a3e0efd8": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfab08899b8a3e0efd9": {
+      "totalScore": 103,
+      "gamesPlayed": 2
+    },
+    "6a9f0cfbb08899b8a3e0efda": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfbb08899b8a3e0efdb": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfcb08899b8a3e0efdc": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfcb08899b8a3e0efdd": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfdb08899b8a3e0efde": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfdb08899b8a3e0efdf": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cfeb08899b8a3e0efe0": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cffb08899b8a3e0efe1": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0cffb08899b8a3e0efe2": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d00b08899b8a3e0efe3": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d00b08899b8a3e0efe4": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d01b08899b8a3e0efe5": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d02b08899b8a3e0efe6": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d02b08899b8a3e0efe7": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d03b08899b8a3e0efe8": {
+      "totalScore": 103,
+      "gamesPlayed": 2
+    },
+    "6a9f0d03b08899b8a3e0efe9": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d04b08899b8a3e0efea": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d04b08899b8a3e0efeb": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d05b08899b8a3e0efec": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d06b08899b8a3e0efed": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d06b08899b8a3e0efee": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d07b08899b8a3e0efef": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d07b08899b8a3e0eff0": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d08b08899b8a3e0eff1": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d09b08899b8a3e0eff2": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d09b08899b8a3e0eff3": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0ab08899b8a3e0eff4": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0ab08899b8a3e0eff5": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0bb08899b8a3e0eff6": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0bb08899b8a3e0eff7": {
+      "totalScore": 103,
+      "gamesPlayed": 2
+    },
+    "6a9f0d0cb08899b8a3e0eff8": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0db08899b8a3e0eff9": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0db08899b8a3e0effa": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0eb08899b8a3e0effb": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0eb08899b8a3e0effc": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d0fb08899b8a3e0effd": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d10b08899b8a3e0effe": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d10b08899b8a3e0efff": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d11b08899b8a3e0f000": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d11b08899b8a3e0f001": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d12b08899b8a3e0f002": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d12b08899b8a3e0f003": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d13b08899b8a3e0f004": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d14b08899b8a3e0f005": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d14b08899b8a3e0f006": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d15b08899b8a3e0f007": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d15b08899b8a3e0f008": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d16b08899b8a3e0f009": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    },
+    "6a9f0d17b08899b8a3e0f00a": {
+      "totalScore": 0,
+      "gamesPlayed": 0
+    }
+  },
+  "leaderboards": {
+    "6a9f0d17b08899b8a3e0f00b:6a9f0d18b08899b8a3e0f069:6a9f0d18b08899b8a3e0f066": {
+      "totalPoints": 103,
+      "seasonPoints": 103,
+      "sessionsPlayed": 2,
+      "lastPlayedSession": "2026-09-08T13:44:50.071Z"
+    }
+  }
+}

@@ -9,8 +9,11 @@ export const startEventExpirationJob = () => {
           startTime: { $lte: new Date() },
         });
         if (scheduledEvent) {
-          scheduledEvent.status = "running";
-          await scheduledEvent.save();
+          const alreadyRunning = await Event.exists({ status: "running" });
+          if (!alreadyRunning) {
+            scheduledEvent.status = "running";
+            await scheduledEvent.save();
+          }
         }
 
         const expiredEvent = await Event.findOne({

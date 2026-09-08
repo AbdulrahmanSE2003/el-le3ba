@@ -323,8 +323,22 @@ export const adminResetPassword = catchAsync(async (req, res, next) => {
       new AppError("Invalid operation, there is no such a user.", 404),
     );
 
-  user.password = "newPass1234";
-  user.passwordConfirm = "newPass1234";
+  const tempPassword =
+    process.env.ADMIN_TEMP_PASSWORD ??
+    (process.env.NODE_ENV === "production" ? undefined : "newPass1234");
+
+  if (!tempPassword)
+    return next(
+      new AppError("ADMIN_TEMP_PASSWORD is missing from the environment.", 500),
+    );
+
+  if (tempPassword.length < 8)
+    return next(
+      new AppError("ADMIN_TEMP_PASSWORD must be at least 8 characters.", 500),
+    );
+
+  user.password = tempPassword;
+  user.passwordConfirm = tempPassword;
   await user.save();
 
   await logAudit({
@@ -811,6 +825,8 @@ export const deleteTeam = catchAsync(async (req, res, next) => {
     }
 
     await TeamMembership.deleteMany({ teamId: id }).session(session);
+    await Leaderboard.deleteMany({ teamId: id }).session(session);
+    await Session.deleteMany({ teamId: id }).session(session);
 
     const [campaign] = await NotificationCampaign.create(
       [
@@ -892,6 +908,7 @@ export const bulkDeleteTeams = catchAsync(async (req, res, next) => {
       session,
     );
     await Leaderboard.deleteMany({ teamId: { $in: teamIds } }).session(session);
+    await Session.deleteMany({ teamId: { $in: teamIds } }).session(session);
 
     // ── 4. Create notification campaign ──
     if (memberships.length > 0) {

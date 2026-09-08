@@ -1,10 +1,12 @@
 import mongoose from "mongoose";
 import Season from "../models/seasonModel";
+import Event from "../models/eventModel";
 import Leaderboard from "../models/leaderboardModel";
+import Session from "../models/sessionModel";
 import { AppError } from "../utils/appError";
 import { logAudit } from "../utils/AuditLog";
 import { catchAsync } from "../utils/catchAsync";
-import { getAll, getOne, updateOne, deleteOne } from "../utils/factory";
+import { getOne, updateOne } from "../utils/factory";
 import resHandler from "../utils/resHandler";
 
 export const getActiveSeason = catchAsync(async (req, res, next) => {
@@ -193,4 +195,55 @@ Leaderboard.aggregate([
 
 export const getSeason = getOne(Season);
 export const updateSeason = updateOne(Season);
-export const deleteSeason = deleteOne(Season);
+
+export const deleteSeason = catchAsync(async (req, res, next) => {
+  const { id } = req.params;
+
+  const season = await Season.findById(id);
+  if (!season) return next(new AppError("There is no such a season.", 404));
+
+  const [runningSessions, runningEvents] = await Promise.all([
+    Session.countDocuments({ seasonId: id, status: "running" }),
+    Event.countDocuments({ seasonId: id, status: "running" }),
+  ]);
+  if (runningSessions > 0)
+    return next(
+      new AppError(
+        "Invalid operation, can't delete a season while it has running sessions.",
+        400,
+      ),
+    );
+  if (runningEvents > 0)
+    return next(
+      new AppError(
+        "Invalid operation, can't delete a season while it has a running event.",
+        400,
+      ),
+    );
+
+  const session = await mongoose.startSession();
+  try {
+    await session.startTransaction();
+
+    await Session.deleteMany({ seasonId: id }).session(session);
+    await Leaderboard.deleteMany({ seasonId: id }).session(session);
+    await Event.deleteMany({ seasonId: id }).session(session);
+    await Season.deleteOne({ _id: id }).session(session);
+
+    await logAudit({
+      actor: req.user._id,
+      action: "season.deleted",
+      target: season._id,
+      targetModel: "Season",
+    });
+
+    await session.commitTransaction();
+  } catch (error) {
+    await session.abortTransaction();
+    return next(error);
+  } finally {
+    session.endSession();
+  }
+
+  res.status(204).send();
+});
