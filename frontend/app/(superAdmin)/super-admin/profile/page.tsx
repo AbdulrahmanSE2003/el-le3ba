@@ -1,5 +1,7 @@
-const page = () => {
-  return <div>page</div>;
+import ConstructionPage from "@/components/shared/ConstructionPage";
+
+const ProfilePage = () => {
+  return <ConstructionPage/>;
 };
 
-export default page;
+export default ProfilePage;

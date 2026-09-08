@@ -2,12 +2,16 @@ import { getRecentAdminsLogs } from "../api/shared";
 import Error from "@/app/error";
 import { formatCreatedAt, getLogActionDetails } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import GenericEmptyState from "@/components/shared/GenericEmptyState";
+import { Logs } from "lucide-react";
 
 const RecentAdminLogs = async () => {
   const recentLogsRes = await getRecentAdminsLogs();
   if (!recentLogsRes.success) return <Error />;
 
+
   const recentLogs = recentLogsRes.data.recentLogs;
+  if(!recentLogs.length) return <GenericEmptyState Icon={Logs} item="إجراءات"/>
   return (
     <ScrollArea dir="rtl" className="h-72 px-2 border-0 rounded-md ">
       <div className="divide-y divide-border">

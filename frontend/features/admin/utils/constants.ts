@@ -40,6 +40,7 @@ import {
   Trash,
   Trash2,
   XCircle,
+  ChartBarIncreasing,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -354,6 +355,11 @@ export const superAdminNav = [
     icon: LayoutDashboard,
   },
   {
+    title: "إحصائيات اللعبة",
+    href: "/super-admin/insights",
+    icon: ChartBarIncreasing,
+  },
+  {
     title: "المشرفون",
     href: "/super-admin/admins",
     icon: UserRoundCog,
@@ -362,11 +368,6 @@ export const superAdminNav = [
     title: "سجل الإجراءات",
     href: "/super-admin/logs",
     icon: ClipboardList,
-  },
-  {
-    title: "الإعدادات",
-    href: "/super-admin/settings",
-    icon: Settings2Icon,
   },
   {
     title: "الملف الشخصي",
