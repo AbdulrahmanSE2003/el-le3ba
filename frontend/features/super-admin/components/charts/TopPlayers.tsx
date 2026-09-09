@@ -7,7 +7,7 @@ const TopPlayers = async() => {
     if(!topPlayersRes.success) return <Error/>
     const players = topPlayersRes.data.analytics.players
     return (
-        <div className={`col-span-2 rounded-2xl h-104 border border-border`}> 
+        <div className={`col-span-2 rounded-2xl h-104`}> 
             <TopPlayersChart players={players}/>
         </div>
     )

@@ -5,6 +5,7 @@ import TeamsPerformance from "@/features/super-admin/components/charts/TeamsPerf
 import { LiveSessionsWidget } from "@/features/super-admin/components/charts/LiveSessionsWidget";
 import GameOutcomes from "@/features/super-admin/components/charts/GameOutcomes";
 import TopPlayers from "@/features/super-admin/components/charts/TopPlayers";
+import LiveSessions from "./charts/LiveSessions";
 
 
 const AnalyticsSections = () => {
@@ -31,7 +32,7 @@ const AnalyticsSections = () => {
           <GameOutcomes/>
         </Suspense>
         <Suspense>
-          <LiveSessionsWidget count={0} />
+<LiveSessions/>
         </Suspense>
       </div>
     )

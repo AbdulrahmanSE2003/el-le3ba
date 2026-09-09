@@ -1,5 +1,5 @@
 import { serverFetch } from "@/shared/api/server";
-import { GameOutcomesResponse, GamesOverTimeRes, TeamsPerformanceRes, TopPlayersLeaderboardResponse } from "../types/analytics";
+import { GameOutcomesResponse, GamesAnalyticsResponse, GamesOverTimeRes, TeamsPerformanceRes, TopPlayersLeaderboardResponse } from "../types/analytics";
 
 
 export const getGamesOverTime = async()=>
@@ -13,3 +13,6 @@ export const getTopPlayers= async()=>
 
 export const getGamesOutcome = async()=>
     serverFetch<GameOutcomesResponse>({url:"admin/analytics/session-outcomes"})
+
+export const getLiveSessionsCount = async()=>
+    serverFetch<GamesAnalyticsResponse>({url:"admin/analytics/live-games"})

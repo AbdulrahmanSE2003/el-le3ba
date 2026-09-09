@@ -22,53 +22,21 @@ export interface LeaderboardPlayer {
 }
 
 export function TopPlayersChart({ players = [] }: { players: LeaderboardPlayer[] }) {
-  const getRankBadge = (index: number) => {
-    switch (index) {
-      case 0:
-        return (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-500/15 text-amber-500 border border-amber-500/30 shadow-sm">
-            <Trophy className="size-4" />
-          </div>
-        )
-      case 1:
-        return (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-300/20 text-slate-400 border border-slate-400/30">
-            <Medal className="size-4" />
-          </div>
-        )
-      case 2:
-        return (
-          <div className="flex h-7 w-7 items-center justify-center rounded-full bg-amber-700/15 text-amber-600 border border-amber-700/30">
-            <Medal className="size-4" />
-          </div>
-        )
-      default:
-        return (
-          <span className="font-bold text-xs text-muted-foreground w-7 text-center">
-            #{index + 1}
-          </span>
-        )
-    }
-  }
 
   return (
-    <Card className="h-full flex flex-col min-h-0 overflow-hidden" dir="rtl">
+    <Card className="h-full flex flex-col min-h-0 overflow-hidden">
       <CardHeader className="pb-3 shrink-0">
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg text-primary font-semibold flex items-center gap-2">
             <Crown className="size-5 text-amber-500" />
             قائمة أفضل اللاعبين
           </CardTitle>
-          <span className="text-xs font-medium text-muted-foreground flex items-center gap-1 bg-muted px-2.5 py-1 rounded-md border border-border/50">
-            <Flame className="size-3.5 text-orange-500" />
-            Top {players.length}
-          </span>
         </div>
         <CardDescription>اللاعبون الأعلى تسجيلاً للنقاط والأداء</CardDescription>
       </CardHeader>
 
       <ScrollArea className="flex-1 min-h-0 px-1">
-        <CardContent className="space-y-2.5 px-3 pb-4">
+        <CardContent className="space-y-1 px-3 pb-4">
           {players.map((player, index) => (
             <div
               key={`${player.userId}-${index}`}
@@ -79,7 +47,9 @@ export function TopPlayersChart({ players = [] }: { players: LeaderboardPlayer[]
               }`}
             >
               <div className="flex flex-row-reverse items-center gap-3">
-                {getRankBadge(index)}
+                <span className="font-bold text-xs text-muted-foreground w-7 text-center">
+                #{index + 1}
+              </span>
 
                 <Avatar className="h-9 w-9 border border-border/60">
                   <AvatarImage src={`/avatars/${player.avatar}`} alt={player.name} />
@@ -92,11 +62,11 @@ export function TopPlayersChart({ players = [] }: { players: LeaderboardPlayer[]
                   <p className="text-sm font-semibold leading-tight text-right">{player.name}</p>
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-xs text-muted-foreground">
-                      فريق {player.team?.teamName}
+                       {player.team?.teamName} فريق
                     </span>
                     <span className="text-[10px] text-muted-foreground/60">•</span>
                     <span className="text-xs text-muted-foreground">
-                      {player.gamesPlayed} مباراة
+                      مباراة {player.gamesPlayed} 
                     </span>
                   </div>
                 </div>

@@ -51,3 +51,48 @@ export interface GameOutcomesResponse {
   status: boolean;
   analytics: GameOutcomesAnalytics;
 }
+
+export interface PlayerTeam {
+  teamId: string;
+  teamName: string;
+  teamCode: string;
+}
+
+export interface LeaderboardPlayer {
+  userId: string;
+  name: string;
+  avatar: string;
+  totalScore: number;
+  gamesPlayed: number;
+  averageScore: number;
+  team: PlayerTeam;
+}
+
+export interface LeaderboardAnalytics {
+  limit: number;
+  sortBy: string;
+  players: LeaderboardPlayer[];
+}
+
+export interface TopPlayersLeaderboardResponse {
+  status: boolean;
+  analytics: LeaderboardAnalytics;
+}
+
+
+export interface GameAnalyticsItem {
+  // أضف الخصائص الخاصة بكل لعبة هنا حسب بيانات الـ Backend عندك
+  id?: string;
+  title?: string;
+  createdAt?: string;
+}
+
+export interface GamesAnalytics {
+  count: number;
+  games: GameAnalyticsItem[];
+}
+
+export interface GamesAnalyticsResponse {
+  status: boolean;
+  analytics: GamesAnalytics;
+}

@@ -18,7 +18,6 @@ export function LiveSessionsWidget({
   games?: GameSession[]
 }) {
   return (
-    <div className="col-span-2 rounded-2xl h-104" dir="rtl">
       <Card className="flex flex-col h-full justify-between">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <div className="space-y-1">
@@ -79,6 +78,5 @@ export function LiveSessionsWidget({
           يتم تحديث الجلسات المباشرة تلقائياً
         </div>
       </Card>
-    </div>
   )
 }

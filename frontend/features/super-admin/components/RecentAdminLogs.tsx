@@ -13,7 +13,7 @@ const RecentAdminLogs = async () => {
   const recentLogs = recentLogsRes.data.recentLogs;
   if(!recentLogs.length) return <GenericEmptyState Icon={Logs} item="إجراءات"/>
   return (
-    <ScrollArea dir="rtl" className="h-72 px-2 border-0 rounded-md ">
+    <ScrollArea dir="rtl" className="h-80 px-2 border-0 rounded-md ">
       <div className="divide-y divide-border">
         {recentLogs.map((log) => {
           const { icon: Icon, title, color } = getLogActionDetails(log.action);
