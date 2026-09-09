@@ -47,7 +47,8 @@ export function PodiumSection({ topThree }: PodiumSectionProps) {
               {second.totalPoints.toLocaleString()}
             </span>
             {/* Podium Base */}
-            <div className="w-full h-28 bg-linear-to-t from-slate-500/10 to-card border-t-3 border-x-3 border-slate-400/30 rounded-t-2xl flex items-center justify-center shadow-inner">
+            <div className="w-full h-28 bg-linear-to-t from-slate-500/10 to-card border-t-3 border-x-3 border-slate-400/30 max-sm:border-b-3 rounded-t-2xl flex items-center justify-center shadow-inner">
+
               <Shield className="h-7 w-7 text-slate-400" />
             </div>
           </Motion>
@@ -79,7 +80,8 @@ export function PodiumSection({ topThree }: PodiumSectionProps) {
               {first.totalPoints.toLocaleString()}
             </span>
             {/* Podium Base with Premium Yellow Glow */}
-            <div className="w-full h-36 bg-linear-to-t from-brand-yellow/10 to-brand-yellow/5 border-t-4 border-x-4 border-brand-yellow/30 rounded-t-2xl flex items-center justify-center shadow-lg shadow-brand-yellow/5 relative overflow-hidden">
+            <div className="w-full h-36 bg-linear-to-t from-brand-yellow/10 to-brand-yellow/5 border-t-4 border-x-4 border-brand-yellow/30 max-sm:border-b-4 rounded-t-2xl flex items-center justify-center ...">
+
               <div className="absolute -bottom-10 h-24 w-24 bg-brand-yellow/30 rounded-full blur-xl" />
               <Crown className="h-9 w-9 text-brand-yellow/40 relative z-10" />
             </div>

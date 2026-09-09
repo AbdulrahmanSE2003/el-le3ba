@@ -7,7 +7,7 @@ const GameOutcomes = async() => {
     if(!gamesRes.success) return <Error/>
     const analytics = gamesRes.data.analytics
     return (
-    <div className="col-span-2 rounded-2xl h-104" dir="rtl">
+    <div className="col-span-6 lg:col-span-2 rounded-2xl h-104" dir="rtl">
              <GameOutcomesChart outcomes={analytics?.outcomes ?? []} total={analytics.total}/>
         </div>
     )

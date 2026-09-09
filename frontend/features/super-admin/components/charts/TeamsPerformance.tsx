@@ -13,7 +13,7 @@ const TeamsPerformance = async() => {
         points: t.totalPoints
     }))
     return (
-        <div className={`col-span-2 rounded-2xl max-h-104`}>
+        <div className={`col-span-6 lg:col-span-2 rounded-2xl max-h-104`}>
         <TeamsPerformanceChart points={points}/>
             
         </div>
