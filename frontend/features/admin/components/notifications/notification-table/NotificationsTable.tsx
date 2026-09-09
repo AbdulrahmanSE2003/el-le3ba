@@ -93,13 +93,13 @@ export default async function NotificationsTable({
                 </TableCell>
 
                 {/* Created By */}
-                <TableCell className="capitalize text-xs text-foreground">
-                  {notification.createdBy.name}
+                <TableCell className="capitalize text-xs text-muted-foreground">
+                  {notification.createdBy?.name ?? "مشرف محذوف"}
                 </TableCell>
 
                 {/* Created At */}
                 <TableCell className="capitalize text-xs text-muted-foreground">
-                  {formatCreatedAt(notification.createdAt)}
+                  {formatCreatedAt(notification?.createdAt ?? "-")}
                 </TableCell>
 
                 {/* Actions */}

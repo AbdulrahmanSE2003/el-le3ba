@@ -2,8 +2,6 @@
 
 import { RotateCcw } from "lucide-react";
 
-import { notificationsSortBy, notificationTypes } from "../constants/constants";
-
 import { Button } from "@/components/ui/button";
 
 import CustomSelect from "../../shared/CustomSelect";
@@ -16,6 +14,19 @@ import {
 } from "next/navigation";
 
 import createPageUrl from "../../shared/utils/createPageUrl";
+
+const notificationTypes = [
+  { label: "الكل", value: "all" },
+  { label: "إشعار عام", value: "broadcast" },
+  { label: "إشعار لمستخدمين محددين", value: "selected" },
+];
+
+const notificationsSortBy = [
+  { label: "الافتراضي", value: "default" },
+  { label: "الأحدث", value: "recent" },
+  { label: "الأقدم", value: "oldest" },
+  { label: "الأكثر مستقبلين", value: "recipients" },
+];
 
 export default function FiltersContainer() {
   const router = useRouter();

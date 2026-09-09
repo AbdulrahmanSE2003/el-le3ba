@@ -12,7 +12,6 @@ import {
   HelpCircle,
   Hash,
   Settings2Icon,
-  ShieldAlert,
   UserCog,
   BellDot,
   BellRing,
@@ -40,9 +39,17 @@ import {
   Send,
   Trash,
   Trash2,
-  XCircle,
-  ChartBarIncreasing,
+  XCircle,Shield, ClipboardList, UserRoundCog
 } from "lucide-react";
+import { AddUserModal } from "../components/users/AddUserModal";
+import SendNotification from "../components/notifications/send-notification/SendNotification";
+import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
+import CreateEventModal from "../components/events/CreateEventModal";
+import { AddQuestionModal } from "../components/questions/question-modals/add-modal/AddQuestionModal";
+
+
+
+
 export const adminNavItems: NavItem[] = [
   {
     title: "لوحة الإدارة",
@@ -100,13 +107,6 @@ export const quickActions = [
     desc: "إنشاء حساب مستخدم جديد",
     component: AddUserModal,
   },
-  // {
-  //   title: "إعدادات النظام",
-  //   icon: Settings,
-  //   className:
-  //     "bg-slate-500/20 text-slate-500 group-hover:bg-slate-500/75 group-hover:text-white",
-  //   desc: "تعديل تفضيلات المنصة",
-  // },
   {
     title: "إضافة سؤال",
     icon: FileText,
@@ -145,69 +145,6 @@ export const quickActions = [
     className:
       "bg-emerald-500/20 text-emerald-500  group-hover:bg-emerald-500/75 group-hover:text-white",
     desc: "تصدير البيانات بصيغة PDF",
-  },
-  {
-    title: "الملف الشخصي",
-    href: "/super-admin/profile",
-    icon: Shield,
-  },
-];
-
-export const seasonStatusOptions = [
-  {
-    label: "الكل",
-    value: "",
-  },
-  {
-    label: "قادم",
-    value: "upcoming",
-  },
-  {
-    label: "نشط",
-    value: "active",
-  },
-  {
-    label: "إقصائيات",
-    value: "knockout",
-  },
-  {
-    label: "منتهي",
-    value: "ended",
-  },
-];
-
-export const seasonSortOptions = [
-  {
-    label: "الأحدث إنشاءً",
-    value: "-createdAt",
-  },
-  {
-    label: "الأقدم إنشاءً",
-    value: "createdAt",
-  },
-  {
-    label: "تاريخ البداية - الأقرب",
-    value: "startDate",
-  },
-  {
-    label: "تاريخ البداية - الأبعد",
-    value: "-startDate",
-  },
-  {
-    label: "تاريخ النهاية - الأقرب",
-    value: "endDate",
-  },
-  {
-    label: "تاريخ النهاية - الأبعد",
-    value: "-endDate",
-  },
-  {
-    label: "الاسم تصاعديًا",
-    value: "title",
-  },
-  {
-    label: "الاسم تنازليًا",
-    value: "-title",
   },
 ];
 
@@ -404,13 +341,6 @@ export const ACTIONS: Record<string, ActionConfig> = {
     color: "text-rose-500 bg-rose-500/10",
   },
 };
-
-import { Shield, ClipboardList, UserRoundCog } from "lucide-react";
-import { AddUserModal } from "../components/users/AddUserModal";
-import SendNotification from "../components/notifications/send-notification/SendNotification";
-import CreateSeasonModal from "../components/seasons/CreateSeasonModal";
-import CreateEventModal from "../components/events/CreateEventModal";
-import { AddQuestionModal } from "../components/questions/question-modals/add-modal/AddQuestionModal";
 
 export const superAdminNav = [
   {

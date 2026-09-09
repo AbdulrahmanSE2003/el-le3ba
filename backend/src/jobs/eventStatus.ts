@@ -25,10 +25,6 @@ export const startEventExpirationJob = () => {
           await expiredEvent.save();
         }
 
-        const expiredEvent = await Event.findOne({
-          status: "running",
-          endTime: { $lte: new Date() },
-        });
         if (expiredEvent) {
           expiredEvent.status = "finished";
           await expiredEvent.save();
