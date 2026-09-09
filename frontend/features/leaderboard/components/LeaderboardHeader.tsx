@@ -17,6 +17,9 @@ const LeaderboardHeader = ({
   const [isPending, startTransition] = useTransition();
   
 
+  console.log(seasonTitle);
+  
+
   const handleRefresh = () => {
     if (refreshAction) {
       startTransition(async () => {
