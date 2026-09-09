@@ -48,7 +48,6 @@ export function TeamActionsMenu({
         {/* Edit */}
         <DropdownMenuItem
           className="gap-2 cursor-pointer"
-          onClick={() => console.log("Edit Team", teamId)}
         >
           <Edit className="w-4 h-4 text-muted-foreground" /> تعديل البيانات
         </DropdownMenuItem>
@@ -56,7 +55,6 @@ export function TeamActionsMenu({
         {/* Change the captain */}
         <DropdownMenuItem
           className="gap-2 cursor-pointer"
-          onClick={() => console.log("Change Leader", teamId)}
         >
           <Crown className="w-4 h-4 text-accent" /> تغيير قائد الفريق
         </DropdownMenuItem>
@@ -64,7 +62,6 @@ export function TeamActionsMenu({
         {/* Send notification */}
         <DropdownMenuItem
           className="gap-2 cursor-pointer"
-          onClick={() => console.log("Notify Team", teamId)}
         >
           <Bell className="w-4 h-4 text-chart-5" /> إرسال إشعار للأعضاء
         </DropdownMenuItem>
@@ -74,7 +71,6 @@ export function TeamActionsMenu({
         {/* Ban */}
         <DropdownMenuItem
           className="gap-2 cursor-pointer text-destructive focus:text-background"
-          onClick={() => console.log("Freeze Team", teamId)}
         >
           <Ban className="w-4 h-4" /> تجميد الفريق
         </DropdownMenuItem>

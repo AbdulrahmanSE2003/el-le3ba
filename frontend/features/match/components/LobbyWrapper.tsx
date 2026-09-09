@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NoTeam from "@/components/shared/no-team/NoTeam";
 import NoActiveEvent from "@/components/shared/NoActiveEvent";
 import { log } from "console";
+import NoAttemptsLeft from "./lobby/NoAttemptsLeft";
 
 const LobbyWrapper = async () => {
   const [teamRes, eventRes] = await Promise.all([
@@ -42,6 +43,7 @@ const LobbyWrapper = async () => {
     : 0;
 
   const attemptsLeft = event.maxAttempts - attempts;
+  if (attemptsLeft <=0 ) return <NoAttemptsLeft teamName={teamData.team.teamName} eventTitle={event.title}/>
   return (
     <>
       <EventInfo attemptsLeft={attemptsLeft} eventTitle={event.title} />

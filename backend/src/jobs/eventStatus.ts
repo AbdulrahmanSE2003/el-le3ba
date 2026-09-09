@@ -24,6 +24,7 @@ export const startEventExpirationJob = () => {
           expiredEvent.status = "finished";
           await expiredEvent.save();
         }
+
       } catch (error) {
         console.error("Event finalization error ", error);
       }

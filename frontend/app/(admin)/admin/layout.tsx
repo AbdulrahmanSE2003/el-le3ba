@@ -44,7 +44,7 @@ export default async function AdminLayout({
             لوحة المشرف
           </span>
           <div className={`mr-auto flex items-center gap-3`}>
-            <span className={`text-xs `}> الملف الشخصي</span>{" "}
+            <p className={`text-xs `}> الملف الشخصي</p>{" "}
             <Avatar asChild className={` group hover:border-border`}>
               <Link href={"/admin/profile"} className={`cursor-pointer`}>
                 <AvatarImage src={user.avatar || ""} />

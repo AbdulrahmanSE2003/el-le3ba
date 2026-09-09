@@ -46,3 +46,28 @@ export interface RecentLog {
   createdAt: string;
   __v: number;
 }
+
+export interface DataTablePaginationProps {
+  page:number;
+  totalPages:number;
+  totalResults:number;
+  limit:number;
+  itemLabel?:string
+}
+
+export interface FilterOption {
+  label: string;
+  value: string;
+}
+
+export interface FilterConfig {
+  key: string;
+  placeholder: string;
+  options: FilterOption[];
+}
+
+export interface GenericFilterBarProps {
+  searchPlaceholder?: string;
+  filters?: FilterConfig[];
+  sortOptions?: FilterOption[];
+}

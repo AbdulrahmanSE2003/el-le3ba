@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight, MoreVertical } from "lucide-react";
+import { ArrowUpRight, History, MoreVertical } from "lucide-react";
 
 import Error from "@/app/error";
 
@@ -48,7 +48,9 @@ export default async function RecentSessions() {
     <div className="lg:col-span-2 rounded-xl border bg-card shadow-sm">
       <div className="flex items-center justify-between border-b mb-2 p-6 py-4">
         <div className={`space-y-1`}>
-          <h2 className="text-lg font-semibold">المباريات الأخيرة</h2>
+          <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+            <History className={`stroke-amber-500 size-5`}/>
+            المباريات الأخيرة</h2>
           <p className="text-xs text-muted-foreground">
             آخر 10 جلسات تم إنشاؤها
           </p>

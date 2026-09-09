@@ -12,26 +12,28 @@ const AnalyticsSections = () => {
     return (
         <div className={`grid grid-cols-6 gap-4`}>
         <Suspense
-          fallback={<Skeleton className={`h-104 col-span-4 rounded-2xl`} />}
+          fallback={<Skeleton className={`h-104 col-span-6 lg:col-span-4 rounded-2xl`} />}
         >
           <GamesOverTime />
         </Suspense>
         <Suspense
-          fallback={<Skeleton className={`h-104 col-span-2 rounded-2xl`} />}
+          fallback={<Skeleton className={`h-104 col-span-6 lg:col-span-2 rounded-2xl`} />}
         >
           <TeamsPerformance />
         </Suspense>
         <Suspense
-          fallback={<Skeleton className={`h-104 col-span-2 rounded-2xl`} />}
+          fallback={<Skeleton className={`h-104 col-span-6 lg:col-span-2 rounded-2xl`} />}
         >
           <TopPlayers/>
         </Suspense>
         <Suspense
-          fallback={<Skeleton className={`h-104 col-span-2 rounded-2xl`} />}
+          fallback={<Skeleton className={`h-104 col-span-6 lg:col-span-2 rounded-2xl`} />}
         >
           <GameOutcomes/>
         </Suspense>
-        <Suspense>
+        <Suspense
+          fallback={<Skeleton className={`h-104 col-span-6 lg:col-span-2 rounded-2xl`} />}
+        >
 <LiveSessions/>
         </Suspense>
       </div>
