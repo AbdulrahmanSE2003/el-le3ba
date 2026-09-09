@@ -45,13 +45,11 @@ interface OutcomeItem {
 }
 
 export function GameOutcomesChart({
-  outcomes = [
-    { type: "completed", count: 69, percentage: 90 },
-    { type: "expired", count: 5, percentage: 7 },
-    { type: "abandoned", count: 2, percentage: 3 },
-  ],
+  outcomes ,
+  total
 }: {
-  outcomes?: OutcomeItem[]
+  outcomes: OutcomeItem[]
+  total:number
 }) {
   const chartData = outcomes.map((item) => ({
     outcome: item.type,
@@ -60,11 +58,7 @@ export function GameOutcomesChart({
       outcomesChartConfig[item.type as keyof typeof outcomesChartConfig]?.color ||
       "var(--chart-1)",
   }))
-
-  const total = outcomes.reduce((acc, curr) => acc + curr.count, 0)
-
   return (
-    <div className="col-span-2 rounded-2xl h-104" dir="rtl">
       <Card className="flex flex-col h-full justify-between">
         <CardHeader className="pb-0">
            <CardTitle className={`text-lg text-primary font-semibold flex items-center gap-2`}>
@@ -107,6 +101,5 @@ export function GameOutcomesChart({
           ))}
         </div>
       </Card>
-    </div>
   )
 }
