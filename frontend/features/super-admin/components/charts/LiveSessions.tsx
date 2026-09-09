@@ -8,7 +8,7 @@ const LiveSessions = async() => {
 
     const liveCount =liveSessionsRes.data.analytics.count
     return (
-    <div className="col-span-2 rounded-2xl h-104">
+    <div className="col-span-6 lg:col-span-2 rounded-2xl h-104">
           <LiveSessionsWidget count={liveCount} />
         </div>
     )

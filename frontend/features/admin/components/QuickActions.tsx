@@ -1,3 +1,4 @@
+import { Zap } from "lucide-react";
 import { quickActions } from "../utils/constants";
 import QuickActionCard from "./QuickActionCard";
 
@@ -5,7 +6,9 @@ const QuickActions = () => {
   return (
     <div className="rounded-xl border border-border bg-card p-6 shadow-sm flex flex-col justify-between">
       <div className={`space-y-1`}>
-        <h2 className="text-lg font-semibold text-card-foreground">
+        <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
+          
+          <Zap className={`stroke-amber-500 size-5`}/>
           إجراءات سريعة
         </h2>
         <p className="text-xs text-muted-foreground mb-4">

@@ -40,7 +40,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       <SidebarInset>
         <StoreInitializer user={user} />
         <section className="flex-1 overflow-auto h-screen">
-          <div className={`container mx-auto w-full py-4 md:w-3/5`}>
+          <div className={`container mx-auto w-full py-4 md:w-3/5 max-sm:pt-8`}>
             {children}
           </div>
         </section>
