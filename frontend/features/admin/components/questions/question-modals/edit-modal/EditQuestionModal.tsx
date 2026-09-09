@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { BaseModal } from "@/features/admin/components/shared/BaseModal";
-import { AdminQuestion } from "@/features/admin/types/question";
+import { AdminQuestion, toCreateQuestionInput } from "@/features/admin/types/question";
 import { QuestionForm } from "@/features/admin/components/questions/question-modals/question-form/QuestionForm";
 import { updateQuestionAction } from "@/features/admin/actions/questions";
 import { useFormFeedBack } from "@/hooks/useFormFeedback";
@@ -42,7 +42,7 @@ export function EditQuestionModal({ question }: EditQuestionModalProps) {
         <QuestionForm
           key={question._id}
           mode="update"
-          initialValues={question}
+          initialValues={toCreateQuestionInput(question)}
           onSubmit={(data) => formAction(data)}
           isLoading={isPending}
         />

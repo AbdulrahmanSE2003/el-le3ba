@@ -29,31 +29,6 @@ export interface ServerTableProps<T> {
   emptyMessage?: string;
 }
 
-export interface DataTablePaginationProps {
-  page: number;
-  totalPages: number;
-  totalResults: number;
-  limit: number;
-  itemLabel?: string;
-}
-
-export interface FilterOption {
-  value: string;
-  label: string;
-}
-
-export interface FilterConfig {
-  key: string;
-  placeholder: string;
-  options: FilterOption[];
-}
-
-export interface GenericFilterBarProps {
-  searchPlaceholder?: string;
-  filters?: FilterConfig[];
-  sortOptions?: FilterOption[];
-}
-
 export interface TableSelectionContextType {
   selectedIds: string[];
   toggleAll: (allIds: string[]) => void;

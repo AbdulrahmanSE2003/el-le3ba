@@ -10,8 +10,15 @@ const superAdminLayout = async ({ children }: { children: ReactNode }) => {
   const userRes = await getCurrentUser();
 
   if (!userRes.success) {
-    redirect("/login");
+    redirect("/api/auth/clear");
   }
+
+  const { role } = userRes.data.userData;
+
+  if (role !== "superAdmin") {
+    redirect(role === "admin" ? "/admin" : "/dashboard");
+  }
+
   const user = userRes.data.userData;
   return (
     <SidebarProvider>

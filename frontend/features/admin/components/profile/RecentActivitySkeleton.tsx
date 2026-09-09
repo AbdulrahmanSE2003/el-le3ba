@@ -8,7 +8,7 @@ export const RecentActivitySkeleton = () => {
       {/* Header */}
       <div className="flex items-center gap-2">
         <Activity className="h-4 w-4 text-primary" />
-        <h2 className="text-base font-semibold">النشاط الأخير</h2>
+        <h2 className="text-base font-semibold">نشاطك الأخير</h2>
       </div>
 
       <Separator className="bg-border" />

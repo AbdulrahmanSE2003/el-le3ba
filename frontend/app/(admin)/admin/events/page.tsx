@@ -4,7 +4,6 @@ import SortSelect from "@/components/shared/SortSelect";
 import PageHeader from "@/features/admin/components/events/PageHeader";
 import EventsContainer from "@/features/admin/components/events/EventsContainer";
 import EventsStats from "@/features/admin/components/events/EventsStats";
-import { getAllSeasons } from "@/features/admin/api/events";
 import { Suspense } from "react";
 import EventsStatsSkeleton from "@/features/admin/components/events/EventsStatsSkeleton";
 
@@ -21,16 +20,9 @@ interface EventsPageProps {
 export default async function EventsPage({ searchParams }: EventsPageProps) {
   const params = await searchParams;
 
-  const seasonsRes = await getAllSeasons();
-  const seasons = seasonsRes.success
-    ? seasonsRes.data.seasons.seasons
-    : [];
-    
-
-
   return (
     <div className="space-y-6">
-      <PageHeader seasons={seasons} />
+      <PageHeader />
 
       <Suspense fallback={<EventsStatsSkeleton/>}>
         <EventsStats />

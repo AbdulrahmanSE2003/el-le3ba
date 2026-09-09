@@ -18,7 +18,13 @@ export async function signIn(
   const result = await authenticate("users/login", { email, password });
 
   if (!result.success) {
-    return { error: result.error, userData: result.userData };
+    const raw = result.userData as
+      | { email?: string; name?: string }
+      | undefined;
+    return {
+      error: result.error,
+      userData: raw ? { email: raw.email, name: raw.name } : undefined,
+    };
   }
 
   redirect(result.redirectPath as string);
@@ -41,7 +47,13 @@ export async function signup(
   });
 
   if (!result.success) {
-    return { error: result.error, userData: result.userData };
+    const raw = result.userData as
+      | { email?: string; name?: string }
+      | undefined;
+    return {
+      error: result.error,
+      userData: raw ? { email: raw.email, name: raw.name } : undefined,
+    };
   }
 
   redirect("/select-avatar");

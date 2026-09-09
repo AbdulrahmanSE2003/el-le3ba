@@ -73,11 +73,22 @@ export const createOne = <T>(Model: Model<T>): RequestHandler => {
   });
 };
 
-export const updateOne = <T>(Model: Model<T>): RequestHandler => {
+export const updateOne = <T>(
+  Model: Model<T>,
+  allowedFields?: string[],
+): RequestHandler => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    const updatedDoc = await Model.findByIdAndUpdate(id, req.body, {
+    const body = allowedFields
+      ? Object.fromEntries(
+          Object.entries(req.body).filter(([key]) =>
+            allowedFields.includes(key),
+          ),
+        )
+      : req.body;
+
+    const updatedDoc = await Model.findByIdAndUpdate(id, body, {
       new: true,
 
       runValidators: true,

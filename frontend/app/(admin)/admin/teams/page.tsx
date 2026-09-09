@@ -1,7 +1,7 @@
 import { Trophy, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TeamsKpiCards } from "@/features/admin/components/teams/TeamsKpiCards";
-import { DataTablePagination } from "@/features/admin/components/shared/DataTablePagination";
+import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 import { ServerTable } from "@/features/admin/components/shared/ServerTable";
 import { TeamActionsMenu } from "@/features/admin/components/teams/TeamActionsMenu";
 import { Column } from "@/features/admin/types/shared";
@@ -31,7 +31,7 @@ export default async function TeamsPage({
     limit = "10",
     search = "",
     status = "all",
-    sortBy = "newest",
+    sort = "",
   } = await searchParams;
 
   const teamsRes = await getAllTeams({
@@ -39,7 +39,7 @@ export default async function TeamsPage({
     limit: Number(limit),
     search,
 
-    sort: sortBy,
+    sort,
   });
 
   if (!teamsRes.success) return <Error />;
@@ -48,7 +48,6 @@ export default async function TeamsPage({
     teams = [],
     totalPages = 1,
     totalResults = 0,
-    page: currentPage = Number(page),
     limit: currentLimit = Number(limit),
   } = teamsRes.data.teams;
   const filteredTeams = teams.filter((team) => {
@@ -193,12 +192,12 @@ export default async function TeamsPage({
           </TableSelectionProvider>
         </Suspense>
 
-        <DataTablePagination
-          page={currentPage}
+        <CustomPagination
+          totalItems={totalResults}
           totalPages={totalPages}
-          totalResults={totalResults}
           limit={currentLimit}
-          itemLabel="فريق"
+          className="mt-auto"
+          showLimitSelect
         />
       </div>
     </div>

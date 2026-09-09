@@ -1,7 +1,7 @@
 import { showSuccess, showError } from "@/components/shared/notifications";
 import { useActionState, useEffect } from "react";
 
-interface ActionState {
+export interface ActionState {
   error?: string | null;
   success?: boolean;
   message?: string;

@@ -6,10 +6,16 @@ import SeasonSelector from "@/features/admin/components/leaderboard/SeasonSelect
 import { getAllSeasonsSimple } from "@/features/admin/api/seasons";
 import { Suspense } from "react";
 import CreateReport from "@/components/shared/CreateReport";
+import SearchBar from "@/components/shared/SearchBar";
+import SortSelect from "@/components/shared/SortSelect";
 
 interface LeaderboardPageProps {
   searchParams: Promise<{
     seasonId?: string;
+    search?: string;
+    sort?: string;
+    page?: string;
+    limit?: string;
   }>;
 }
 
@@ -46,7 +52,23 @@ export default async function LeaderboardPage({ searchParams }: LeaderboardPageP
             <LeaderboardStats seasonId={selectedSeasonId} />
           </Suspense>
 
-          <LeaderboardContainer seasonId={selectedSeasonId} />
+          <div className="flex max-sm:flex-col gap-3 items-center justify-between">
+            <SearchBar placeholder="ابحث باسم الفريق..." />
+            <SortSelect
+              placeholder="الترتيب"
+              label="ترتيب حسب"
+              options={[
+                { value: "pointsDesc", label: "الأعلى نقاطًا" },
+                { value: "pointsAsc", label: "الأقل نقاطًا" },
+                { value: "nameAsc", label: "اسم الفريق (أ - ي)" },
+                { value: "nameDesc", label: "اسم الفريق (ي - أ)" },
+                { value: "playedDesc", label: "الأكثر مباريات" },
+                { value: "playedAsc", label: "الأقل مباريات" },
+              ]}
+            />
+          </div>
+
+          <LeaderboardContainer seasonId={selectedSeasonId} searchParams={params} />
         </>
       )}
     </div>

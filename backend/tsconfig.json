@@ -11,6 +11,6 @@
     "resolveJsonModule": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src/**/*", "src/controllers/HomepageSkeleton.tsx"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

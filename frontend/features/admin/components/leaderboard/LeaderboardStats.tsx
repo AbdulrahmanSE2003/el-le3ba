@@ -21,28 +21,28 @@ const LeaderboardStats = async ({ seasonId }: { seasonId: string }) => {
         Icon={Users}
         value={totalTeams}
         title="إجمالي الفرق"
-        description=""
+        description="إجمالي الفرق المشاركة في الموسم الحالي."
       />
 
       <StatCard
         Icon={Gamepad2}
         value={totalSessions}
         title="إجمالي المباريات"
-        description=""
+        description="إجمالي المباريات التي تم لعبها في الموسم الحالي."
       />
 
       <StatCard
         Icon={Trophy}
         value={totalPoints}
         title="إجمالي النقاط"
-        description=""
+        description="إجمالي نقاط الفرق خلال الموسم."
       />
 
       <StatCard
         Icon={Crown}
         value={topScore ? topScore.score : 0}
-        title={topScore ? `أعلى سكور — ${topScore.teamName}` : "أعلى سكور"}
-        description=""
+        title="أعلى سكور"
+        description="أعلى سكور تم تحقيقه من قبل الفرق في الموسم الحالي."
       />
     </div>
   );

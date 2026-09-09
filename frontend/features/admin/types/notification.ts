@@ -1,5 +1,3 @@
-import { LucideIcon } from "lucide-react";
-
 export type NotificationType =
   | "announcement"
   | "match_reminder"
@@ -61,13 +59,6 @@ export type NotificationCampaignsRes = {
   totalResults: number;
 }
 
-
-export type PaginationBtn = {
-  title: string;
-  icon?: LucideIcon;
-  disabled?: boolean;
-  url?: string;
-};
 
 export type NotificationsRes = {
   status: boolean;

@@ -12,7 +12,7 @@ import { NotificationTypeBadge } from "./NotificationTypeBadge";
 
 import { formatCreatedAt } from "@/lib/utils";
 
-import { Pagination } from "../../shared/Pagination";
+import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 import { NotificationCampaignsRes } from "@/features/admin/types/notification";
 import NoPage from "../../shared/NoPage";
 import NoTableData from "../../shared/NoTableData";
@@ -39,7 +39,7 @@ export default async function NotificationsTable({
 
   return (
     <div className="rounded-lg space-y-4">
-      <div className="p-5 bg-white dark:bg-card rounded-lg">
+      <div className=" rounded-lg">
         <Table className="text-center">
           {/* Table Headers */}
           <TableHeader className="bg-muted/50">
@@ -56,7 +56,7 @@ export default async function NotificationsTable({
           </TableHeader>
 
           {/* Table Body */}
-          <TableBody>
+          <TableBody className={`bg-card`}>
             {/* No notifications to display */}
             {notifications.length === 0 && (
               <NoTableData colSpan={7} title="اشعارات" />
@@ -113,7 +113,13 @@ export default async function NotificationsTable({
       </div>
 
       {/* Pagination */}
-      <Pagination page={page} totalPages={totalPages} />
+      <CustomPagination
+        className={`mt-auto`}
+        totalItems={campaigns.totalResults}
+        totalPages={totalPages}
+        limit={campaigns.limit}
+        showLimitSelect
+      />
     </div>
   );
 }
