@@ -35,3 +35,19 @@ interface Team {
     teamId: string;
     averageScore: number;
 }
+
+export interface GameOutcomeItem {
+  type: "completed" | "expired" | "abandoned" | string;
+  count: number;
+  percentage: number;
+}
+
+export interface GameOutcomesAnalytics {
+  total: number;
+  outcomes: GameOutcomeItem[];
+}
+
+export interface GameOutcomesResponse {
+  status: boolean;
+  analytics: GameOutcomesAnalytics;
+}

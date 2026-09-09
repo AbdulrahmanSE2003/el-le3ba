@@ -1,13 +1,11 @@
 "use client"
 
-import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts"
 
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -17,6 +15,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { Swords } from "lucide-react"
 
 export const description = "A horizontal bar chart"
 
@@ -43,7 +42,10 @@ export function TeamsPerformanceChart({points}:TeamsPerformanceProps) {
   return (
     <Card className={`h-full`}>
       <CardHeader>
-        <CardTitle>إحصائيات الفرق</CardTitle>
+                <CardTitle className={`text-lg text-primary font-semibold flex items-center gap-2`}>
+<Swords className={`stroke-amber-500 size-5`}/>
+إحصائيات الفرق
+</CardTitle>
         <CardDescription>عرض لأداء ونشاط أعلى الفرق داخل اللعبة.</CardDescription>
       </CardHeader>
       <CardContent className={`px-1`}>

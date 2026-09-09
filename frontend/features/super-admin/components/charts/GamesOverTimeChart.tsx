@@ -53,7 +53,9 @@ export function GamesOverTimeChart({
   return (
     <Card className="flex flex-col">
       <CardHeader className="pb-2">
-        <CardTitle className={`text-lg text-primary font-semibold`}>{title}</CardTitle>
+        <CardTitle className={`text-lg text-primary font-semibold flex items-center gap-2`}>
+          <TrendingUp className={`size-5 stroke-amber-500`}/>
+          {title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
