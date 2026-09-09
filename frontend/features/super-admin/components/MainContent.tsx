@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import QuickActions from "./QuickActions";
 import RecentAdminLogs from "./RecentAdminLogs";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, History } from "lucide-react";
 import { Suspense } from "react";
 import RecentAdminLogsSkeleton from "./RecentAdminLogsSkeleton";
 
@@ -14,7 +14,9 @@ const MainContent = () => {
       <div className="lg:col-span-2 rounded-xl border border-border bg-card shadow-sm space-y-4">
         <div>
           <div className="flex items-center justify-between p-4">
-            <h2 className="text-base font-semibold">نشاط المسؤولين الأخير</h2>
+            <h2 className="text-lg text-primary font-semibold flex items-center gap-2">
+              <History className={`stroke-amber-500 size-5`}/>
+              نشاط المسؤولين الأخير</h2>
             <Button
               variant="link"
               size="sm"

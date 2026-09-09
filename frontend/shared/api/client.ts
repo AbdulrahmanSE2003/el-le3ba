@@ -17,11 +17,15 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (isAuthError(error)) {
-      if (typeof window !== "undefined") {
-        localStorage.removeItem("user-store");
-        window.location.href = "/login";
+      try {
+        await fetch("/api/auth/clear", { method: "GET" });
+      } finally {
+        if (typeof window !== "undefined") {
+          localStorage.removeItem("user-store");
+          window.location.href = "/login";
+        }
       }
       return Promise.reject(error);
     }

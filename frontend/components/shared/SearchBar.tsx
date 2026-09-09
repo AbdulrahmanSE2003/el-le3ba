@@ -64,7 +64,7 @@ export default function SearchBar({ placeholder }: SearchBarProps) {
         <Input
           value={searchValue}
           placeholder={placeholder}
-          className="pr-9 pl-10 text-right"
+          className="pr-9 pl-10 text-right bg-card"
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {

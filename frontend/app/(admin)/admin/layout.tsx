@@ -21,7 +21,7 @@ export default async function AdminLayout({
   const userRes = await getCurrentUser();
 
   if (!userRes.success) {
-    redirect("/login");
+    redirect("/api/auth/clear");
   }
 
   const { role } = userRes.data.userData;

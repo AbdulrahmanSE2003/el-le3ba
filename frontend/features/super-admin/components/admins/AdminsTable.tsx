@@ -139,6 +139,7 @@ const AdminsTable = ({ res }: { res: AdminsRes; params: SearchParams }) => {
         totalPages={data.totalPages}
         totalItems={data.totalResults}
         limit={data.limit}
+        showLimitSelect
       />
     </div>
   );

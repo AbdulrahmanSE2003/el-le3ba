@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { UsersKpiCards } from "@/features/admin/components/users/UsersKpiCards";
-import { DataTablePagination } from "@/features/admin/components/shared/DataTablePagination";
+import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 import { ServerTable } from "@/features/admin/components/shared/ServerTable";
 import { UserActionsMenu } from "@/features/admin/components/users/UserActionsMenu";
 import { Column } from "@/features/admin/types/shared";
@@ -32,7 +32,7 @@ export default async function UsersPage({
     search = "",
     role = "all",
     hasTeam = "all",
-    sortBy = "-createdAt",
+    sort = "",
   } = await searchParams;
 
   // Fetch API Data directly from backend
@@ -42,7 +42,7 @@ export default async function UsersPage({
     search,
     role,
     hasTeam,
-    sort: sortBy,
+    sort,
   });
 
   if (!usersRes.success) return <Error />;
@@ -51,7 +51,6 @@ export default async function UsersPage({
     users = [],
     totalPages = 1,
     totalResults = 0,
-    page: currentPage = 1,
     limit: currentLimit = 10,
   } = usersRes.data.users;
 
@@ -170,12 +169,12 @@ export default async function UsersPage({
         </Suspense>
 
         {/* Pagination */}
-        <DataTablePagination
-          page={currentPage}
+        <CustomPagination
+          totalItems={totalResults}
           totalPages={totalPages}
-          totalResults={totalResults}
           limit={currentLimit}
-          itemLabel="مستخدم"
+          className="mt-auto"
+          showLimitSelect
         />
       </div>
     </div>

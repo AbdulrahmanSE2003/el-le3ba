@@ -39,7 +39,7 @@ interface DashboardStatsRes {
 
 interface DashboardRecentSessions {
   results: number;
-  recentSessions: RecentSession[];
+  sessions: RecentSession[];
 }
 
 // Action Functions

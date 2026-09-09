@@ -50,7 +50,6 @@ export default function LoginForm() {
           placeholder="••••••••"
           icon={Lock}
           disabled={isPending}
-          defaultValue={state?.userData?.password || ""}
           required
         />
 

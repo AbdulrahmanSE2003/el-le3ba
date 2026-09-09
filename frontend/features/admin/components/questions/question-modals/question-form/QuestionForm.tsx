@@ -18,7 +18,7 @@ import {
 
 import { questionCategories } from "@/features/admin/components/questions/constants/constants";
 import { Plus, Trash2 } from "lucide-react";
-import { AdminQuestion } from "@/features/admin/types/question";
+import { CreateQuestionInput } from "@/features/admin/types/question";
 
 const typeOptions = [
   { value: "mcq", label: "اختيار من متعدد" },
@@ -29,7 +29,7 @@ const typeOptions = [
 // valid value to save on a question, so it's excluded here.
 const categoryOptions = questionCategories.filter((c) => c.value !== "all");
 
-const emptyValues: AdminQuestion = {
+const emptyValues: CreateQuestionInput = {
   question: "",
   type: "mcq",
   category: "",
@@ -42,13 +42,13 @@ type QuestionFormProps =
   | {
       mode: "create";
       initialValues?: undefined;
-      onSubmit: (data: AdminQuestion) => void;
+      onSubmit: (data: CreateQuestionInput) => void;
       isLoading?: boolean;
     }
   | {
       mode: "update";
-      initialValues: AdminQuestion;
-      onSubmit: (data: AdminQuestion) => void;
+      initialValues: CreateQuestionInput;
+      onSubmit: (data: CreateQuestionInput) => void;
       isLoading?: boolean;
     };
 
@@ -58,11 +58,11 @@ export function QuestionForm({
   onSubmit,
   isLoading,
 }: QuestionFormProps) {
-  const [values, setValues] = useState<AdminQuestion>(initialValues ?? emptyValues);
+  const [values, setValues] = useState<CreateQuestionInput>(initialValues ?? emptyValues);
 
   const options = values.options ?? [];
 
-  function updateType(type: AdminQuestion["type"]) {
+  function updateType(type: CreateQuestionInput["type"]) {
     // Reset dependent fields when the type changes so we never submit
     // stale options/correctAnswer combos.
     setValues((prev) => ({

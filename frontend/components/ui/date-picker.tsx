@@ -19,6 +19,7 @@ interface DatePickerProps {
   placeholder?: string;
   minDate?: Date;
   maxDate?: Date;
+  className?:string
   showTime?: boolean;
   disabled?: boolean;
 }
@@ -64,6 +65,7 @@ const extractTime = (value: string): string => {
 export function DatePicker({
   value,
   onChange,
+  className,
   placeholder,
   minDate,
   maxDate,
@@ -108,7 +110,7 @@ export function DatePicker({
           variant="outline"
           disabled={disabled}
           className={cn(
-            "w-full justify-start gap-2 font-normal",
+            "w-full min-w-0 justify-start gap-2 font-normal truncate",
             !selected && "text-muted-foreground",
           )}
         >

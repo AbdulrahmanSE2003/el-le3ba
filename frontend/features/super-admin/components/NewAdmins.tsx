@@ -7,24 +7,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Shield } from "lucide-react";
+import { Lock, Shield, UserCog2 } from "lucide-react";
 import { getRecentAdmins } from "../api/shared";
 import Error from "@/app/error";
 import { formatCreatedAt } from "@/lib/utils";
+import GenericEmptyState from "@/components/shared/GenericEmptyState";
 
 const NewAdmins = async () => {
   const recentAdminsRes = await getRecentAdmins();
   if (!recentAdminsRes.success) return <Error />;
 
   const recentAdmins = recentAdminsRes.data.recentAdmins;
+  if(!recentAdmins.length) return <GenericEmptyState item="مشرفين" Icon={UserCog2}/>
+  
 
   return (
     <div className="rounded-xl border border-border bg-card p-5 md:p-6 shadow-sm flex flex-col gap-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold">أحدث المسؤولين</h2>
+        <h2 className="text-lg font-semibold flex items-center gap-2 text-primary">
+          <Lock className={`stroke-amber-500 size-5`}/>
+          أحدث المسؤولين</h2>
       </div>
-
-      <Separator className="bg-border" />
 
       <div className="overflow-x-auto -mx-2 px-2">
         <Table className={`p-2`}>

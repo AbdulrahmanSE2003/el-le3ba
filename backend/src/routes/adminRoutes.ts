@@ -16,13 +16,13 @@ import {
   getNotificationStats,
   getProfileRecentLogs,
   getProfileStats,
-  getRecentSessions,
   getTeamsStats,
   getUserStats,
   sendNotificationToTeamMembers,
   updateUser,
 } from "../controllers/adminController";
 import { sendNotifications } from "../controllers/notificationController";
+import { getRecentSessions } from "../controllers/sessionController";
 
 const adminRoutes = express.Router();
 

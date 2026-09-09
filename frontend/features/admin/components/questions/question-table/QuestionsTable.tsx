@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
 import { AdminQuestion } from "@/features/admin/types/question";
 
@@ -14,15 +15,33 @@ import TableActions from "./TableActions";
 import { formatCreatedAt } from "@/lib/utils";
 
 import NoTableData from "../../shared/NoTableData";
-import { Pagination } from "../../shared/Pagination";
+import { CustomPagination } from "@/features/super-admin/components/shared/CustomPagination";
 import NoPage from "../../shared/NoPage";
 import { HeaderCheckbox, RowCheckbox } from "../../shared/TableCheckbox";
+import { getQuestionTypeStyle } from "@/features/admin/utils/constants";
 
 interface Props {
   tableHeaders: string[];
   questions: AdminQuestion[];
   page: number;
   totalPages: number;
+  totalResults: number;
+  limit: number;
+}
+
+
+function QuestionTypeBadge({ type }: { type: string }) {
+  const { icon: Icon, className, label } = getQuestionTypeStyle(type);
+
+  return (
+    <Badge
+      variant="outline"
+      className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium ${className}`}
+    >
+      <Icon className="size-3.5" />
+      <span>{label}</span>
+    </Badge>
+  );
 }
 
 export default function QuestionsTable({
@@ -30,8 +49,9 @@ export default function QuestionsTable({
   questions,
   page,
   totalPages,
+  totalResults,
+  limit,
 }: Props) {
-  // No questions page
   if (page > totalPages) {
     return <NoPage requestedPage={page} totalPages={totalPages} />;
   }
@@ -40,12 +60,10 @@ export default function QuestionsTable({
 
   return (
     <div className="rounded-lg space-y-4">
-      <div className="p-5 bg-white dark:bg-card rounded-lg">
+      <div className="rounded-lg border border-border overflow-hidden">
         <Table className="text-center">
-          {/* Table Headers */}
           <TableHeader className="bg-muted/50">
             <TableRow className="border-border">
-              {/* Bulk-selection header checkbox */}
               <TableHead className="w-12 text-center">
                 <HeaderCheckbox allIds={allIds} />
               </TableHead>
@@ -61,51 +79,49 @@ export default function QuestionsTable({
             </TableRow>
           </TableHeader>
 
-          {/* Table Body */}
-
-          <TableBody>
-            {/* No notifications to display */}
+          <TableBody className="bg-card">
             {questions.length === 0 && (
-              <NoTableData colSpan={7} title="اسئلة" />
+              <NoTableData colSpan={tableHeaders.length + 1} title="اسئلة" />
             )}
 
-            {/* Questions rows */}
             {questions.map((question) => (
               <TableRow
                 key={question._id}
                 className="border-border hover:bg-muted/30 transition-colors"
               >
-                {/* Row selection checkbox */}
                 <TableCell className="text-center">
                   <RowCheckbox id={question._id} />
                 </TableCell>
 
-                {/* Question text */}
-                <TableCell className="text-right max-w-[260px]">
-                  <p className="text-xs font-medium text-foreground truncate">
+                <TableCell className="max-w-65 truncate text-start">
+                  <p className="text-sm font-medium text-foreground truncate" title={question.question}>
                     {question.question}
                   </p>
                 </TableCell>
 
-                {/* Type */}
-                <TableCell>{question.type}</TableCell>
+                {/* Type Badge */}
+                <TableCell>
+  <QuestionTypeBadge type={question.type} />
+</TableCell>
 
-                {/* Category */}
-                <TableCell className="text-xs text-muted-foreground">
-                  {question.category}
+                {/* Category Badge */}
+                <TableCell>
+                  <Badge variant="secondary" className="font-normal capitalize text-xs">
+                    {question.category}
+                  </Badge>
                 </TableCell>
 
-                {/* Correct answer */}
-                <TableCell className="text-xs font-semibold text-foreground">
-                  {question.correctAnswer}
+                {/* Correct Answer Highlight */}
+                <TableCell>
+                  <span className="inline-flex items-center px-3 py-px rounded-md text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                    {question.correctAnswer}
+                  </span>
                 </TableCell>
 
-                {/* Date of creating */}
-                <TableCell className="text-xs font-semibold text-foreground">
+                <TableCell className="text-xs text-muted-foreground font-medium">
                   {formatCreatedAt(question.createdAt)}
                 </TableCell>
 
-                {/* Actions */}
                 <TableCell className="text-center">
                   <TableActions question={question} />
                 </TableCell>
@@ -115,8 +131,13 @@ export default function QuestionsTable({
         </Table>
       </div>
 
-      {/* Pagination */}
-      <Pagination page={page} totalPages={totalPages} />
+      <CustomPagination
+        className="mt-auto"
+        totalItems={totalResults}
+        totalPages={totalPages}
+        limit={limit}
+        showLimitSelect
+      />
     </div>
   );
 }

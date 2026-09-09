@@ -8,22 +8,39 @@ import {
   LayoutDashboard,
   Medal,
   Play,
-  Settings,
+  Globe,
+  HelpCircle,
+  Hash,
   Settings2Icon,
-  ShieldAlert,
   UserCog,
   BellDot,
   BellRing,
   FileQuestion,
   LogIn,
   Pencil,
+  PencilLine,
   UserPlus,
+  UserRoundPlus,
   Users,
   LucideIcon,
   UserX,
+  UserMinus,
+  UserCheck,
   KeyRound,
+  KeySquare,
   CalendarClock,
   BellMinus,
+  CalendarX,
+  CalendarRangeIcon,
+  PlaySquare,
+  CheckCircle2,
+  Crown,
+  LogOut,
+  Send,
+  Trash,
+  Trash2,
+  XCircle,
+  ChartBarIncreasing,
 } from "lucide-react";
 export const adminNavItems: NavItem[] = [
   {
@@ -137,41 +154,6 @@ export interface ActionConfig {
 }
 
 export const ACTIONS: Record<string, ActionConfig> = {
-  "user.login": {
-    icon: LogIn,
-    title: "تسجيل دخول",
-    color: "text-blue-500 bg-blue-500/10",
-  },
-  "notification.broadcast": {
-    icon: BellRing,
-    title: "إشعار عام",
-    color: "text-purple-500 bg-purple-500/10",
-  },
-  "notification.bulk_sent": {
-    icon: BellDot,
-    title: "إشعار لمستخدمين محددين",
-    color: "text-indigo-500 bg-indigo-500/10",
-  },
-  "notification.deleted": {
-    icon: BellMinus,
-    title: "حذف إشعار",
-    color: "text-rose-500 bg-rose-500/10",
-  },
-  "question.bulk_created": {
-    icon: FileQuestion,
-    title: "إضافة أسئلة",
-    color: "text-emerald-500 bg-emerald-500/10",
-  },
-  "question.deleted": {
-    icon: FileQuestion,
-    title: "حذف سؤال",
-    color: "text-rose-500 bg-rose-500/10",
-  },
-  "user.created": {
-    icon: UserPlus,
-    title: "إضافة مستخدم",
-    color: "text-rose-500 bg-rose-500/10",
-  },
   "super_admin.created": {
     icon: UserPlus,
     title: "إضافة سوبر أدمن",
@@ -188,24 +170,174 @@ export const ACTIONS: Record<string, ActionConfig> = {
     color: "text-amber-500 bg-amber-500/10",
   },
   "user.bulk_deactivated": {
-    icon: Pencil,
-    title: "تعديل المستخدمين",
-    color: "text-yellow-500 bg-yellow-500/10",
+    icon: UserX,
+    title: "تعطيل عدة مستخدمين",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "user.password_changed": {
+    icon: KeyRound,
+    title: "تغيير كلمة المرور",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "user.profile_updated": {
+    icon: UserCog,
+    title: "تعديل الملف الشخصي",
+    color: "text-sky-500 bg-sky-500/10",
+  },
+  "user.password_reset": {
+    icon: KeySquare,
+    title: "إعادة تعيين كلمة المرور",
+    color: "text-amber-500 bg-amber-500/10",
   },
   "user.deactivated": {
     icon: UserX,
     title: "تعطيل مستخدم",
     color: "text-rose-500 bg-rose-500/10",
   },
+  "user.signup": {
+    icon: UserRoundPlus,
+    title: "تسجيل حساب جديد",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
+  "user.login": {
+    icon: LogIn,
+    title: "تسجيل دخول",
+    color: "text-blue-500 bg-blue-500/10",
+  },
+  "user.created": {
+    icon: UserPlus,
+    title: "إضافة مستخدم",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "notification.broadcast": {
+    icon: BellRing,
+    title: "إشعار عام",
+    color: "text-purple-500 bg-purple-500/10",
+  },
+  "notification.bulk_sent": {
+    icon: BellDot,
+    title: "إشعار لمستخدمين محددين",
+    color: "text-indigo-500 bg-indigo-500/10",
+  },
+  "notification.deleted": {
+    icon: BellMinus,
+    title: "حذف إشعار",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "notification.sent_to_team": {
+    icon: Send,
+    title: "إرسال إشعار لفريق",
+    color: "text-indigo-500 bg-indigo-500/10",
+  },
+  "question.created": {
+    icon: FileQuestion,
+    title: "إضافة سؤال",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
+  "question.bulk_created": {
+    icon: FileQuestion,
+    title: "إضافة أسئلة",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
+  "question.deleted": {
+    icon: FileQuestion,
+    title: "حذف سؤال",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "question.updated": {
+    icon: PencilLine,
+    title: "تعديل سؤال",
+    color: "text-sky-500 bg-sky-500/10",
+  },
+  "question.bulk_deleted": {
+    icon: Trash2,
+    title: "حذف أسئلة متعددة",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "season.created": {
+    icon: CalendarRangeIcon,
+    title: "إضافة موسم",
+    color: "text-violet-500 bg-violet-500/10",
+  },
+  "season.updated": {
+    icon: CalendarCog,
+    title: "تعديل موسم",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "season.deleted": {
+    icon: CalendarDaysIcon,
+    title: "حذف موسم",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "event.created": {
+    icon: CalendarDaysIcon,
+    title: "إضافة حدث",
+    color: "text-orange-500 bg-orange-500/10",
+  },
+  "event.updated": {
+    icon: CalendarCog,
+    title: "تعديل حدث",
+    color: "text-amber-500 bg-amber-500/10",
+  },
+  "event.deleted": {
+    icon: CalendarX,
+    title: "حذف حدث",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "session.started": {
+    icon: PlaySquare,
+    title: "بدء جلسة",
+    color: "text-green-500 bg-green-500/10",
+  },
+  "session.completed": {
+    icon: CheckCircle2,
+    title: "إكمال الجلسة",
+    color: "text-emerald-500 bg-emerald-500/10",
+  },
+  "session.abandoned": {
+    icon: XCircle,
+    title: "تخلي عن الجلسة",
+    color: "text-orange-500 bg-orange-500/10",
+  },
   "team.created": {
     icon: Users,
     title: "إنشاء فريق",
     color: "text-cyan-500 bg-cyan-500/10",
   },
-  "user.password_changed": {
-    icon: KeyRound,
-    title: "تغيير كلمة المرور",
+  "team.joined": {
+    icon: UserCheck,
+    title: "انضمام إلى فريق",
+    color: "text-cyan-500 bg-cyan-500/10",
+  },
+  "team.left": {
+    icon: LogOut,
+    title: "مغادرة الفريق",
+    color: "text-slate-500 bg-slate-500/10",
+  },
+  "team.captain_transferred": {
+    icon: Crown,
+    title: "نقل كابتن الفريق",
     color: "text-amber-500 bg-amber-500/10",
+  },
+  "team.member_removed": {
+    icon: UserMinus,
+    title: "إزالة عضو من الفريق",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "team.delete": {
+    icon: Trash,
+    title: "حذف الفريق تلقائياً",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "team.deleted": {
+    icon: Trash2,
+    title: "حذف فريق",
+    color: "text-rose-500 bg-rose-500/10",
+  },
+  "team.bulk_deleted": {
+    icon: Trash2,
+    title: "حذف عدة فرق",
+    color: "text-rose-500 bg-rose-500/10",
   },
 };
 
@@ -231,11 +363,6 @@ export const superAdminNav = [
     title: "سجل الإجراءات",
     href: "/super-admin/logs",
     icon: ClipboardList,
-  },
-  {
-    title: "الإعدادات",
-    href: "/super-admin/settings",
-    icon: Settings2Icon,
   },
   {
     title: "الملف الشخصي",
@@ -300,4 +427,61 @@ export const seasonSortOptions = [
     label: "الاسم تنازليًا",
     value: "-title",
   },
-];
+];export interface QuestionTypeStyle {
+  label: string;
+  icon: LucideIcon;
+  className: string;
+}
+
+export const QUESTION_TYPE_STYLES: Record<string, QuestionTypeStyle> = {
+  mcq: {
+    label: "MCQ",
+    icon: Globe,
+    className:
+      "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
+  },
+
+  numberexact: {
+    label: "Number Exact",
+    icon: Hash,
+    className:
+      "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+  },
+
+  // database: {
+  //   label: "Database",
+  //   icon: Database,
+  //   className:
+  //     "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  // },
+
+  // programming: {
+  //   label: "Programming",
+  //   icon: Code2,
+  //   className:
+  //     "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
+  // },
+
+  // devops: {
+  //   label: "DevOps",
+  //   icon: Cpu,
+  //   className:
+  //     "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20",
+  // },
+
+  default: {
+    label: "General",
+    icon: HelpCircle,
+    className: "bg-muted text-muted-foreground border-border",
+  },
+};
+
+export function getQuestionTypeStyle(type: string): QuestionTypeStyle {
+  return (
+    QUESTION_TYPE_STYLES[type.toLowerCase().trim()] ??
+    {
+      ...QUESTION_TYPE_STYLES.default,
+      label: type,
+    }
+  );
+}

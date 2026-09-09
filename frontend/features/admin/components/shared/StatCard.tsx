@@ -37,7 +37,7 @@ const StatCard = ({
         )}
       </div>
 
-      <span className="mt-2 block text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors duration-300">
+      <span className="mt-2 block text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors duration-300 capitalize">
         {value || 0}
       </span>
 

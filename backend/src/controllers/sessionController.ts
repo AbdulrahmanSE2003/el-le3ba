@@ -167,8 +167,10 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
         broadcastQuestionResult(io, String(updatedSession.teamId), result);
       }
 
+      const { correctAnswer: _correctAnswer, ...answerResult } = result;
+
       return resHandler(res, 200, "answerDetails", {
-        ...result,
+        ...answerResult,
         alreadyAnswered: false,
       });
     }
@@ -198,8 +200,10 @@ export const submitAnswer = catchAsync(async (req, res, next) => {
       broadcastQuestionResult(io, String(updatedSession.teamId), result);
     }
 
+    const { correctAnswer: _correctAnswer, ...answerResult } = result;
+
     resHandler(res, 200, "answerDetails", {
-      ...result,
+      ...answerResult,
       alreadyAnswered: false,
     });
   } finally {
@@ -358,6 +362,21 @@ export const getAllSessions = catchAsync(async (req, res, next) => {
       totalPages,
     },
   });
+});
+
+
+export const getRecentSessions = catchAsync(async (req, res, next) => {
+  
+  const sessions= await Session.find()
+    .sort("-startedAt")
+      .select("-__v -seasonId -questions -answerLogs")
+      .populate("teamId", "teamName")
+      .populate("eventId", "title")
+      .limit(10)
+
+  resHandler(res, 200, "sessions",
+    sessions,
+  );
 });
 
 

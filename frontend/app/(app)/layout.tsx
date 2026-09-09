@@ -21,7 +21,7 @@ async function getProfile() {
 
   const result = await getCurrentUser();
 
-  if (!result.success) redirect("/login");
+  if (!result.success) redirect("/api/auth/clear");
   return result.data.userData;
 }
 export default async function AppLayout({ children }: { children: ReactNode }) {

@@ -13,6 +13,7 @@ import { fetchNotifications } from "../../actions/notifications";
 import { tableHeaders } from "./constants/constants";
 
 import Error from "@/app/error";
+import CreateReport from "@/components/shared/CreateReport";
 
 interface Props {
   searchParams: Promise<URLSearchParams>;
@@ -34,7 +35,10 @@ export default async function NotificationsContainer({ searchParams }: Props) {
           title="الإشعارات"
           description="سجل كل الإشعارات اللي اتبعتت للمستخدمين، الفرق، والمواسم."
         />
-        <SendNotification />
+        <div className={`flex items-center gap-3`}>
+          <CreateReport/>
+          <SendNotification />
+        </div>
       </div>
 
       <Suspense fallback={<StatsCardsSkeleton />}>

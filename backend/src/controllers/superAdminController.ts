@@ -128,6 +128,7 @@ export const getAllAdmins = catchAsync(async (req, res, next) => {
   // ── 2. Build filter ─────────────────────────────────────
   const filter: Record<string, any> = {
     role: { $in: ["admin", "superAdmin"] },
+    _id: {$ne: req.user._id} // Exclude the currently logged-in superAdmin from the results
   };
 
   // Filter by specific role
@@ -179,7 +180,12 @@ export const getAllAdmins = catchAsync(async (req, res, next) => {
   });
 });
 
-export const editAdmin = updateOne(User);
+export const editAdmin = updateOne(User, [
+  "name",
+  "email",
+  "avatar",
+  "isActive",
+]);
 
 export const deactivateAdmin = catchAsync(async (req, res, next) => {
   const { id } = req.params;
